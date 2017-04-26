@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.1
+
+* add new author.
+
 # CHANGES IN VERSION 0.99.8
 
 * reduce the memory cost.
