@@ -145,12 +145,18 @@ downstream nucleosomes. Because ATAC-seq reads are concentrated at regions of
 open chromatin, users should saw a strong nucleosome signal at the +1 
 nucleosome that decreased at the +2, +3 and +4 nucleosomes. 
 
-```{r fig.height=8, fig.width=4}
+```{r fig.height=4, fig.width=4}
+library(ChIPpeakAnno)
 bamfiles <- file.path(outPath,
                      c("NucleosomeFree.bam",
                      "mononucleosome.bam",
                      "dinucleosome.bam",
                      "trinucleosome.bam"))
+## Plot the cumulative percentage tag allocation in NucleosomeFree 
+## and mononucleosome bams.
+cumulativePercentage(bamfiles[1:2], as(seqinfo(Hsapiens)["chr1"], "GRanges"))
+```
+```{r fig.height=8, fig.width=4}
 TSS <- promoters(txs, upstream=0, downstream=1)
 TSS <- unique(TSS)
 ## estimate the library size for normalization
