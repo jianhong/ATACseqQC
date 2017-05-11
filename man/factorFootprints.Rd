@@ -36,6 +36,12 @@ aggregate ATAC-seq footprint.}
 }
 \value{
 an invisible list of matrixes with the signals for plot.
+It includes:
+ - signal    mean values of coverage for positive strand and negative strand
+             in feature regions
+ - spearman.correlation    spearman correlations of cleavage counts in the 
+             highest 10-nucleotide-window and binding prediction score.
+ - bindingSites    predicted binding sites.
 }
 \description{
 Aggregate ATAC-seq footprint for a given motif generated

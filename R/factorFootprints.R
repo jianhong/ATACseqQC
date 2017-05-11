@@ -18,6 +18,7 @@
 #' @param upstream,downstream numeric(1) or integer(1).
 #'        Upstream and downstream of the binding region for
 #'        aggregate ATAC-seq footprint.
+#' @importFrom stats cor.test
 #' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments
 #' @importFrom Biostrings matchPWM
@@ -25,6 +26,12 @@
 #' @import GenomicRanges
 #' @import IRanges
 #' @return an invisible list of matrixes with the signals for plot.
+#' It includes:
+#'  - signal    mean values of coverage for positive strand and negative strand
+#'              in feature regions
+#'  - spearman.correlation    spearman correlations of cleavage counts in the 
+#'              highest 10-nucleotide-window and binding prediction score.
+#'  - bindingSites    predicted binding sites.
 #' @export
 #' @references Chen, K., Xi, Y., Pan, X., Li, Z., Kaestner, K., Tyler, J.,
 #' Dent, S., He, X. and Li, W., 2013.
@@ -51,6 +58,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   #stopifnot(length(bamfiles)==4)
   stopifnot(is(genome, "BSgenome"))
   stopifnot(all(round(colSums(pfm), digits=4)==1))
+  stopifnot(upstream>10 && downstream>10)
   if(missing(bindingSites)){
       pwm <- motifStack::pfm2pwm(pfm)
       mt <- matchPWM(pwm, genome, min.score=min.score, with.score=TRUE,
@@ -58,6 +66,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   }else{
       stopifnot(is(bindingSites, "GRanges"))
       stopifnot(length(bindingSites)>1)
+      stopifnot(length(bindingSites$score))
       mt <- bindingSites
   }
   wid <- ncol(pfm)
@@ -80,23 +89,38 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
     .ele[names(.ele) %in% seqlev])
   ## coverage of mt, must be filtered, otherwise too much
   cvgSum <- cvglist[["+"]] + cvglist[["-"]]
-  mt.s <- split(ranges(mt), seqnames(mt))
+  mt.s <- split(mt, seqnames(mt))
   seqlev <- intersect(names(cvgSum), names(mt.s))
-  mt.s <- mapply(function(.cvg, .mt){
-    v <- Views(.cvg, .mt)
-    .mt[viewApply(v, sum)>0]
-  }, cvgSum[seqlev], mt.s[seqlev], SIMPLIFY=FALSE)
-  mt <- as(IRangesList(mt.s), "GRanges")
-  sig <- featureAlignedSignal(cvglists=cvglist,
+  cvgSum <- cvgSum[seqlev]
+  mt.s <- mt.s[seqlev]
+  mt.v <- Views(cvgSum, mt.s)
+  mt.s <- mt.s[viewSums(mt.v)>0]
+  mt <- unlist(mt.s)
+  sigs <- featureAlignedSignal(cvglists=cvglist,
                               feature.gr=reCenterPeaks(mt, width=1),
                               upstream=upstream+floor(wid/2),
                               downstream=downstream+ceiling(wid/2),
                               n.tile=upstream+downstream+wid)
-  sig <- do.call(cbind, sig)
-  sig <- colMeans(sig)
-  plotFootprints(sig,
+  cor <- lapply(sigs, function(sig){
+      sig.colMeans <- colMeans(sig)
+      ## calculate corelation of footprinting and binding score
+      windows <- slidingWindows(IRanges(1, ncol(sig)), width = 10, step = 1)[[1]]
+      # remove the windows with overlaps of motif binding region
+      windows <- windows[end(windows)<=upstream | start(windows)>=upstream+wid]
+      sig.windowMeans <- viewMeans(Views(sig.colMeans, windows))
+      windows.sel <- windows[which.max(sig.windowMeans)][1]
+      highest.sig.windows <- 
+          rowMeans(sig[, start(windows.sel):end(windows.sel)])
+      predictedBindingSiteScore <- mt$score
+      cor <- cor.test(x = predictedBindingSiteScore, 
+                      y = highest.sig.windows, 
+                      method = "spearman")
+  })
+  plotFootprints(colMeans(do.call(cbind, sigs)),
                  Mlen=wid, motif=pwm2pfm(pfm))
-  return(invisible(sig))
+  return(invisible(list(signal=sigs, 
+                        spearman.correlation=cor, 
+                        bindingSites=mt)))
 }
 
 pwm2pfm <- function(pfm, name="motif"){

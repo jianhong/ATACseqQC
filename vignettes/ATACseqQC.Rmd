@@ -215,11 +215,19 @@ library(MotifDb)
 CTCF <- query(MotifDb, c("CTCF"))
 CTCF <- as.list(CTCF)
 print(CTCF[[1]], digits=2)
-factorFootprints(shiftedBamfile, pfm=CTCF[[1]], 
-                 genome=genome,
-                 min.score="95%", seqlev=seqlev,
-                 upstream=100, downstream=100)
+sigs <- factorFootprints(shiftedBamfile, pfm=CTCF[[1]], 
+                         genome=genome,
+                         min.score="95%", seqlev=seqlev,
+                         upstream=100, downstream=100)
 ```
+```{r fig.height=6, fig.width=4}
+featureAlignedHeatmap(sigs$signal, feature.gr=sigs$bindingSites,
+                      annoMcols="score", sortBy = "score", 
+                      n.tile=ncol(sigs$signal[[1]]))
+
+sigs$spearman.correlation
+```
+
 
 
 Here is the CTCF footprints for a bigger dataset.

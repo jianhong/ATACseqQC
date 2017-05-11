@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.3
+
+* change output of factorFootprints.
+
 # CHANGES IN VERSION 1.1.2
 
 * add cumulativePercentage in vignette

@@ -182,7 +182,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nd.gc <- letterFrequency(nd.seq, letters="CG", as.prob = TRUE)
   # conservation
   getScoresFromCons <- function(cons, gr){
-      gr.cons <- scores(cons, gr)
+      gr.cons <- scores(object=cons, ranges=gr, scores.only=FALSE)
       stopifnot(identical(ranges(gr), ranges(gr.cons)))
       gr.cons <- gr.cons$scores
       gr.cons[is.na(gr.cons)] <- 0
