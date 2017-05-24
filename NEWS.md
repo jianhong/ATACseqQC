@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.4
+
+* change author list.
+
 # CHANGES IN VERSION 1.1.3
 
 * change output of factorFootprints.

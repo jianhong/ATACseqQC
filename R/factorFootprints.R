@@ -61,13 +61,36 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   stopifnot(upstream>10 && downstream>10)
   if(missing(bindingSites)){
       pwm <- motifStack::pfm2pwm(pfm)
-      mt <- matchPWM(pwm, genome, min.score=min.score, with.score=TRUE,
+      mt <- matchPWM(pwm, genome, min.score = "85%", with.score=TRUE,
+                            exclude=names(genome)[!names(genome) %in% seqlev])
+      mt.user <- matchPWM(pwm, genome, min.score=min.score, with.score=TRUE,
                      exclude=names(genome)[!names(genome) %in% seqlev])
+      userdefined <- length(mt.user)
+      if(length(mt)<=length(mt.user)){
+          mt <- mt.user
+          mt$userdefined <- TRUE
+      }else{
+          ol <- findOverlaps(mt, mt.user, type = "equal")
+          mt$userdefined <- FALSE
+          mt$userdefined[unique(queryHits(ol))] <- TRUE
+      }
+      if(length(mt)>10000 && userdefined<10000){## subsample 
+          set.seed(seed = 1)
+          mt.keep <- seq_along(mt)[!mt$userdefined]
+          n <- 10000-userdefined
+          if(length(mt.keep)>n){
+              mt.keep <- sample(mt.keep, n, replace = FALSE)
+              mt.keep <- sort(mt.keep)
+              mt.keep <- seq_along(mt) %in% mt.keep
+              mt <- mt[mt$userdefined | mt.keep]
+          }
+      }
   }else{
       stopifnot(is(bindingSites, "GRanges"))
       stopifnot(length(bindingSites)>1)
       stopifnot(length(bindingSites$score))
       mt <- bindingSites
+      mt$userdefined <- TRUE
   }
   wid <- ncol(pfm)
   mt <- mt[seqnames(mt) %in% seqlev]
@@ -116,6 +139,9 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
                       y = highest.sig.windows, 
                       method = "spearman")
   })
+  sigs <- lapply(sigs, function(.ele) .ele[mt$userdefined, ])
+  mt <- mt[mt$userdefined]
+  mt$userdefined <- NULL
   plotFootprints(colMeans(do.call(cbind, sigs)),
                  Mlen=wid, motif=pwm2pfm(pfm))
   return(invisible(list(signal=sigs, 

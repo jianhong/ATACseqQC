@@ -217,12 +217,15 @@ CTCF <- as.list(CTCF)
 print(CTCF[[1]], digits=2)
 sigs <- factorFootprints(shiftedBamfile, pfm=CTCF[[1]], 
                          genome=genome,
-                         min.score="95%", seqlev=seqlev,
+                         min.score="90%", seqlev=seqlev,
                          upstream=100, downstream=100)
 ```
-```{r fig.height=6, fig.width=4}
-featureAlignedHeatmap(sigs$signal, feature.gr=sigs$bindingSites,
-                      annoMcols="score", sortBy = "score", 
+```{r fig.height=6, fig.width=6}
+featureAlignedHeatmap(sigs$signal, 
+                      feature.gr=reCenterPeaks(sigs$bindingSites,
+                                               width=200+width(sigs$bindingSites[1])), 
+                      annoMcols="score",
+                      sortBy="score",
                       n.tile=ncol(sigs$signal[[1]]))
 
 sigs$spearman.correlation
