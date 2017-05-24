@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.0.3
+
+* change author list
+
 # CHANGES IN VERSION 1.0.2
 
 * add cumulativePercentage in vignette
