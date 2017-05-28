@@ -1,6 +1,6 @@
 ---
 title: "ATACseqQC Guide"
-author: "Jianhong Ou, Jun Yu, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu"
+author: "Jianhong Ou, Jun Yu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu"
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('ATACseqQC')`"
 bibliography: bibliography.bib
