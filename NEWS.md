@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.0.4
+
+* update the vignette
+
 # CHANGES IN VERSION 1.0.3
 
 * change author list
