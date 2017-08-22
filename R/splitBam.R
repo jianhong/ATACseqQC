@@ -48,7 +48,16 @@ splitBam <- function(bamfile, tags, outPath=NULL,
                      cutoff = .8){
   stopifnot(length(labels)+1==length(breaks))
   stopifnot(is(txs, "GRanges"))
-  stopifnot(is(conservation, "GScores"))
+  conservationFlag <- FALSE
+  if(!missing(conservation)){
+    if(length(conservation)){
+      if(!is.na(conservation)){
+        stopifnot(is(conservation, "GScores"))
+        conservationFlag <- TRUE ## conservation is supplied.
+      }
+    }
+  }
+  if(!conservationFlag) conservation <- NULL
   stopifnot(is(genome, "BSgenome"))
   stopifnot(length(seqlev)>0)
   stopifnot(is.integer(positive))

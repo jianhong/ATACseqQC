@@ -79,7 +79,16 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   stopifnot(is(obj, "GAlignments"))
   stopifnot(length(names(obj))==length(obj))
   stopifnot(is(txs, "GRanges"))
-  stopifnot(is(conservation, "GScores"))
+  conservationFlag <- FALSE
+  if(!missing(conservation)){
+    if(length(conservation)){
+      if(!is.na(conservation)){
+        stopifnot(is(conservation, "GScores"))
+        conservationFlag <- TRUE ## conservation is supplied.
+      }
+    }
+  }
+  
   stopifnot(is(genome, "BSgenome"))
   seqlev <- unique(seqlevels(obj))
   seqlev <- seqlev[seqlev %in% unique(seqnames(obj))]
@@ -90,6 +99,9 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
                 cut(abs(mcols(obj)$isize),
                     breaks = breaks,
                     labels = labels))
+  if(!conservationFlag){
+    return(objs)
+  }
   nf.old <- objs[[labelsOfNucleosomeFree]]
   nc.old <- objs[[labelsOfMononucleosome]]
   nf.cvg <- coverage(nf.old)
