@@ -1,5 +1,9 @@
 # CHANGES IN VERSION 1.1.6
 
+* Fix a bug in shiftGAlignmentsList.
+
+# CHANGES IN VERSION 1.1.6
+
 * Change default behavior of splitBam
 
 # CHANGES IN VERSION 1.1.5

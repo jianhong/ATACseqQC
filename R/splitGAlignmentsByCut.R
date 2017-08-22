@@ -82,10 +82,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   conservationFlag <- FALSE
   if(!missing(conservation)){
     if(length(conservation)){
-      if(!is.na(conservation)){
         stopifnot(is(conservation, "GScores"))
         conservationFlag <- TRUE ## conservation is supplied.
-      }
     }
   }
   

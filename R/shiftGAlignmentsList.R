@@ -32,13 +32,10 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L){
     gp1 <- rep(seq_along(gal), elementNROWS(gal))
     gp[duplicated(gp1)] <- 2
     mcols(gal1)$MD <- NULL
-    gal1[gp==1] <- shiftReads(gal1[gp==1], 
-                              positive=positive,
-                              negative=negative)
+    gal1 <- shiftReads(gal1, 
+                       positive=positive,
+                       negative=negative)
     names(gal1) <- mcols(gal1)$qname
-    mcols(gal1)$isize[gp==2] <-
-        sign(mcols(gal1)$isize[gp==2]) *
-        abs(mcols(gal1)$isize[which(gp==2)-1])
     mcols(gal1)$mpos[gp==2] <- start(gal1)[which(gp==2)-1]
     mcols(gal1)$mpos[gp==1] <- start(gal1)[which(gp==1)+1]
     ## till now, gal1 must have mrnm, mpos, names and flag

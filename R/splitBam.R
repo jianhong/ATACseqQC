@@ -51,10 +51,8 @@ splitBam <- function(bamfile, tags, outPath=NULL,
   conservationFlag <- FALSE
   if(!missing(conservation)){
     if(length(conservation)){
-      if(!is.na(conservation)){
         stopifnot(is(conservation, "GScores"))
         conservationFlag <- TRUE ## conservation is supplied.
-      }
     }
   }
   if(!conservationFlag) conservation <- NULL
