@@ -1,4 +1,8 @@
-# CHANGES IN VERSION 1.1.6
+# CHANGES IN VERSION 1.1.8
+
+* Add function bamQC.
+
+# CHANGES IN VERSION 1.1.7
 
 * Fix a bug in shiftGAlignmentsList.
 

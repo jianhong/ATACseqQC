@@ -57,6 +57,12 @@ bamfile <- system.file("extdata", "GL1.bam",
 bamfile.labels <- gsub(".bam", "", basename(bamfile))
 ```
 
+## Check fastq and mapping quality
+
+```{r}
+bamQC(bamfile, outPath=NULL)
+```
+
 ## Fragment size distribution
 
 First, there should be a large proportion of reads with less 
