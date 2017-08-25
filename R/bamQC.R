@@ -9,18 +9,22 @@
 #' @author Jianhong Ou
 #' @export
 #' @importFrom S4Vectors FilterRules
-#' @importFrom Rsamtools BamFile scanBamFlag ScanBamParam scanBam bamFlagAsBitMatrix filterBam idxstatsBam
+#' @importFrom Rsamtools BamFile scanBamFlag ScanBamParam scanBam bamFlagAsBitMatrix filterBam idxstatsBam testPairedEndBam
+#' @importFrom GenomicAlignments readGAlignmentPairs
+#' @import GenomicRanges
 #' @examples
 #' bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
 #' bamQC(bamfile, outPath=NULL)
 bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
-                  outPath=sub(".bam", ".clean.bam", bamfile)){
+                  outPath=sub(".bam", ".clean.bam", 
+                              basename(bamfile))){
   stopifnot(length(bamfile)==1)
   stopifnot(is.character(bamfile))
   file <- BamFile(file = bamfile, index = index)
   flag <- scanBamFlag(isSecondaryAlignment = FALSE, 
                       isNotPassingQualityControls = FALSE)
-  param <- ScanBamParam(what=c("qname", "flag", "rname"),
+  param <- ScanBamParam(what=c("qname", "flag", "rname",
+                               "cigar", "pos", "qwidth"),
                         flag = flag)
   res <- scanBam(file, param = param)[[1L]]
   qname <- res[["qname"]]
@@ -33,14 +37,30 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   dupRate <- sum(isDuplicate)/length(qname)
   if(dupRate==0){
     ## need to double check duplicate rate
-    message("Duplicates may be not marked.",
-            "Please try to run picard MarkDuplicates.")
+    if(testPairedEndBam(file)){
+      ## PE, remove the fragments with same cigar and positions.
+      gal <- readGAlignmentPairs(file, use.names = TRUE, 
+                                 param=param)
+      gal <- granges(gal, on.discordant.seqnames="drop")
+      ## Here, may introduce some bug, if the cigar is switched
+      cigar <- do.call(rbind, 
+                       split(res[["cigar"]], qname)[names(gal)])
+      duplicated.qname <- 
+        names(gal)[duplicated(gal) & duplicated(cigar)]
+      isDuplicate <- qname %in% duplicated.qname
+    }else{
+      ## SE, remove the reads with same cigar and positions.
+      se <- do.call(cbind, 
+                    res[c("rname", "cigar", "pos", "qwidth")])
+      isDuplicate <- duplicated(se)
+    }
   }
+  dupRate <- sum(isDuplicate)/length(qname)
   mitRate <- sum(isMitochondria)/length(qname)
   if(length(outPath)){
-    filter <- FilterRules(list(
-      seqn = !isMitochondria, 
-      dup = !isDuplicate))
+    keepQNAME <- qname[(!isMitochondria) & (!isDuplicate)]
+    filter <- FilterRules(list(qn = function(x){ 
+      x$qname %in% keepQNAME}))
     filterBam(file = bamfile, 
               index = index,
               destination = outPath,

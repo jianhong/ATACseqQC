@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.
+
+* Remove duplicates for outputs of bamQC.
+
 # CHANGES IN VERSION 1.1.8
 
 * Add function bamQC.

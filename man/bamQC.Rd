@@ -5,7 +5,7 @@
 \title{Mapping quality control}
 \usage{
 bamQC(bamfile, index = bamfile, mitochondria = "chrM",
-  outPath = sub(".bam", ".clean.bam", bamfile))
+  outPath = sub(".bam", ".clean.bam", basename(bamfile)))
 }
 \arguments{
 \item{bamfile}{character(1). File name of bam.}
