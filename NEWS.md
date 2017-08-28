@@ -1,4 +1,8 @@
-# CHANGES IN VERSION 1.1.
+# CHANGES IN VERSION 1.1.10
+
+* Check is PE before run fragSizeDist.
+
+# CHANGES IN VERSION 1.1.9
 
 * Remove duplicates for outputs of bamQC.
 

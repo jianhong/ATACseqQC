@@ -20,6 +20,11 @@ fragSizeDist <- function(bamFiles, bamFiles.labels, ylim=NULL,
                          logYlim=NULL){
   opar <- par(c("fig", "mar"))
   on.exit(par(opar))
+  pe <- sapply(bamFiles, testPairedEndBam)
+  if(any(!pe)){
+    stop(paste(bamFiles[!pe], collapse = ", "), 
+         "is not Paired-End file.")
+  }
   summaryFunction <- function(seqname, seqlength, bamFile, ...) {
     param <-
       ScanBamParam(what=c('isize'),
