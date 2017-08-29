@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.0.5
+
+*fix a bug in fragSizeDist
+
 # CHANGES IN VERSION 1.0.4
 
 * update the vignette

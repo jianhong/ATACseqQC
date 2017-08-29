@@ -27,7 +27,8 @@ fragSizeDist <- function(bamFiles, bamFiles.labels, ylim=NULL,
                    flag=scanBamFlag(isSecondaryAlignment = FALSE,
                                     isUnmappedQuery=FALSE,
                                     isNotPassingQualityControls = FALSE))
-    table(abs(scanBam(bamFile, ..., param=param)[[1]][["isize"]]))
+    table(abs(unlist(sapply(scanBam(bamFile, ..., param=param),
+                            `[[`, "isize"), use.names = FALSE)))
   }
 
   idxstats <- unique(do.call(rbind, lapply(bamFiles, function(.ele)
