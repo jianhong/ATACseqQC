@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.11
+
+* fix a bug in fragSizeDist.
+
 # CHANGES IN VERSION 1.1.10
 
 * Check is PE before run fragSizeDist.
