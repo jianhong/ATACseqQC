@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.12
+
+* fix the soft clipping and improve the efficency.
+
 # CHANGES IN VERSION 1.1.11
 
 * fix a bug in fragSizeDist.

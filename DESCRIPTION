@@ -1,7 +1,7 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.1.11
+Version: 1.1.12
 Author: Jianhong Ou, Jun Yu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jianhong.ou@umassmed.edu>
 Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
@@ -22,7 +22,7 @@ Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
 Depends: R (>= 3.4), BiocGenerics, S4Vectors
 Imports: BSgenome, Biostrings, ChIPpeakAnno, IRanges, GenomicRanges,
         GenomicAlignments, GenomeInfoDb, GenomicScores, graphics, grid,
-        limma, Rsamtools, randomForest, rtracklayer, stats, stringr
+        limma, Rsamtools, randomForest, rtracklayer, stats
 Suggests: RUnit, BiocStyle, knitr, BSgenome.Hsapiens.UCSC.hg19,
         TxDb.Hsapiens.UCSC.hg19.knownGene, phastCons100way.UCSC.hg19,
         motifStack, MotifDb, trackViewer
