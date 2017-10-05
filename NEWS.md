@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.13
+
+* improve the efficency of factorFootprints.
+
 # CHANGES IN VERSION 1.1.12
 
 * fix the soft clipping and improve the efficency.

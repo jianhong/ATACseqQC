@@ -68,5 +68,5 @@ DANPOS: dynamic analysis of nucleosome position and occupancy by sequencing.
 Genome research, 23(2), pp.341-351.
 }
 \author{
-Jianhong Ou
+Jianhong Ou, Julie Zhu
 }
