@@ -154,6 +154,9 @@ objs <- splitBam(bamfile, tags=tags, outPath=outPath,
                  conservation=phastCons100way.UCSC.hg19)
 ```
 
+If you do not have conservation score, you may want to have a try simply 
+split the bams with the fragment lengths without provide conservation argument.
+
 ### Heatmap and coverage curve for nucleosome positions
 
 By averaging the signal across all active TSSs, we should observe that 

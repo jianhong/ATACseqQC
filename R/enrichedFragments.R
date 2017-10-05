@@ -104,6 +104,12 @@ enrichedFragments <- function(bamfiles, index=bamfiles, TSS, librarySize,
                                librarySize = librarySize,
                                adjustFragmentLength=adjustFragmentLength,
                                pe="SE")
+  sig.pe <- lapply(sig.pe, function(.ele){
+    .ele[is.na(.ele)] <- 0
+    .ele}) ## in case of NA
+  sig.se <- lapply(sig.se, function(.ele){
+    .ele[is.na(.ele)] <- 0
+    .ele}) ## in case of NA
   sig <- sig.pe
   sig[[3]] <- sig.se[[3]]
   sig[[4]] <- sig.pe[[4]] + sig.se[[4]]

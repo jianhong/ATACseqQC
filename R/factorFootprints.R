@@ -21,10 +21,12 @@
 #' @importFrom stats cor.test
 #' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments
-#' @importFrom Biostrings matchPWM
+#' @importFrom Biostrings matchPWM maxScore
+#' @importFrom Rsamtools ScanBamParam
 #' @import GenomeInfoDb
 #' @import GenomicRanges
 #' @import IRanges
+#' @import S4Vectors
 #' @return an invisible list of matrixes with the signals for plot.
 #' It includes:
 #'  - signal    mean values of coverage for positive strand and negative strand
@@ -37,7 +39,7 @@
 #' Dent, S., He, X. and Li, W., 2013.
 #' DANPOS: dynamic analysis of nucleosome position and occupancy by sequencing.
 #' Genome research, 23(2), pp.341-351.
-#' @author Jianhong Ou
+#' @author Jianhong Ou, Julie Zhu
 #' @examples
 #'
 #'shiftedBamfile <- system.file("extdata", "GL1.bam",
@@ -61,25 +63,41 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   stopifnot(upstream>10 && downstream>10)
   if(missing(bindingSites)){
       pwm <- motifStack::pfm2pwm(pfm)
-      mt <- matchPWM(pwm, genome, min.score = "85%", with.score=TRUE,
-                            exclude=names(genome)[!names(genome) %in% seqlev])
-      mt.user <- matchPWM(pwm, genome, min.score=min.score, with.score=TRUE,
-                     exclude=names(genome)[!names(genome) %in% seqlev])
-      userdefined <- length(mt.user)
-      if(length(mt)<=length(mt.user)){
-          mt <- mt.user
-          mt$userdefined <- TRUE
+      maxS <- maxScore(pwm)
+      if(!is.numeric(min.score)){
+        if(!is.character(min.score)){
+          stop("'min.score' must be a single number or string")
+        }else{
+          nc <- nchar(min.score)
+          if (substr(min.score, nc, nc) == "%"){
+            min.score <- substr(min.score, 1L, nc - 1L)
+          }else{
+            stop("'min.score' can be given as a character string containing a percentage",
+                 "(e.g. '85%') of the highest possible score")
+          }
+          min.score <- maxS * as.double(min.score)/100
+        }
       }else{
-          ol <- findOverlaps(mt, mt.user, type = "equal")
-          mt$userdefined <- FALSE
-          mt$userdefined[unique(queryHits(ol))] <- TRUE
+        min.score <- min.score[1]
       }
-      if(length(mt)>10000 && userdefined<10000){## subsample 
+      predefined.score <- maxS * as.double(0.85)
+      mt <- matchPWM(pwm, genome, min.score = min(predefined.score, min.score), 
+                     with.score=TRUE,
+                     exclude=names(genome)[!names(genome) %in% seqlev])
+      if (min.score <= predefined.score){
+        mt$userdefined <- TRUE
+      } else {
+        mt$userdefined <- FALSE
+        mt$userdefined[mt$score >= min.score] <- TRUE
+      }
+      
+      if(length(mt)>10000 && sum(mt$userdefined)<10000){## subsample 
           set.seed(seed = 1)
           mt.keep <- seq_along(mt)[!mt$userdefined]
-          n <- 10000-userdefined
+          n <- 10000-sum(mt$userdefined)
           if(length(mt.keep)>n){
-              mt.keep <- sample(mt.keep, n, replace = FALSE)
+              mt.keep <- mt.keep[order(mt[mt.keep]$score, decreasing = TRUE)]
+              mt.keep <- mt.keep[seq.int(n)]
               mt.keep <- sort(mt.keep)
               mt.keep <- seq_along(mt) %in% mt.keep
               mt <- mt[mt$userdefined | mt.keep]
@@ -93,11 +111,14 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       mt$userdefined <- TRUE
   }
   wid <- ncol(pfm)
-  mt <- mt[seqnames(mt) %in% seqlev]
+  #mt <- mt[seqnames(mt) %in% seqlev]
   seqlevels(mt) <- seqlev
   seqinfo(mt) <- Seqinfo(seqlev, seqlengths = seqlengths(mt))
-  ## read in bam file
-  bamIn <- mapply(readGAlignments, bamfiles, index, SIMPLIFY = FALSE)
+  ## read in bam file with input seqlev specified by users
+  which <- as(seqinfo(mt), "GRanges")
+  param <- ScanBamParam(which=which)
+  bamIn <- mapply(function(.b, .i) readGAlignments(.b, .i, param = param), 
+                  bamfiles, index, SIMPLIFY = FALSE)
   bamIn <- lapply(bamIn, as, Class = "GRanges")
   if(class(bamIn)!="GRangesList") bamIn <- GRangesList(bamIn)
   bamIn <- unlist(bamIn)
@@ -116,8 +137,11 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   seqlev <- intersect(names(cvgSum), names(mt.s))
   cvgSum <- cvgSum[seqlev]
   mt.s <- mt.s[seqlev]
-  mt.v <- Views(cvgSum, mt.s)
-  mt.s <- mt.s[viewSums(mt.v)>0]
+  ## too much if use upstream and downstream, just use 3*wid maybe better.
+  mt.s.ext <- promoters(mt.s, upstream=wid, downstream=wid+wid)
+  stopifnot(all(lengths(mt.s.ext)==lengths(mt.s)))
+  mt.v <- Views(cvgSum, mt.s.ext)
+  mt.s <- mt.s[viewSums(mt.v)>0] 
   mt <- unlist(mt.s)
   sigs <- featureAlignedSignal(cvglists=cvglist,
                               feature.gr=reCenterPeaks(mt, width=1),
@@ -126,8 +150,8 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
                               n.tile=upstream+downstream+wid)
   cor <- lapply(sigs, function(sig){
       sig.colMeans <- colMeans(sig)
-      ## calculate corelation of footprinting and binding score
-      windows <- slidingWindows(IRanges(1, ncol(sig)), width = 10, step = 1)[[1]]
+      ## calculate correlation of footprinting and binding score
+      windows <- slidingWindows(IRanges(1, ncol(sig)), width = wid, step = 1)[[1]]
       # remove the windows with overlaps of motif binding region
       windows <- windows[end(windows)<=upstream | start(windows)>=upstream+wid]
       sig.windowMeans <- viewMeans(Views(sig.colMeans, windows))
@@ -142,7 +166,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   sigs <- lapply(sigs, function(.ele) .ele[mt$userdefined, ])
   mt <- mt[mt$userdefined]
   mt$userdefined <- NULL
-  plotFootprints(colMeans(do.call(cbind, sigs)),
+  plotFootprints(colMeans(do.call(cbind, sigs), na.rm = TRUE),
                  Mlen=wid, motif=pwm2pfm(pfm))
   return(invisible(list(signal=sigs, 
                         spearman.correlation=cor, 
