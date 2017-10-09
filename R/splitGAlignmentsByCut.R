@@ -249,10 +249,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
 
 GRbin <- function(A, B, col){
     A1 <- B1 <- C <- disjoin(c(A, B), ignore.strand=FALSE)
-    ol1 <- findOverlaps(C, A, maxgap=0L, minoverlap=1L,
-                        type="any", ignore.strand=FALSE)
-    ol2 <- findOverlaps(C, B, maxgap=0L, minoverlap=1L,
-                        type="any", ignore.strand=FALSE)
+    ol1 <- findOverlaps(C, A)
+    ol2 <- findOverlaps(C, B)
     A1$value <- B1$value <- 0
     A1$value[queryHits(ol1)] <- mcols(A)[subjectHits(ol1), col]
     B1$value[queryHits(ol2)] <- mcols(B)[subjectHits(ol2), col]
