@@ -3,7 +3,7 @@ Type: Package
 Title: ATAC-seq Quality Control
 Version: 1.1.14
 Author: Jianhong Ou, Jun Yu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
-Maintainer: Jianhong Ou <jianhong.ou@umassmed.edu>
+Maintainer: Jianhong Ou <jianhong.ou@gmail.com>
 Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
         using sequencing, is a rapid and sensitive method for chromatin
         accessibility analysis. It was developed as an alternative
