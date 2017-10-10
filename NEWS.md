@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.1.14
+
+* Fix the error: when 'type' is "any", at least one of 'maxgap' and 
+'minoverlap' must be set to its default value
+
 # CHANGES IN VERSION 1.1.13
 
 * improve the efficency of factorFootprints.
