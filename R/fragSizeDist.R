@@ -78,7 +78,7 @@ fragSizeDist <- function(bamFiles, bamFiles.labels, ylim=NULL,
     x <- 1:1010
     frag.len <- frag.len[match(x, names(frag.len))]
     frag.len[is.na(frag.len)] <- 0
-    y <- 100 * frag.len / sum(frag.len)
+    y <- frag.len / sum(frag.len)
     y <- as.numeric(y)
     names(y) <- x
     par(mar=c(5, 5, 4, 2) +.1)

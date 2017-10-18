@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.16
+
+* Fix a bug in fragSizeDist
+
 # CHANGES IN VERSION 1.1.15
 
 * Fix a bug in bamQC
