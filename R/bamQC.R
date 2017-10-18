@@ -33,7 +33,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   totalQNAMEs <- length(unique(qname))
   isDuplicate <- 
     as.logical(bamFlagAsBitMatrix(flag, "isDuplicate"))
-  isMitochondria <- rname=="chrM"
+  isMitochondria <- rname %in% mitochondria
   dupRate <- sum(isDuplicate)/length(qname)
   if(dupRate==0){
     ## need to double check duplicate rate

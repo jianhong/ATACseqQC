@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.15
+
+* Fix a bug in bamQC
+
 # CHANGES IN VERSION 1.1.14
 
 * Fix the error: when 'type' is "any", at least one of 'maxgap' and 
