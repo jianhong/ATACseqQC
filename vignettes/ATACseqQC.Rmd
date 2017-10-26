@@ -187,7 +187,11 @@ TSS <- unique(TSS)
 ## calculate the signals around TSSs.
 NTILE <- 101
 dws <- ups <- 1010
-sigs <- enrichedFragments(bamfiles, TSS=TSS,
+sigs <- enrichedFragments(gal=objs[c("NucleosomeFree", 
+                                     "mononucleosome",
+                                     "dinucleosome",
+                                     "trinucleosome")], 
+                          TSS=TSS,
                           librarySize=librarySize,
                           seqlev=seqlev,
                           TSS.filter=0.5,
@@ -195,7 +199,6 @@ sigs <- enrichedFragments(bamfiles, TSS=TSS,
                           upstream = ups,
                           downstream = dws)
 ## log2 transformed signals
-names(sigs) <- gsub(".bam", "", basename(names(sigs)))
 sigs.log2 <- lapply(sigs, function(.ele) log2(.ele+1))
 #plot heatmap
 featureAlignedHeatmap(sigs.log2, reCenterPeaks(TSS, width=ups+dws),
