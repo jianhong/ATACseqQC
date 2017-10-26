@@ -4,7 +4,7 @@
 \alias{enrichedFragments}
 \title{enrichment for nucleosome-free fragments and nucleosome signals}
 \usage{
-enrichedFragments(bamfiles, index = bamfiles, TSS, librarySize,
+enrichedFragments(bamfiles, index = bamfiles, gal, TSS, librarySize,
   upstream = 1010L, downstream = 1010L, n.tile = 101L,
   normal.method = "quantile", adjustFragmentLength = 80L,
   TSS.filter = 0.5, seqlev = paste0("chr", c(1:22, "X", "Y")))
@@ -14,6 +14,9 @@ enrichedFragments(bamfiles, index = bamfiles, TSS, librarySize,
 
 \item{index}{The names of the index file of the 'BAM' file being processed;
 This is given without the '.bai' extension.}
+
+\item{gal}{A GAlignmentsList object or a list of GAlignmentPairs.
+If bamfiles is missing, gal is required.}
 
 \item{TSS}{an object of \link[GenomicRanges]{GRanges} indicates
 the transcript start sites. All the width of TSS should equal to 1.

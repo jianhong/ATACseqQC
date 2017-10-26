@@ -4,6 +4,8 @@
 #' @param bamfiles A vector of characters indicates the file names of bams.
 #' @param index The names of the index file of the 'BAM' file being processed;
 #'        This is given without the '.bai' extension.
+#' @param gal A GAlignmentsList object or a list of GAlignmentPairs.
+#'        If bamfiles is missing, gal is required.
 #' @param TSS an object of \link[GenomicRanges]{GRanges} indicates
 #' the transcript start sites. All the width of TSS should equal to 1.
 #' Otherwise, TSS will be reset to the center of input TSS.
@@ -29,6 +31,7 @@
 #' @author Jianhong Ou
 #' @export
 #' @import GenomeInfoDb
+#' @import GenomicRanges
 #' @importFrom ChIPpeakAnno featureAlignedExtendSignal reCenterPeaks
 #' @importFrom limma normalizeBetweenArrays
 #' @importFrom Rsamtools countBam ScanBamParam
@@ -52,7 +55,7 @@
 #' featureAlignedDistribution(sigs, reCenterPeaks(TSS, width=2020),
 #'                            zeroAt=.5, n.tile=101, type="l")
 #'
-enrichedFragments <- function(bamfiles, index=bamfiles, TSS, librarySize,
+enrichedFragments <- function(bamfiles, index=bamfiles, gal, TSS, librarySize,
                               upstream = 1010L,
                               downstream = 1010L,
                               n.tile = 101L,
@@ -60,7 +63,26 @@ enrichedFragments <- function(bamfiles, index=bamfiles, TSS, librarySize,
                               adjustFragmentLength=80L,
                               TSS.filter=0.5,
                               seqlev = paste0("chr", c(1:22, "X", "Y"))){
-  stopifnot(length(bamfiles)==4)
+  if(missing(bamfiles)){
+    if(missing(gal)){
+      stop("gal is required if missing bamfiles")
+    }else{
+      if(!is(gal, "GAlignmentsList")){
+        galInput <- sapply(gal, function(.ele){
+          inherits(.ele, c("GAlignments", "GAlignmentPairs"))
+        })
+        if(any(!galInput)){
+          stop("gal must be a GAlignmentsList object or a list of GAlignmentPairs.")
+        }
+      }
+    }
+    galInput <- TRUE
+    stopifnot(length(gal)==4)
+  }else{
+    stopifnot(length(bamfiles)==4)
+    stopifnot(length(bamfiles)==length(index))
+    galInput <- FALSE
+  }
   stopifnot(is(TSS, "GRanges"))
   #fragmentLength <- estFragmentLength(bamfiles)
   fragmentLength <- 200 #here we suppose all the fragment of nucleosome is 200.
@@ -75,35 +97,67 @@ enrichedFragments <- function(bamfiles, index=bamfiles, TSS, librarySize,
   if(TSS.filter>0){
     ## filter the TSS before count signals
     TSS.expand <- reCenterPeaks(TSS, width=upstream+downstream+1)
-    cnt <- lapply(bamfiles, countBam, param=ScanBamParam(which=TSS.expand))
-    cnt <- do.call(cbind, lapply(cnt, function(.ele) .ele$records))
+    if(galInput){
+      cnt <- lapply(gal, function(.ele){
+        countOverlaps(query=TSS.expand, 
+                      subject=granges(.ele), 
+                      ignore.strand=TRUE)
+        })
+      cnt <- do.call(cbind, cnt)
+    }else{
+      cnt <- lapply(bamfiles, countBam, param=ScanBamParam(which=TSS.expand))
+      cnt <- do.call(cbind, lapply(cnt, function(.ele) .ele$records))
+    }
     cnt <- rowMeans(cnt)>0
     TSS <- TSS[cnt]
   }
   ## Dinucleosome reads will be split into two reads,
   ## and trinucleosome reads will be split into three reads.
-  sig.pe <-
-    featureAlignedExtendSignal(bamfiles,
-                               index = index,
-                               feature.gr = TSS,
-                               upstream = upstream,
-                               downstream = downstream,
-                               n.tile = n.tile,
-                               fragmentLength = fragmentLength,
-                               librarySize = librarySize,
-                               adjustFragmentLength=adjustFragmentLength,
-                               pe="PE")
-  sig.se <-
-    featureAlignedExtendSignal(bamfiles,
-                               index = index,
-                               feature.gr = TSS,
-                               upstream = upstream,
-                               downstream = downstream,
-                               n.tile=n.tile,
-                               fragmentLength = fragmentLength,
-                               librarySize = librarySize,
-                               adjustFragmentLength=adjustFragmentLength,
-                               pe="SE")
+  if(galInput){
+    sig.pe <-
+      featureAlignedExtendSignal(gal = gal,
+                                 feature.gr = TSS,
+                                 upstream = upstream,
+                                 downstream = downstream,
+                                 n.tile = n.tile,
+                                 fragmentLength = fragmentLength,
+                                 librarySize = librarySize,
+                                 adjustFragmentLength=adjustFragmentLength,
+                                 pe="PE")
+    sig.se <-
+      featureAlignedExtendSignal(gal = gal,
+                                 feature.gr = TSS,
+                                 upstream = upstream,
+                                 downstream = downstream,
+                                 n.tile=n.tile,
+                                 fragmentLength = fragmentLength,
+                                 librarySize = librarySize,
+                                 adjustFragmentLength=adjustFragmentLength,
+                                 pe="SE")
+  }else{
+    sig.pe <-
+      featureAlignedExtendSignal(bamfiles,
+                                 index = index,
+                                 feature.gr = TSS,
+                                 upstream = upstream,
+                                 downstream = downstream,
+                                 n.tile = n.tile,
+                                 fragmentLength = fragmentLength,
+                                 librarySize = librarySize,
+                                 adjustFragmentLength=adjustFragmentLength,
+                                 pe="PE")
+    sig.se <-
+      featureAlignedExtendSignal(bamfiles,
+                                 index = index,
+                                 feature.gr = TSS,
+                                 upstream = upstream,
+                                 downstream = downstream,
+                                 n.tile=n.tile,
+                                 fragmentLength = fragmentLength,
+                                 librarySize = librarySize,
+                                 adjustFragmentLength=adjustFragmentLength,
+                                 pe="SE")
+  }
   sig.pe <- lapply(sig.pe, function(.ele){
     .ele[is.na(.ele)] <- 0
     .ele}) ## in case of NA

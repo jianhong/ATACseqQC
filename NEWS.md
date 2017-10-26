@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.1.17
+
+* add gal argument for enrichedFragments to improve the efficency.
+
 # CHANGES IN VERSION 1.1.16
 
 * Fix a bug in fragSizeDist
