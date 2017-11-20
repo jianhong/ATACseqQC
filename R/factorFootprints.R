@@ -143,11 +143,16 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   mt.v <- Views(cvgSum, mt.s.ext)
   mt.s <- mt.s[viewSums(mt.v)>0] 
   mt <- unlist(mt.s)
+  mt.ids <- promoters(reCenterPeaks(mt, width=1),
+                      upstream=upstream+floor(wid/2),
+                      downstream=downstream+ceiling(wid/2)+1)
+  mt.ids <- paste0(as.character(seqnames(mt.ids)), ":", start(mt.ids), "-", end(mt.ids))
   sigs <- featureAlignedSignal(cvglists=cvglist,
                               feature.gr=reCenterPeaks(mt, width=1),
                               upstream=upstream+floor(wid/2),
                               downstream=downstream+ceiling(wid/2),
                               n.tile=upstream+downstream+wid)
+  mt <- mt[match(rownames(sigs[[1]]), mt.ids)]
   cor <- lapply(sigs, function(sig){
       sig.colMeans <- colMeans(sig)
       ## calculate correlation of footprinting and binding score
