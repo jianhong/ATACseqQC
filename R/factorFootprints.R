@@ -110,6 +110,9 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       mt <- bindingSites
       mt$userdefined <- TRUE
   }
+  if(sum(mt$userdefined)<2){
+    stop("less than 2 binding sites by input min.score")
+  }
   wid <- ncol(pfm)
   #mt <- mt[seqnames(mt) %in% seqlev]
   seqlevels(mt) <- seqlev

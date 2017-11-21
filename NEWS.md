@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.2
+
+* Fix a bug in factorFootprints when bindingsite is less than 2.
+
 # CHANGES IN VERSION 1.3.1
 
 * Fix a bug in factorFootprints
