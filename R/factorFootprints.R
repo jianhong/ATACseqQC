@@ -106,7 +106,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   }else{
       stopifnot(is(bindingSites, "GRanges"))
       stopifnot(length(bindingSites)>1)
-      stopifnot(length(bindingSites$score))
+      stopifnot(length(bindingSites$score)==length(bindingSites))
       mt <- bindingSites
       mt$userdefined <- TRUE
   }

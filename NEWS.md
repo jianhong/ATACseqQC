@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.2.1
+
+* fix a bug in factorFootprints
+
 # CHANGES IN VERSION 1.1.17
 
 * add gal argument for enrichedFragments to improve the efficency.
