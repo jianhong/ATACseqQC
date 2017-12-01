@@ -1,3 +1,10 @@
+# CHANGES IN VERSION 1.3.3
+
+* Fix a bug in factorFootprints when bindingSites is supplied.
+* Modified the vignettes.
+* Expand the functionality of the bamQC function.
+* Import motifStack.
+
 # CHANGES IN VERSION 1.3.2
 
 * Fix a bug in factorFootprints when bindingsite is less than 2.

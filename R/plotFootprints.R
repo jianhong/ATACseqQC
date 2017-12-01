@@ -7,11 +7,15 @@
 #' @param xlab Label of the x axis
 #' @param ylab Label for the y axis
 #' @param legTitle Title for one of the plot corners
+#' @param xlim xlim
+#' @param ylim ylim
 #' @param newpage Plot the figure in a new page?
 #' @param motif a pfm object.
+#' @param segmentation the segmentation position and abundance
 #' @importFrom grid grid.newpage viewport plotViewport pushViewport upViewport
 #' gpar grid.xaxis grid.yaxis convertX convertY 
-#' unit grid.legend grid.text grid.lines
+#' unit grid.legend grid.text grid.lines grid.segments
+#' @import motifStack
 #' @return Null.
 #' @author Jianhong Ou
 #' @examples
@@ -24,19 +28,25 @@
 plotFootprints <- function (Profile, Mlen = 0,
                             xlab = "Dist. to motif (bp)",
                             ylab = "Cut-site probability",
-                            legTitle,
-                            newpage = TRUE, motif)
+                            legTitle, xlim, ylim,
+                            newpage = TRUE, motif, segmentation)
 {
   stopifnot(is(motif, "pfm"))
   if(newpage) grid.newpage()
 
   S <- length(Profile)
   W <- ((S/2) - Mlen)/2
-  vp <- plotViewport(name="plotRegion")
+  vp <- plotViewport(margins=c(5.1, 5.1, 4.1, 2.1), name="plotRegion")
   pushViewport(vp)
+  if(missing(xlim)){
+    xlim <- c(0, S/2+1)
+  }
+  if(missing(ylim)){
+    ylim <- c(0, max(Profile) * 1.12)
+  }
   vp1 <- viewport(y=.4, height=.8,
-                  xscale=c(0, S/2+1),
-                  yscale=c(0, max(Profile) * 1.12),
+                  xscale=xlim,
+                  yscale=ylim,
                   name="footprints")
   pushViewport(vp1)
   grid.lines(x=1:(S/2),
@@ -47,6 +57,17 @@ plotFootprints <- function (Profile, Mlen = 0,
              y=Profile[(S/2 + 1):S],
              default.units="native",
              gp=gpar(lwd = 2, col = "darkred"))
+  if(!missing(segmentation)){
+    if(length(segmentation)==4){
+      ## plot the guide line for the segmentation
+      grid.segments(x0=c(0, segmentation[1], W, W+Mlen, S/2-segmentation[1]),
+                    x1=c(segmentation[1], W, W+Mlen, S/2-segmentation[1], S/2),
+                    y0=c(segmentation[2], segmentation[3], segmentation[4], segmentation[3], segmentation[2]),
+                    y1=c(segmentation[2], segmentation[3], segmentation[4], segmentation[3], segmentation[2]),
+                    default.units = "native",
+                    gp=gpar(lwd =2, col = "red", lty = 2))
+    }
+  }
   grid.xaxis(at = c(seq(1, W, length.out = 3),
                     W + seq(1, Mlen),
                     W + Mlen + seq(1, W, length.out = 3)),
@@ -54,10 +75,10 @@ plotFootprints <- function (Profile, Mlen = 0,
                        rep("", Mlen),
                        seq(0, W, len = 3)))
   grid.yaxis()
-  grid.lines(x=c(W, W, 0), y=c(0, max(Profile), max(Profile) * 1.12),
+  grid.lines(x=c(W, W, 0), y=c(0, max(Profile), ylim[2]),
              default.units="native", gp=gpar(lty=2))
   grid.lines(x=c(W + Mlen + 1, W + Mlen + 1, S/2),
-             y=c(0, max(Profile), max(Profile) * 1.12),
+             y=c(0, max(Profile), ylim[2]),
              default.units="native", gp=gpar(lty=2))
   upViewport()
   vp2 <- viewport(y=.9, height=.2,

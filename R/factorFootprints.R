@@ -19,7 +19,7 @@
 #'        Upstream and downstream of the binding region for
 #'        aggregate ATAC-seq footprint.
 #' @importFrom stats cor.test
-#' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
+#' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks estLibSize
 #' @importFrom GenomicAlignments readGAlignments
 #' @importFrom Biostrings matchPWM maxScore
 #' @importFrom Rsamtools ScanBamParam
@@ -81,9 +81,11 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
         min.score <- min.score[1]
       }
       predefined.score <- maxS * as.double(0.85)
-      mt <- matchPWM(pwm, genome, min.score = min(predefined.score, min.score), 
+      suppressWarnings({
+        mt <- matchPWM(pwm, genome, min.score = min(predefined.score, min.score), 
                      with.score=TRUE,
                      exclude=names(genome)[!names(genome) %in% seqlev])
+      })
       if (min.score <= predefined.score){
         mt$userdefined <- TRUE
       } else {
@@ -106,7 +108,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   }else{
       stopifnot(is(bindingSites, "GRanges"))
       stopifnot(length(bindingSites)>1)
-      stopifnot(length(bindingSites$score))
+      stopifnot(length(bindingSites$score)==length(bindingSites))
       mt <- bindingSites
       mt$userdefined <- TRUE
   }
@@ -167,18 +169,76 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       highest.sig.windows <- 
           rowMeans(sig[, start(windows.sel):end(windows.sel)])
       predictedBindingSiteScore <- mt$score
-      cor <- cor.test(x = predictedBindingSiteScore, 
+      suppressWarnings({
+        cor <- cor.test(x = predictedBindingSiteScore, 
                       y = highest.sig.windows, 
                       method = "spearman")
+      })
+      cor
   })
   sigs <- lapply(sigs, function(.ele) .ele[mt$userdefined, ])
   mt <- mt[mt$userdefined]
   mt$userdefined <- NULL
-  plotFootprints(colMeans(do.call(cbind, sigs), na.rm = TRUE),
-                 Mlen=wid, motif=pwm2pfm(pfm))
+  ## segmentation the signals
+  libSize <- estLibSize(bamfiles = bamfiles, index = index)
+  ## x2 because stranded.
+  Profile <- lapply(sigs, function(.ele) colMeans(.ele, na.rm = TRUE)*2/sum(libSize))
+  ## upstream + wid + downstream
+  Profile.split <- lapply(Profile, function(.ele){
+    list(upstream=.ele[seq.int(upstream)],
+         binding=.ele[upstream+seq.int(wid)],
+         downstream=.ele[upstream+wid+seq.int(downstream)])
+  })
+  optimalSegmentation <- function(.ele){
+    .l <- length(.ele)
+    short_abun <- cumsum(.ele)/seq.int(.l)
+    long_abun <- cumsum(rev(.ele))/seq.int(.l)
+    long_abun <- rev(long_abun)
+    short_abun <- short_abun[-length(short_abun)]
+    long_abun <- long_abun[-1]
+    ##long_abun should always greater than short_abun
+    long_abun <- long_abun - short_abun
+    long_abun[long_abun<0] <- 0
+    cov_diff <- numeric(length(short_abun))
+    for(i in seq_along(.ele)){
+      cov_diff_tmp <- .ele
+      cov_diff_tmp <- cov_diff_tmp-short_abun[i]
+      cov_diff_tmp[-seq.int(i)] <- cov_diff_tmp[-seq.int(i)] - long_abun[i]
+      cov_diff[i] <- mean(cov_diff_tmp^2)
+    }
+    .ids <- which(cov_diff==min(cov_diff, na.rm = TRUE))
+    data.frame(pos=.ids, short_abun=short_abun[.ids], long_abun=long_abun[.ids])
+  }
+  Profile.seg <- lapply(Profile.split, function(.ele){
+    ups <- optimalSegmentation(.ele$upstream)
+    downs <- optimalSegmentation(rev(.ele$downstream))
+    ## find the nearest pair
+    .min <- c(max(rbind(ups, downs)), 0, 0)
+    for(i in seq.int(nrow(ups))){
+      for(j in seq.int(nrow(downs))){
+        tmp <- sum(abs(ups[i, -1] - downs[j, -1]))
+        if(tmp < .min[1]){
+          .min <- c(tmp, i, j)
+        }
+      }
+    }
+    c(colMeans(rbind(ups[.min[2], ], downs[.min[3], ])), binding=mean(.ele$binding, na.rm=TRUE))
+  })
+  Profile.seg <- colMeans(do.call(rbind, Profile.seg))
+  Profile.seg[3] <- Profile.seg[2]+Profile.seg[3]
+  tryCatch({ ## try to avoid the error when ploting.
+    plotFootprints(c(Profile[["+"]], Profile[["-"]]), 
+                   Mlen=wid, motif=pwm2pfm(pfm), 
+                   segmentation=Profile.seg)
+  }, error=function(e){
+    message(e)
+  })
   return(invisible(list(signal=sigs, 
                         spearman.correlation=cor, 
-                        bindingSites=mt)))
+                        bindingSites=mt,
+                        Mlen=wid,
+                        estLibSize=libSize,
+                        Profile.segmentation=Profile.seg)))
 }
 
 pwm2pfm <- function(pfm, name="motif"){

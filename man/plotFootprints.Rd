@@ -5,7 +5,8 @@
 \title{Plots a footprint estimated by Centipede}
 \usage{
 plotFootprints(Profile, Mlen = 0, xlab = "Dist. to motif (bp)",
-  ylab = "Cut-site probability", legTitle, newpage = TRUE, motif)
+  ylab = "Cut-site probability", legTitle, xlim, ylim, newpage = TRUE,
+  motif, segmentation)
 }
 \arguments{
 \item{Profile}{A vector with the profile estimated by CENTIPEDE}
@@ -18,9 +19,15 @@ plotFootprints(Profile, Mlen = 0, xlab = "Dist. to motif (bp)",
 
 \item{legTitle}{Title for one of the plot corners}
 
+\item{xlim}{xlim}
+
+\item{ylim}{ylim}
+
 \item{newpage}{Plot the figure in a new page?}
 
 \item{motif}{a pfm object.}
+
+\item{segmentation}{the segmentation position and abundance}
 }
 \value{
 Null.
