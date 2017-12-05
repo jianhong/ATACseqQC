@@ -15,7 +15,8 @@
 #' @importFrom grid grid.newpage viewport plotViewport pushViewport upViewport
 #' gpar grid.xaxis grid.yaxis convertX convertY 
 #' unit grid.legend grid.text grid.lines grid.segments
-#' @import motifStack
+#' @importFrom motifStack plotMotifLogoA
+#' @importClassesFrom motifStack pfm
 #' @return Null.
 #' @author Jianhong Ou
 #' @examples

@@ -226,6 +226,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   })
   Profile.seg <- colMeans(do.call(rbind, Profile.seg))
   Profile.seg[3] <- Profile.seg[2]+Profile.seg[3]
+  names(Profile.seg)[2:3] <- c("distal_abun", "proximal_abun")
   tryCatch({ ## try to avoid the error when ploting.
     plotFootprints(c(Profile[["+"]], Profile[["-"]]), 
                    Mlen=wid, motif=pwm2pfm(pfm), 

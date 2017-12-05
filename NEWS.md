@@ -1,3 +1,9 @@
+# CHANGES IN VERSION 1.3.4
+
+* Add function PTscore and NFRscore
+* add Profile.segmentation in output of factorFootprints
+* add unit test.
+
 # CHANGES IN VERSION 1.3.3
 
 * Fix a bug in factorFootprints when bindingSites is supplied.

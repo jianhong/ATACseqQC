@@ -121,6 +121,37 @@ shiftedBamfile <- file.path(outPath, "shifted.bam")
 export(gal1, shiftedBamfile)
 ```
 
+### Nucleosome Free Regions (NFR) score
+
+NFR score is calculated for nuclosome signal divided by nuclosome free signal in 
+every TSS 400bp windows. 
+For each TSS window, it is seperated into 3 parts, first 150 bp for nuclesome 1 (n1) and 
+last 150 bp for nucleosome 2 (n2), and the middle 100 bp is for nucleosome free (nf). 
+The coverages of 5' ends of the fragments for each part are calculated.
+The NFR score is calculated by NFR-score = log2(nf) - log2((n1+n2)/2)
+
+```{r}
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
+nfr <- NFRscore(gal1, txs)
+plot(nfr$log2meanCoverage, nfr$NFR_score, 
+     xlab="log2 mean coverage",
+     ylab="Nucleosome Free Regions score",
+     main="around TSS 200bp")
+```
+
+### Promoter/Transcript body (PT) score
+
+PT score is calculated for coverage of promoter divided by the coverage of transcripts body.
+PT score will show if the signal is enriched in promoters.
+```{r}
+pt <- PTscore(gal1, txs)
+plot(pt$log2meanCoverage, pt$PT_score, 
+     xlab="log2 mean coverage",
+     ylab="Promoter vs Transcript")
+```
+
+
 ### Split reads
 
 The shifted reads will be split into different bins, namely
@@ -139,8 +170,6 @@ using random forest. The number of the tree will be set to 2 times
 of square root of the length of the training set.
 
 ```{r}
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
 library(phastCons100way.UCSC.hg19)
 ## run program for chromosome 1 only
 txs <- txs[seqnames(txs) %in% "chr1"]
@@ -267,6 +296,7 @@ featureAlignedHeatmap(sigs$signal,
                       n.tile=ncol(sigs$signal[[1]]))
 
 sigs$spearman.correlation
+sigs$Profile.segmentation
 ```
 
 
