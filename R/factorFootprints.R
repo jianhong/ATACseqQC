@@ -19,7 +19,7 @@
 #'        Upstream and downstream of the binding region for
 #'        aggregate ATAC-seq footprint.
 #' @importFrom stats cor.test
-#' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks estLibSize
+#' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments
 #' @importFrom Biostrings matchPWM maxScore
 #' @importFrom Rsamtools ScanBamParam
@@ -42,13 +42,13 @@
 #' @author Jianhong Ou, Julie Zhu
 #' @examples
 #'
-#'shiftedBamfile <- system.file("extdata", "GL1.bam",
-#'                              package="ATACseqQC")
+#'bamfile <- system.file("extdata", "GL1.bam",
+#'                        package="ATACseqQC")
 #'library(MotifDb)
 #'CTCF <- query(MotifDb, c("CTCF"))
 #'CTCF <- as.list(CTCF)
 #'library(BSgenome.Hsapiens.UCSC.hg19)
-#'factorFootprints(shiftedBamfile, pfm=CTCF[[1]],
+#'factorFootprints(bamfile, pfm=CTCF[[1]],
 #'                 genome=Hsapiens,
 #'                 min.score="95%", seqlev="chr1",
 #'                 upstream=100, downstream=100)
@@ -127,8 +127,12 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   bamIn <- lapply(bamIn, as, Class = "GRanges")
   if(class(bamIn)!="GRangesList") bamIn <- GRangesList(bamIn)
   bamIn <- unlist(bamIn)
+  seqlevelsStyle(bamIn) <- seqlevelsStyle(genome)
   ## keep 5'end as cutting sites
   bamIn <- promoters(bamIn, upstream=0, downstream=1)
+  libSize <- length(bamIn)
+  coverageSize <- sum(as.numeric(width(reduce(bamIn, ignore.strand=TRUE))))
+  libFactor <- libSize / coverageSize
   ## split into positive strand and negative strand
   bamIn <- split(bamIn, strand(bamIn))
   ## get coverage
@@ -180,9 +184,8 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   mt <- mt[mt$userdefined]
   mt$userdefined <- NULL
   ## segmentation the signals
-  libSize <- estLibSize(bamfiles = bamfiles, index = index)
   ## x2 because stranded.
-  Profile <- lapply(sigs, function(.ele) colMeans(.ele, na.rm = TRUE)*2/sum(libSize))
+  Profile <- lapply(sigs, function(.ele) colMeans(.ele, na.rm = TRUE)*2/libFactor)
   ## upstream + wid + downstream
   Profile.split <- lapply(Profile, function(.ele){
     list(upstream=.ele[seq.int(upstream)],

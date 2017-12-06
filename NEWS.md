@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.3.5
+
+* adjust the Cut-site probability by the 
+  depth=librarySize/libraryCoverageSize for output of factorFootprints
+
 # CHANGES IN VERSION 1.3.4
 
 * Add function PTscore and NFRscore

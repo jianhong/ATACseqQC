@@ -49,13 +49,13 @@ Aggregate ATAC-seq footprint for a given motif generated
 }
 \examples{
 
-shiftedBamfile <- system.file("extdata", "GL1.bam",
-                             package="ATACseqQC")
+bamfile <- system.file("extdata", "GL1.bam",
+                       package="ATACseqQC")
 library(MotifDb)
 CTCF <- query(MotifDb, c("CTCF"))
 CTCF <- as.list(CTCF)
 library(BSgenome.Hsapiens.UCSC.hg19)
-factorFootprints(shiftedBamfile, pfm=CTCF[[1]],
+factorFootprints(bamfile, pfm=CTCF[[1]],
                 genome=Hsapiens,
                 min.score="95\%", seqlev="chr1",
                 upstream=100, downstream=100)
