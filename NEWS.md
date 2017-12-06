@@ -1,3 +1,12 @@
+# CHANGES IN VERSION 1.2.2
+
+* Fix a bug in factorFootprints when bindingSites is supplied.
+* adjust the Cut-site probability by the depth=librarySize/libraryCoverageSize for output of factorFootprints
+* Modified the vignettes.
+* Expand the functionality of the bamQC function.
+* Import motifStack.
+* add unit test.
+
 # CHANGES IN VERSION 1.2.1
 
 * fix a bug in factorFootprints

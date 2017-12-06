@@ -42,13 +42,13 @@
 #' @author Jianhong Ou, Julie Zhu
 #' @examples
 #'
-#'shiftedBamfile <- system.file("extdata", "GL1.bam",
-#'                              package="ATACseqQC")
+#'bamfile <- system.file("extdata", "GL1.bam",
+#'                       package="ATACseqQC")
 #'library(MotifDb)
 #'CTCF <- query(MotifDb, c("CTCF"))
 #'CTCF <- as.list(CTCF)
 #'library(BSgenome.Hsapiens.UCSC.hg19)
-#'factorFootprints(shiftedBamfile, pfm=CTCF[[1]],
+#'factorFootprints(bamfile, pfm=CTCF[[1]],
 #'                 genome=Hsapiens,
 #'                 min.score="95%", seqlev="chr1",
 #'                 upstream=100, downstream=100)
@@ -81,9 +81,11 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
         min.score <- min.score[1]
       }
       predefined.score <- maxS * as.double(0.85)
-      mt <- matchPWM(pwm, genome, min.score = min(predefined.score, min.score), 
-                     with.score=TRUE,
-                     exclude=names(genome)[!names(genome) %in% seqlev])
+      suppressWarnings({
+        mt <- matchPWM(pwm, genome, min.score = min(predefined.score, min.score), 
+                       with.score=TRUE,
+                       exclude=names(genome)[!names(genome) %in% seqlev])
+      })
       if (min.score <= predefined.score){
         mt$userdefined <- TRUE
       } else {
@@ -124,6 +126,9 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   bamIn <- unlist(bamIn)
   ## keep 5'end as cutting sites
   bamIn <- promoters(bamIn, upstream=0, downstream=1)
+  libSize <- length(bamIn)
+  coverageSize <- sum(as.numeric(width(reduce(bamIn, ignore.strand=TRUE))))
+  libFactor <- libSize / coverageSize
   ## split into positive strand and negative strand
   bamIn <- split(bamIn, strand(bamIn))
   ## get coverage
@@ -159,14 +164,17 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       highest.sig.windows <- 
           rowMeans(sig[, start(windows.sel):end(windows.sel)])
       predictedBindingSiteScore <- mt$score
-      cor <- cor.test(x = predictedBindingSiteScore, 
-                      y = highest.sig.windows, 
-                      method = "spearman")
+      suppressWarnings({
+        cor <- cor.test(x = predictedBindingSiteScore, 
+                        y = highest.sig.windows, 
+                        method = "spearman")
+      })
+      cor
   })
   sigs <- lapply(sigs, function(.ele) .ele[mt$userdefined, ])
   mt <- mt[mt$userdefined]
   mt$userdefined <- NULL
-  plotFootprints(colMeans(do.call(cbind, sigs), na.rm = TRUE),
+  plotFootprints(colMeans(do.call(cbind, sigs)*2/libFactor, na.rm = TRUE),
                  Mlen=wid, motif=pwm2pfm(pfm))
   return(invisible(list(signal=sigs, 
                         spearman.correlation=cor, 

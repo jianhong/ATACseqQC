@@ -67,8 +67,8 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
               filter = filter,
               indexDestination = TRUE)
   }
-  return(c(totalQNAMEs=totalQNAMEs,
-           duplicateRate=dupRate,
-           mitochondriaRate=mitRate,
-           idxstats=idxstatsBam(file=bamfile, index=index)))
+  return(list(totalQNAMEs=totalQNAMEs,
+              duplicateRate=dupRate,
+              mitochondriaRate=mitRate,
+              idxstats=idxstatsBam(file=bamfile, index=index)))
 }

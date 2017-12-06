@@ -47,6 +47,18 @@ Here is an example to using ATACseqQC with a subset of published ATAC-seq
 data[@buenrostro2013transposition]. Currently, only bam input file 
 format is supported.
 
+```{r, eval=FALSE}
+## prepare the packages
+library(BiocInstaller)
+biocLite(c("ATACseqQC", "ChIPpeakAnno", "MotifDb",
+           "BSgenome.Hsapiens.UCSC.hg19", "TxDb.Hsapiens.UCSC.hg19.knownGene",
+           "phastCons100way.UCSC.hg19"))
+```
+The packages we imported in this vignette is designed for human. For different species and different assembly, 
+the BSgenome, TxDb and phastCons should be changed accordingly. For example for mouse data, they should be 
+BSgenome.Mmusculus.UCSC.mm10, TxDb.Mmusculus.UCSC.mm10.knownGene and phastCons60way.UCSC.mm10 
+(How to get phastCons60way.UCSC.mm10 please refer vignettes of GenomicScores). If there is no conservation score
+available, just forget the parameter correlated with this.
 
 ```{r}
 ## load the library
