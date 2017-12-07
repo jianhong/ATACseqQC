@@ -43,28 +43,23 @@ subsequent peak calling.
 
 # Quick start
 
-Here is an example to using ATACseqQC with a subset of published ATAC-seq 
+Here is an example using ATACseqQC with a subset of published ATAC-seq 
 data[@buenrostro2013transposition]. Currently, only bam input file 
 format is supported.
 
+First install ATACseqQC and other packages required to run the examples. Please note that the example dataset used here is from human. To run analysis with dataset from adifferent species or differnt assembly, please install the corresponding BSgenome, TxDb and phastCons. For example, to analyze mouse data aligned to mm10, please install BSgenome.Mmusculus.UCSC.mm10, TxDb.Mmusculus.UCSC.mm10.knownGene and phastCons60way.UCSC.mm10. Please note that phstCons60way.UCSC.mm10 is optional, which can be obtained according to the vignettes of GenomicScores. 
+
 ```{r, eval=FALSE}
-## prepare the packages
 library(BiocInstaller)
 biocLite(c("ATACseqQC", "ChIPpeakAnno", "MotifDb",
            "BSgenome.Hsapiens.UCSC.hg19", "TxDb.Hsapiens.UCSC.hg19.knownGene",
            "phastCons100way.UCSC.hg19"))
 ```
-The packages we imported in this vignette is designed for human. For different species and different assembly, 
-the BSgenome, TxDb and phastCons should be changed accordingly. For example for mouse data, they should be 
-BSgenome.Mmusculus.UCSC.mm10, TxDb.Mmusculus.UCSC.mm10.knownGene and phastCons60way.UCSC.mm10 
-(How to get phastCons60way.UCSC.mm10 please refer vignettes of GenomicScores). If there is no conservation score
-available, just forget the parameter correlated with this.
-
 
 ```{r}
 ## load the library
 library(ATACseqQC)
-## input is bamFile
+## input the bamFile
 bamfile <- system.file("extdata", "GL1.bam", 
                         package="ATACseqQC", mustWork=TRUE)
 bamfile.labels <- gsub(".bam", "", basename(bamfile))
@@ -79,10 +74,10 @@ bamQC(bamfile, outPath=NULL)
 ## Fragment size distribution
 
 First, there should be a large proportion of reads with less 
-than 100 bp, which represent the nucleosome-free region. 
+than 100 bp, which represents the nucleosome-free region. 
 Second, the fragment size distribution should have a clear 
 periodicity, which is evident in the inset figure, indicative of 
-nucleosome occupation (present in integer multiples).
+nucleosome occupacy (present in integer multiples).
 
 ```{r}
 ## generate fragement size distribution
@@ -123,12 +118,13 @@ export(gal1, shiftedBamfile)
 
 ### Nucleosome Free Regions (NFR) score
 
-NFR score is calculated for nuclosome signal divided by nuclosome free signal in 
-every TSS 400bp windows. 
-For each TSS window, it is seperated into 3 parts, first 150 bp for nuclesome 1 (n1) and 
-last 150 bp for nucleosome 2 (n2), and the middle 100 bp is for nucleosome free (nf). 
-The coverages of 5' ends of the fragments for each part are calculated.
-The NFR score is calculated by NFR-score = log2(nf) - log2((n1+n2)/2)
+NFR score is a raio between cut signal adjacent to TSS and that flanking the corresponding TSS.
+Each TSS window of 400 bp is first seperated into 3 sub-regions: the most upstream 150 bp (n1), 
+the most downstream of 150 bp (n2), and the middle 100 bp (nf). 
+Then the number of fragments with 5' ends overlapping each region are calculated for each TSS.
+The NFR score for each TSS is calculated as NFR-score = log2(nf) - log2((n1+n2)/2). 
+A plot can be generate with the NFR scores as Y-axis and the average signals of 400 bp window as X-axis,
+ very much like a MA plot for gene expression data. 
 
 ```{r}
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
@@ -142,7 +138,7 @@ plot(nfr$log2meanCoverage, nfr$NFR_score,
 
 ### Promoter/Transcript body (PT) score
 
-PT score is calculated for coverage of promoter divided by the coverage of transcripts body.
+PT score is calculated as the coverage of promoter divided by the coverage of its transcript body.
 PT score will show if the signal is enriched in promoters.
 ```{r}
 pt <- PTscore(gal1, txs)

@@ -1,6 +1,7 @@
 # CHANGES IN VERSION 1.3.7
 
 * add mapq summary in output of bamQC.
+* add unit test for splitGAlignmentsByCut.
 
 # CHANGES IN VERSION 1.3.6
 
