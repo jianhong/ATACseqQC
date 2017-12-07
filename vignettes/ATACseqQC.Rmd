@@ -28,37 +28,36 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 # Introduction
 
 Assay for Transposase-Accessible Chromatin using sequencing 
-(ATAC-seq) is an alternative or complementary technique to MNase-seq DNase, 
+(ATAC-seq) is an alternative or complementary technique to MNase-seq, DNase-seq, 
 and FAIRE-seq for chromatin accessibility analysis. The results 
-obtained from ATAC-seq are similar to those from DNase and FAIRE-seq. 
+obtained from ATAC-seq are similar to those from DNase-seq and FAIRE-seq. 
 ATAC-seq is gaining popularity because it does not require cross-linking, 
 has higher signal to noise ratio, requires a much smaller amount of biological 
 material and is faster and easier to perform, compared to other techniques [@buenrostro2013transposition]. 
 
 To help researchers quickly assess the quality of  ATAC-seq data, we 
-have developed ATACseqQC package for easily making diagnostic plots 
+have developed the ATACseqQC package for easily making diagnostic plots 
 following the published guidelines [@buenrostro2013transposition]. 
 In addition, it has functions to preprocess ATACseq data for 
 subsequent peak calling.
 
 # Quick start
 
-Here is an example to using ATACseqQC with a subset of published ATAC-seq 
+Here is an example using ATACseqQC with a subset of published ATAC-seq 
 data[@buenrostro2013transposition]. Currently, only bam input file 
 format is supported.
 
 First install ATACseqQC and other packages required to run the examples. 
 Please note that the example dataset used here is from human. 
-To run analysis with dataset from adifferent species or differnt assembly, 
+To run analysis with dataset from a different species or different assembly, 
 please install the corresponding BSgenome, TxDb and phastCons. 
-For example, to analyze mouse data aligned to mm10, 
-please install BSgenome.Mmusculus.UCSC.mm10, TxDb.Mmusculus.UCSC.mm10.knownGene 
-and phastCons60way.UCSC.mm10. 
+For example, to analyze mouse data aligned to mm10, please install 
+BSgenome.Mmusculus.UCSC.mm10, TxDb.Mmusculus.UCSC.mm10.knownGene and 
+phastCons60way.UCSC.mm10. 
 Please note that phstCons60way.UCSC.mm10 is optional, 
 which can be obtained according to the vignettes of GenomicScores. 
 
 ```{r, eval=FALSE}
-## prepare the packages
 library(BiocInstaller)
 biocLite(c("ATACseqQC", "ChIPpeakAnno", "MotifDb",
            "BSgenome.Hsapiens.UCSC.hg19", "TxDb.Hsapiens.UCSC.hg19.knownGene",
@@ -68,13 +67,13 @@ biocLite(c("ATACseqQC", "ChIPpeakAnno", "MotifDb",
 ```{r}
 ## load the library
 library(ATACseqQC)
-## input is bamFile
+## input the bamFile from the ATACseqQC package 
 bamfile <- system.file("extdata", "GL1.bam", 
                         package="ATACseqQC", mustWork=TRUE)
 bamfile.labels <- gsub(".bam", "", basename(bamfile))
 ```
 
-## Check fastq and mapping quality
+## Check alignment metrics and mapping quality
 
 ```{r}
 bamQC(bamfile, outPath=NULL)
@@ -83,10 +82,10 @@ bamQC(bamfile, outPath=NULL)
 ## Fragment size distribution
 
 First, there should be a large proportion of reads with less 
-than 100 bp, which represent the nucleosome-free region. 
+than 100 bp, which represents the nucleosome-free region. 
 Second, the fragment size distribution should have a clear 
 periodicity, which is evident in the inset figure, indicative of 
-nucleosome occupation (present in integer multiples).
+nucleosome occupacy (present in integer multiples).
 
 ```{r}
 ## generate fragement size distribution
@@ -98,7 +97,7 @@ fragSize <- fragSizeDist(bamfile, bamfile.labels)
 ### Adjust the read start sites
 
 Tn5 transposase has been shown to bind as a dimer and 
-insert two adaptors separated by 9 bp [@adey2010rapid].
+inserts two adaptors into accessible DNA locations separated by 9 bp [@adey2010rapid].
 
 Therefore, for downstream analysis, such as peak-calling and footprinting,
 all reads in input bamfile need to be shifted. 
@@ -110,12 +109,12 @@ The adjusted reads will be written into a new bamfile for peak calling or
 footprinting.
 
 ```{r}
-## bamfile tags
+## bamfile tags to be read in
 tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
 ## files will be output into outPath
 outPath <- "splited"
 dir.create(outPath)
-## shift the bam file by the 5'ends
+## shift the coordinates of 5'ends of alignments in the bam file
 library(BSgenome.Hsapiens.UCSC.hg19)
 seqlev <- "chr1" ## subsample data for quick run
 which <- as(seqinfo(Hsapiens)[seqlev], "GRanges")
@@ -139,13 +138,13 @@ By default, we assign the top 10% of short reads (reads below 100_bp)
 as nucleosome-free regions and the top 10% of intermediate length reads
 as (reads between 180 and 247 bp) mononucleosome. 
 This serves as the training set to classify the rest of the fragments
-using random forest. The number of the tree will be set to 2 times 
-of square root of the length of the training set.
+using random forest. The number of trees will be set to 2 times 
+of square root of the training set size.
 
 ```{r}
+library(phastCons100way.UCSC.hg19)
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
-library(phastCons100way.UCSC.hg19)
 ## run program for chromosome 1 only
 txs <- txs[seqnames(txs) %in% "chr1"]
 genome <- Hsapiens
@@ -163,7 +162,7 @@ null <- writeListOfGAlignments(objs, outPath)
 dir(outPath)
 ```
 
-You can also do shift, split and save bams in one step by calling `splitBam`.
+You can also perform shifting, splitting and saving in one step by calling `splitBam`.
 
 ```{r eval=FALSE}
 objs <- splitBam(bamfile, tags=tags, outPath=outPath,
@@ -171,19 +170,17 @@ objs <- splitBam(bamfile, tags=tags, outPath=outPath,
                  conservation=phastCons100way.UCSC.hg19)
 ```
 
-If you do not have conservation score, you may want to have a try simply 
-split the bams with the fragment lengths without provide conservation argument.
+Conservation is an optional parameter. If you do not have the conservation score or you would like to simply split the bams using the fragment length, then you will just need to run the command without providing the conservation argument. Without setting the conservation parameter, it will run much faster.
 
 ### Heatmap and coverage curve for nucleosome positions
 
 By averaging the signal across all active TSSs, we should observe that 
-nucleosome-free fragments are enriched at the TSS, 
+nucleosome-free fragments are enriched at the TSSs, 
 whereas the nucleosome-bound fragments should be enriched both upstream 
-and downstream 
-of the active TSS and display characteristic phasing of upstream and 
+and downstream of the active TSSs and display characteristic phasing of upstream and 
 downstream nucleosomes. Because ATAC-seq reads are concentrated at regions of 
 open chromatin, users should see a strong nucleosome signal at the +1 
-nucleosome that decreases at the +2, +3 and +4 nucleosomes. 
+nucleosome, but the signal decreases at the +2, +3 and +4 nucleosomes. 
 
 ```{r fig.height=4, fig.width=4}
 library(ChIPpeakAnno)
@@ -192,8 +189,8 @@ bamfiles <- file.path(outPath,
                      "mononucleosome.bam",
                      "dinucleosome.bam",
                      "trinucleosome.bam"))
-## Plot the cumulative percentage tag allocation in NucleosomeFree 
-## and mononucleosome bams.
+## Plot the cumulative percentage of tag allocation in nucleosome-free 
+## and mononucleosome bam files.
 cumulativePercentage(bamfiles[1:2], as(seqinfo(Hsapiens)["chr1"], "GRanges"))
 ```
 ```{r fig.height=8, fig.width=4}
@@ -225,7 +222,8 @@ featureAlignedHeatmap(sigs.log2, reCenterPeaks(TSS, width=ups+dws),
 ## get signals normalized for nucleosome-free and nucleosome-bound regions.
 out <- featureAlignedDistribution(sigs, 
                                   reCenterPeaks(TSS, width=ups+dws),
-                                  zeroAt=.5, n.tile=NTILE, type="l")
+                                  zeroAt=.5, n.tile=NTILE, type="l", 
+                                  ylab="Averaged coverage")
 ```
 ```{r}
 ## rescale the nucleosome-free and nucleosome signals to 0~1
@@ -235,11 +233,11 @@ matplot(out, type="l", xaxt="n",
         xlab="Position (bp)", 
         ylab="Fraction of signal")
 axis(1, at=seq(0, 100, by=10)+1, 
-     labels=c("-1K", seq(-800, 800, by=200), "1K"), las=3)
+     labels=c("-1K", seq(-800, 800, by=200), "1K"), las=2)
 abline(v=seq(0, 100, by=10)+1, lty=2, col="gray")
 ```
 
-## Footprints
+## plot Footprints
 
 ATAC-seq footprints infer factor occupancy genome-wide. The `factorFootprints` 
 function uses `matchPWM` to predict the binding sites using the input position
@@ -247,8 +245,8 @@ weight matrix (PWM).
 Then it calculates and plots the accumulated coverage for those binding sites
 to show the status of the occupancy genome-wide.
 Unlike CENTIPEDE[@pique2011accurate], the footprints generated here 
-do not take into consideration the conservation (PhyloP). 
-`factorFootprints` function could also accept the possible 
+do not take the conservation (PhyloP) into consideration. 
+`factorFootprints` function could also accept the
 binding sites as a GRanges object.
 
 ```{r}
@@ -271,6 +269,7 @@ featureAlignedHeatmap(sigs$signal,
                       n.tile=ncol(sigs$signal[[1]]))
 
 sigs$spearman.correlation
+sigs$Profile.segmentation
 ```
 
 
