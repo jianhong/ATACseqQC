@@ -22,12 +22,13 @@ NFRscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
 A object of \link[GenomicRanges]{GRanges} with NFR scores
 }
 \description{
-NFR score is calculated for nuclosome signal divided by nuclosome free signal in 
-every TSS 400bp windows. 
-For each TSS window, it is seperated into 3 parts, first 150 bp for nuclesome 1 (n1) and 
-last 150 bp for nucleosome 2 (n2), and the middle 100 bp is for nucleosome free (nf). 
-The coverages of 5' ends of the fragments for each part are calculated.
-The NFR score is calculated by NFR-score = log2(nf) - log2((n1+n2)/2)
+NFR score is a raio between cut signal adjacent to TSS and that flanking 
+the corresponding TSS. Each TSS window of 400 bp is first seperated into 3 sub-regions: 
+the most upstream 150 bp (n1), the most downstream of 150 bp (n2), and the middle 100 bp (nf). 
+Then the number of fragments with 5' ends overlapping each region are calculated for each TSS.
+The NFR score for each TSS is calculated as NFR-score = log2(nf) - log2((n1+n2)/2). 
+A plot can be generate with the NFR scores as Y-axis and the average signals of 400 bp window as X-axis,
+very much like a MA plot for gene expression data.
 }
 \examples{
  
