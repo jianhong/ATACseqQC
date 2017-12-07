@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.7
+
+* add mapq summary in output of bamQC.
+
 # CHANGES IN VERSION 1.3.6
 
 * add unit test for factorFootprints and fragSizeDist.

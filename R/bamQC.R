@@ -24,12 +24,15 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   flag <- scanBamFlag(isSecondaryAlignment = FALSE, 
                       isNotPassingQualityControls = FALSE)
   param <- ScanBamParam(what=c("qname", "flag", "rname",
-                               "cigar", "pos", "qwidth"),
+                               "cigar", "pos", "qwidth",
+                               "mapq"),
                         flag = flag)
   res <- scanBam(file, param = param)[[1L]]
   qname <- res[["qname"]]
   flag <- res[["flag"]]
   rname <- res[["rname"]]
+  mapq <- res[["mapq"]]
+  mapq <- as.data.frame(table(mapq))
   totalQNAMEs <- length(unique(qname))
   isDuplicate <- 
     as.logical(bamFlagAsBitMatrix(flag, "isDuplicate"))
@@ -70,5 +73,6 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   return(list(totalQNAMEs=totalQNAMEs,
               duplicateRate=dupRate,
               mitochondriaRate=mitRate,
+              MAPQ=mapq,
               idxstats=idxstatsBam(file=bamfile, index=index)))
 }
