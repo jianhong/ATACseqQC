@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.2.3
+
+* Add mapq summary in output of bamQC.
+* Add unit test for splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.2.2
 
 * Fix a bug in factorFootprints when bindingSites is supplied.

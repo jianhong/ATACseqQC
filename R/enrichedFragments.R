@@ -114,6 +114,7 @@ enrichedFragments <- function(bamfiles, index=bamfiles, gal, TSS, librarySize,
   ## Dinucleosome reads will be split into two reads,
   ## and trinucleosome reads will be split into three reads.
   if(galInput){
+    message("The signal is being calculated for mono-nucleosome.")
     sig.pe <-
       featureAlignedExtendSignal(gal = gal,
                                  feature.gr = TSS,
@@ -124,6 +125,7 @@ enrichedFragments <- function(bamfiles, index=bamfiles, gal, TSS, librarySize,
                                  librarySize = librarySize,
                                  adjustFragmentLength=adjustFragmentLength,
                                  pe="PE")
+    message("The signal is being calculated for di- and tri-nucleosome.")
     sig.se <-
       featureAlignedExtendSignal(gal = gal,
                                  feature.gr = TSS,
@@ -135,6 +137,7 @@ enrichedFragments <- function(bamfiles, index=bamfiles, gal, TSS, librarySize,
                                  adjustFragmentLength=adjustFragmentLength,
                                  pe="SE")
   }else{
+    message("The signal is being calculated for mono-nucleosome.")
     sig.pe <-
       featureAlignedExtendSignal(bamfiles,
                                  index = index,
@@ -146,6 +149,7 @@ enrichedFragments <- function(bamfiles, index=bamfiles, gal, TSS, librarySize,
                                  librarySize = librarySize,
                                  adjustFragmentLength=adjustFragmentLength,
                                  pe="PE")
+    message("The signal is being calculated for di- and tri-nucleosome.")
     sig.se <-
       featureAlignedExtendSignal(bamfiles,
                                  index = index,

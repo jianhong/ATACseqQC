@@ -1,5 +1,7 @@
 require("ATACseqQC") || stop("unable to load Package:ATACseqQC")
 require("GenomicAlignments") || stop("unable to load Package:GenomicAlignments")
+require("BSgenome") || stop("unable to load Package:BSgenome")
 require("rtracklayer") || stop("unable to load Package:rtracklayer")
+require("utils") || stop("unable to load Package:utils")
 require("testthat") || stop("unable to load testthat")
 test_check("ATACseqQC")
