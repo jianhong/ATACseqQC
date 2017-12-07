@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.6
+
+* add unit test for factorFootprints and fragSizeDist.
+  
 # CHANGES IN VERSION 1.3.5
 
 * adjust the Cut-site probability by the 
