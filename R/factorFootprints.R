@@ -246,7 +246,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
 }
 
 pwm2pfm <- function(pfm, name="motif"){
-  if(!all(colSums(pfm)==1)){
+  if(!all(round(colSums(pfm), digits=4)==1)){
     return(NULL)
   }
   new("pfm", mat=as.matrix(pfm), name=name)
