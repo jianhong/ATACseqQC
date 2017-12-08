@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.2.4
+
+* add properPairRate, unmappedRate, hasUnmappedMateRate, 
+  notPassingQualityControlsRate in output of bamQC.
+
 # CHANGES IN VERSION 1.2.3
 
 * Add mapq summary in output of bamQC.
