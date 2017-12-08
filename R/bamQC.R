@@ -21,8 +21,9 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   stopifnot(length(bamfile)==1)
   stopifnot(is.character(bamfile))
   file <- BamFile(file = bamfile, index = index)
-  flag <- scanBamFlag(isSecondaryAlignment = FALSE, 
-                      isNotPassingQualityControls = FALSE)
+  # flag <- scanBamFlag(isSecondaryAlignment = FALSE, 
+  #                     isNotPassingQualityControls = FALSE)
+  flag <- scanBamFlag(isSecondaryAlignment = FALSE)
   param <- ScanBamParam(what=c("qname", "flag", "rname",
                                "cigar", "pos", "qwidth",
                                "mapq"),
@@ -58,10 +59,21 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
       isDuplicate <- duplicated(se)
     }
   }
-  dupRate <- sum(isDuplicate)/length(qname)
-  mitRate <- sum(isMitochondria)/length(qname)
+  lenQ <- length(qname)
+  dupRate <- sum(isDuplicate)/lenQ
+  mitRate <- sum(isMitochondria)/lenQ
+  
+  isProperPair <- as.logical(bamFlagAsBitMatrix(flag, "isProperPair"))
+  isUnmappedQuery <- as.logical(bamFlagAsBitMatrix(flag, "isUnmappedQuery"))
+  hasUnmappedMate <- as.logical(bamFlagAsBitMatrix(flag, "hasUnmappedMate"))
+  isNotPassingQualityControls <- as.logical(bamFlagAsBitMatrix(flag, "isNotPassingQualityControls"))
+  properPairRate <- sum(isProperPair)/lenQ
+  unmappedRate <- sum(isUnmappedQuery)/lenQ
+  hasUnmappedMateRate <- sum(hasUnmappedMate)/lenQ
+  badQualityRate <- sum(isNotPassingQualityControls)/lenQ
+  
   if(length(outPath)){
-    keepQNAME <- qname[(!isMitochondria) & (!isDuplicate)]
+    keepQNAME <- qname[(!isMitochondria) & (!isDuplicate) & isProperPair & (!isNotPassingQualityControls)]
     filter <- FilterRules(list(qn = function(x){ 
       x$qname %in% keepQNAME}))
     filterBam(file = bamfile, 
@@ -73,6 +85,10 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   return(list(totalQNAMEs=totalQNAMEs,
               duplicateRate=dupRate,
               mitochondriaRate=mitRate,
+              properPairRate=properPairRate,
+              unmappedRate=unmappedRate,
+              hasUnmappedMateRate=hasUnmappedMateRate,
+              notPassingQualityControlsRate=badQualityRate,
               MAPQ=mapq,
               idxstats=idxstatsBam(file=bamfile, index=index)))
 }
