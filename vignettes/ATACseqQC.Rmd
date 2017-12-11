@@ -1,6 +1,6 @@
 ---
 title: "ATACseqQC Guide"
-author: "Jianhong Ou, Jun Yu, Haibo Liu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu"
+author: "Jianhong Ou, Haibo Liu, Jun Yu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu"
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('ATACseqQC')`"
 bibliography: bibliography.bib
@@ -69,6 +69,12 @@ bamfile.labels <- gsub(".bam", "", basename(bamfile))
 
 ```{r}
 bamQC(bamfile, outPath=NULL)
+```
+
+## Estimate the library complexity
+
+```{r}
+estimateLibComplexity(readsDupFreq(bamfile))
 ```
 
 ## Fragment size distribution

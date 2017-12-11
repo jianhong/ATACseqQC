@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.9
+
+* add new functions readFreq, estimateLibComplexity and saturationPlot
+
 # CHANGES IN VERSION 1.3.8
 
 * add properPairRate, unmappedRate, hasUnmappedMateRate, 
