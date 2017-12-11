@@ -35,6 +35,6 @@ estimateLibComplexity <- function(histFile, times=100,
     plot(x=estimates$relative.size, y=estimates$values/10^6,  
          type="o", xlab ="Relative sequencing depth", 
          ylab=expression(Distinct~fragments~x~10^6),
-         main="Estimation of ATAC-seq\nlibrary complexit")
+         main="Estimation of ATAC-seq\nlibrary complexity")
     return(invisible(estimates))  
 }

@@ -32,6 +32,8 @@ peak files}
 
 \item{skipLines}{integer, the number of lines (comment or instruction) to skip when peak 
 files are read into R}
+
+\item{...}{parameters could be passed to plot.}
 }
 \description{
 plot the saturations

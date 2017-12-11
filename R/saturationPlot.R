@@ -13,6 +13,7 @@
 #' @param endCol integer, column index for end positions of peak regions
 #' @param skipLines integer, the number of lines (comment or instruction) to skip when peak 
 #' files are read into R
+#' @param ... parameters could be passed to plot.
 #' @param peakCaller "MACS2", "ZINBA", "SPP", or "F-seq". Current only support MACS2 output
 #' @importFrom utils read.delim
 #' @export

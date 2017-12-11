@@ -34,7 +34,7 @@ readsDupFreq <- function(bamFile, index = bamFile){
   df <-df[!is.na(df$isize) & df$isize >0, ]
   freqByPos <-
     as.data.frame(table(paste(df$rname, df$strand, df$cigar,
-                              df$pos, df$mrnm, df$isize,
+                              df$pos, df$mrnm, df$isize, df$mpos,
                               sep="_")))
   rm("df")
   freqByDuplication <- as.data.frame(table(freqByPos$Freq))

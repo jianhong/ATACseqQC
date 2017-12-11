@@ -122,6 +122,20 @@ shiftedBamfile <- file.path(outPath, "shifted.bam")
 export(gal1, shiftedBamfile)
 ```
 
+### Promoter/Transcript body (PT) score
+
+PT score is calculated as the coverage of promoter divided by the coverage of its transcript body.
+PT score will show if the signal is enriched in promoters.
+```{r}
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
+pt <- PTscore(gal1, txs)
+plot(pt$log2meanCoverage, pt$PT_score, 
+     xlab="log2 mean coverage",
+     ylab="Promoter vs Transcript")
+```
+
+
 ### Nucleosome Free Regions (NFR) score
 
 NFR score is a ratio between cut signal adjacent to TSS and that flanking the corresponding TSS.
@@ -133,24 +147,11 @@ A plot can be generated with the NFR scores as Y-axis and the average signals of
 very much like a MA plot for gene expression data. 
 
 ```{r}
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
 nfr <- NFRscore(gal1, txs)
 plot(nfr$log2meanCoverage, nfr$NFR_score, 
      xlab="log2 mean coverage",
      ylab="Nucleosome Free Regions score",
      main="NFRscore for 200bp flanking TSSs ")
-```
-
-### Promoter/Transcript body (PT) score
-
-PT score is calculated as the coverage of promoter divided by the coverage of its transcript body.
-PT score will show if the signal is enriched in promoters.
-```{r}
-pt <- PTscore(gal1, txs)
-plot(pt$log2meanCoverage, pt$PT_score, 
-     xlab="log2 mean coverage",
-     ylab="Promoter vs Transcript")
 ```
 
 
