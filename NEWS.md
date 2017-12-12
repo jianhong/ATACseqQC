@@ -1,6 +1,7 @@
 # CHANGES IN VERSION 1.3.9
 
 * add new functions readFreq, estimateLibComplexity and saturationPlot
+* output NRF, PBC1, and PBC2 from bamQC
 
 # CHANGES IN VERSION 1.3.8
 
