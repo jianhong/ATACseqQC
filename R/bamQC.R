@@ -30,6 +30,9 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
                         flag = flag)
   res <- scanBam(file, param = param)[[1L]]
   qname <- res[["qname"]]
+  if(all(qname=="*")){
+    stop("Can not get qname.")
+  }
   flag <- res[["flag"]]
   rname <- res[["rname"]]
   mapq <- res[["mapq"]]
@@ -72,6 +75,36 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   hasUnmappedMateRate <- sum(hasUnmappedMate)/lenQ
   badQualityRate <- sum(isNotPassingQualityControls)/lenQ
   
+  ## PCR Bottlenecking Coefficient 1 (PBC1) = M1/M_DISTINCT where
+  ## M1: number of genomic locations where exactly one read maps uniquely
+  ## M_DISTINCT: number of distinct genomic locations to which some read maps uniquely
+  ## PCR Bottlenecking Coefficient 2 (PBC2) = M1/M2 where
+  ## number of genomic locations where only one read maps uniquely
+  ## number of genomic locations where two reads map uniquely
+  ## Non-Redundant Fraction (NRF) = 
+  ## Number of distinct uniquely mapping reads (i.e. after removing duplicates) / Total number of reads. 
+  if(testPairedEndBam(file)){ ## Could we calculate dupRate in the meanwhile?
+    pe <- do.call(cbind, res[c("qname", "rname", "pos", "qwidth")])
+    pe <- split(pe[, -1], pe[, 1])
+    pe.len <- lengths(pe)
+    pe <- split(pe, pe.len)
+    pe <- lapply(pe, function(.ele){
+      .ele <- do.call(rbind, .ele)
+      Reduce(paste, as.data.frame(.ele))
+    })
+    pos <- unlist(pe, use.names = FALSE)
+  }else{ ## SE
+    pos <- Reduce(paste, res[c("rname", "pos", "qwidth")])
+  }
+  stats <- table(pos)
+  dup.stats <- table(stats)
+  M1 <- ifelse("1" %in% names(dup.stats), dup.stats[["1"]], 0)
+  M2 <- ifelse("2" %in% names(dup.stats), dup.stats[["2"]], 1) ## avoid x/0
+  M_DISTINCT <- sum(dup.stats)
+  NRF <- M1/totalQNAMEs
+  PBC1 <- M1/M_DISTINCT
+  PBC2 <- M1/M2
+  
   if(length(outPath)){
     keepQNAME <- qname[(!isMitochondria) & (!isDuplicate) & isProperPair & (!isNotPassingQualityControls)]
     filter <- FilterRules(list(qn = function(x){ 
@@ -89,6 +122,9 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
               unmappedRate=unmappedRate,
               hasUnmappedMateRate=hasUnmappedMateRate,
               notPassingQualityControlsRate=badQualityRate,
+              nonRedundantFraction=NRF,
+              PCRbottleneckingCoefficient_1=PBC1,
+              PCRbottleneckingCoefficient_2=PBC2,
               MAPQ=mapq,
               idxstats=idxstatsBam(file=bamfile, index=index)))
 }

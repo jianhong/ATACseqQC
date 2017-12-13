@@ -1,3 +1,9 @@
+# CHANGES IN VERSION 1.2.5
+
+* output NRF, PBC1, and PBC2 from bamQC.
+* add unit test for bamQC.
+* fix a bug in factorFootprints when motif is not exactly pfm.
+
 # CHANGES IN VERSION 1.2.4
 
 * add properPairRate, unmappedRate, hasUnmappedMateRate, 
