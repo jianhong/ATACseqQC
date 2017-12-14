@@ -91,23 +91,6 @@ nucleosome occupacy (present in integer multiples).
 fragSize <- fragSizeDist(bamfile, bamfile.labels)
 ```
 
-## Plot correlations for multiple samples
-
-```{r}
-path <- system.file("extdata", package="ATACseqQC", mustWork=TRUE)
-bamfiles <- dir(path, "*.bam$", full.name=TRUE)
-gals <- lapply(bamfiles, function(bamfile){
-               readBamFile(bamFile=bamfile, tag=character(0), 
-                          which=GRanges("chr1", IRanges(1, 1e6)), 
-                          asMates=FALSE)
-         })
-library(TxDb.Hsapiens.UCSC.hg19.knownGene)
-txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
-library(GenomicAlignments)
-plotCorrelation(GAlignmentsList(gals), txs, seqlev="chr1")
-```
-
-
 ## Nucleosome positioning
 
 ### Adjust the read start sites
@@ -326,6 +309,23 @@ sigs$Profile.segmentation
 
 Here is the CTCF footprints for the full dataset.
 ![CTCF footprints](CTCFfootprints.png)
+
+# Plot correlations for multiple samples
+
+```{r}
+path <- system.file("extdata", package="ATACseqQC", mustWork=TRUE)
+bamfiles <- dir(path, "*.bam$", full.name=TRUE)
+gals <- lapply(bamfiles, function(bamfile){
+               readBamFile(bamFile=bamfile, tag=character(0), 
+                          which=GRanges("chr1", IRanges(1, 1e6)), 
+                          asMates=FALSE)
+         })
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(GenomicAlignments)
+plotCorrelation(GAlignmentsList(gals), txs, seqlev="chr1")
+```
+
 
 # Session Info
 ```{r sessionInfo}
