@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.10
+
+* add new function plotCorrelation
+
 # CHANGES IN VERSION 1.3.9
 
 * add new functions readFreq, estimateLibComplexity and saturationPlot

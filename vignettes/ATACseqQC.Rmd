@@ -21,6 +21,7 @@ suppressPackageStartupMessages({
   library(TxDb.Hsapiens.UCSC.hg19.knownGene)
   library(phastCons100way.UCSC.hg19)
   library(MotifDb)
+  library(GenomicAlignments)
 })
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```
@@ -51,7 +52,7 @@ First install ATACseqQC and other packages required to run the examples. Please 
 
 ```{r, eval=FALSE}
 library(BiocInstaller)
-biocLite(c("ATACseqQC", "ChIPpeakAnno", "MotifDb",
+biocLite(c("ATACseqQC", "ChIPpeakAnno", "MotifDb", "GenomicAlignments",
            "BSgenome.Hsapiens.UCSC.hg19", "TxDb.Hsapiens.UCSC.hg19.knownGene",
            "phastCons100way.UCSC.hg19"))
 ```
@@ -89,6 +90,23 @@ nucleosome occupacy (present in integer multiples).
 ## generate fragement size distribution
 fragSize <- fragSizeDist(bamfile, bamfile.labels)
 ```
+
+## Plot correlations for multiple samples
+
+```{r}
+path <- system.file("extdata", package="ATACseqQC", mustWork=TRUE)
+bamfiles <- dir(path, "*.bam$", full.name=TRUE)
+gals <- lapply(bamfiles, function(bamfile){
+               readBamFile(bamFile=bamfile, tag=character(0), 
+                          which=GRanges("chr1", IRanges(1, 1e6)), 
+                          asMates=FALSE)
+         })
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
+library(GenomicAlignments)
+plotCorrelation(GAlignmentsList(gals), txs, seqlev="chr1")
+```
+
 
 ## Nucleosome positioning
 
