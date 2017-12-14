@@ -24,7 +24,7 @@
 estimateLibComplexity <- function(histFile, times=100, 
                                   interpolate.sample.sizes=seq(0.1, 1, by=0.1),
                                   extrapolate.sample.sizes=seq(5, 20, by=5)){
-    result = ds.mincount.bootstrap(histFile, r=1, times=times)
+    suppressWarnings({result = ds.mincount.bootstrap(histFile, r=1, times=times)})
     sequences <- c(interpolate.sample.sizes, extrapolate.sample.sizes)
     estimates <- data.frame(relative.size=sequences, values=rep(NA, length(sequences)))
     for ( i in seq_along(sequences))
