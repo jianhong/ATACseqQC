@@ -32,6 +32,7 @@ calculated by the counts in promoter regions.
 }
 \examples{
 library(GenomicRanges)
+library(GenomicAlignments)
 path <- system.file("extdata", package="ATACseqQC", mustWork=TRUE)
 bamfiles <- dir(path, "*.bam$", full.name=TRUE)
 gals <- lapply(bamfiles, function(bamfile){

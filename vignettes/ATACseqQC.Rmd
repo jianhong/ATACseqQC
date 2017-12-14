@@ -152,7 +152,8 @@ nfr <- NFRscore(gal1, txs)
 plot(nfr$log2meanCoverage, nfr$NFR_score, 
      xlab="log2 mean coverage",
      ylab="Nucleosome Free Regions score",
-     main="NFRscore for 200bp flanking TSSs ")
+     main="NFRscore for 200bp flanking TSSs",
+     xlim=c(-10, 0), ylim=c(-5, 5))
 ```
 
 

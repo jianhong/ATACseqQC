@@ -10,6 +10,7 @@
 #' @param ... parameters could be passed to downstream functions such as plot for pca or heatmap for heatmap.
 #' @importClassesFrom GenomicAlignments GAlignments GAlignmentsList
 #' @importClassesFrom GenomicRanges GRanges
+#' @importFrom GenomicAlignments GAlignmentsList
 #' @importFrom GenomicRanges promoters coverage shift
 #' @importFrom IRanges viewMeans Views
 #' @importFrom stats prcomp heatmap
@@ -19,6 +20,7 @@
 #' @author Jianhong Ou
 #' @examples
 #' library(GenomicRanges)
+#' library(GenomicAlignments)
 #' path <- system.file("extdata", package="ATACseqQC", mustWork=TRUE)
 #' bamfiles <- dir(path, "*.bam$", full.name=TRUE)
 #' gals <- lapply(bamfiles, function(bamfile){
