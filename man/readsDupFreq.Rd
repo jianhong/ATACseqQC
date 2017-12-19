@@ -2,21 +2,23 @@
 % Please edit documentation in R/readsDupFreq.R
 \name{readsDupFreq}
 \alias{readsDupFreq}
-\title{reads duplicates frequency}
+\title{Calculating duplication frequency}
 \usage{
 readsDupFreq(bamFile, index = bamFile)
 }
 \arguments{
-\item{bamFile}{character. bam file name.}
+\item{bamFile}{A character vector of length 1L containing the name of a BAM file.}
 
-\item{index}{character. name of index file.}
+\item{index}{A character vector of length 1L containing the name of a BAM index file.}
 }
 \value{
-a 2 column matrix with reads duplicates frequency
+A two-column matrix of integers. The 1st column is the frequency 
+j = 1,2,3,.... The 2nd column is the number of genomic regions with the same 
+fequency (j) of duplication. The frequency column is in ascending order.
 }
 \description{
-Calculate the frequency of read duplication based on alignment coordinates
-determined by rname, strand, pos, cigar, mrnm, and isize.
+Calculating the frequency of read duplication based on alignment
+status determined by rname, strand, pos, cigar, mrnm, mpos and isize.
 }
 \examples{
 bamFile <- system.file("extdata", "GL1.bam", package = "ATACseqQC")

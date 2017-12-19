@@ -1,3 +1,10 @@
+# CHANGES IN VERSION 1.3.11
+
+* update the documentation for function estimateLibComplexity, readsDupFreq, saturationPlot 
+* fix a bug in saturationPlot.R ( using sum instead of cumsum for calculate the overall peak breadth)
+* improve the efficiency of bamQC.
+* add new function IGVSnapshot.
+
 # CHANGES IN VERSION 1.3.10
 
 * add new function plotCorrelation

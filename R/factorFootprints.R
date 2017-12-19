@@ -18,6 +18,9 @@
 #' @param upstream,downstream numeric(1) or integer(1).
 #'        Upstream and downstream of the binding region for
 #'        aggregate ATAC-seq footprint.
+#' @param maxSiteNum numeric(1). Maximal number of predicted binding sites.
+#'        if predicted binding sites is more than this number, top maxSiteNum binding
+#'        sites will be used.
 #' @importFrom stats cor.test
 #' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments
@@ -56,11 +59,15 @@
 factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome, 
                              min.score="95%", bindingSites,
                              seqlev=paste0("chr", c(1:22, "X", "Y")),
-                             upstream=100, downstream=100){
+                             upstream=100, downstream=100,
+                             maxSiteNum=1e6){
   #stopifnot(length(bamfiles)==4)
   stopifnot(is(genome, "BSgenome"))
   stopifnot(all(round(colSums(pfm), digits=4)==1))
   stopifnot(upstream>10 && downstream>10)
+  stopifnot(is.numeric(maxSiteNum))
+  maxSiteNum <- ceiling(maxSiteNum[1])
+  stopifnot(maxSiteNum>1)
   if(missing(bindingSites)){
       pwm <- motifStack::pfm2pwm(pfm)
       maxS <- maxScore(pwm)
@@ -92,11 +99,18 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
         mt$userdefined <- FALSE
         mt$userdefined[mt$score >= min.score] <- TRUE
       }
-      
-      if(length(mt)>10000 && sum(mt$userdefined)<10000){## subsample 
+      if(length(mt)>maxSiteNum){## subsample
+        mt$oid <- seq_along(mt)
+        mt <- mt[order(mt$score, decreasing = TRUE)]
+        mt <- mt[seq.int(maxSiteNum)]
+        mt <- mt[order(mt$oid)]
+        mt$oid <- NULL
+      }
+      subsampleNum <- min(10000, maxSiteNum)
+      if(length(mt)>subsampleNum && sum(mt$userdefined)<subsampleNum){## subsample 
           set.seed(seed = 1)
           mt.keep <- seq_along(mt)[!mt$userdefined]
-          n <- 10000-sum(mt$userdefined)
+          n <- subsampleNum-sum(mt$userdefined)
           if(length(mt.keep)>n){
               mt.keep <- mt.keep[order(mt[mt.keep]$score, decreasing = TRUE)]
               mt.keep <- mt.keep[seq.int(n)]
@@ -173,11 +187,15 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       highest.sig.windows <- 
           rowMeans(sig[, start(windows.sel):end(windows.sel)])
       predictedBindingSiteScore <- mt$score
-      suppressWarnings({
-        cor <- cor.test(x = predictedBindingSiteScore, 
-                      y = highest.sig.windows, 
-                      method = "spearman")
-      })
+      if(length(predictedBindingSiteScore) == length(highest.sig.windows)){
+        suppressWarnings({
+          cor <- cor.test(x = predictedBindingSiteScore, 
+                          y = highest.sig.windows, 
+                          method = "spearman")
+        })
+      }else{
+        cor <- NA
+      }
       cor
   })
   sigs <- lapply(sigs, function(.ele) .ele[mt$userdefined, ])

@@ -6,7 +6,7 @@
 \usage{
 factorFootprints(bamfiles, index = bamfiles, pfm, genome,
   min.score = "95\%", bindingSites, seqlev = paste0("chr", c(1:22, "X",
-  "Y")), upstream = 100, downstream = 100)
+  "Y")), upstream = 100, downstream = 100, maxSiteNum = 1e+06)
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.}
@@ -33,6 +33,10 @@ candidate binding sites (eg. the output of fimo).}
 \item{upstream, downstream}{numeric(1) or integer(1).
 Upstream and downstream of the binding region for
 aggregate ATAC-seq footprint.}
+
+\item{maxSiteNum}{numeric(1). Maximal number of predicted binding sites.
+if predicted binding sites is more than this number, top maxSiteNum binding
+sites will be used.}
 }
 \value{
 an invisible list of matrixes with the signals for plot.

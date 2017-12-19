@@ -2,41 +2,60 @@
 % Please edit documentation in R/saturationPlot.R
 \name{saturationPlot}
 \alias{saturationPlot}
-\title{Saturation plot}
+\title{Plotting Saturation curves}
 \usage{
-saturationPlot(subsamplingPeakFiles, subsamplingSizes, peakCaller = "MACS2",
-  sep = "\\t", header = c(TRUE, FALSE), fdr = 0.05, fdrCol,
-  startCol = 2, endCol = 3, skipLines, ...)
+saturationPlot(subsamplingPeakFiles, subsamplingSizes, sep = "\\t",
+  header = FALSE, fdr = 0.05, fdrCol = 9, startCol = 2, endCol = 3,
+  skipLines = 1, peakCaller = "MACS2", outPrefix, span = 2, degree = 2)
 }
 \arguments{
-\item{subsamplingPeakFiles}{a list of files from peak calling tools}
+\item{subsamplingPeakFiles}{A character vector containing peak files from peak
+calling tools, such as MACS2. Currently only MACS2 output is supported.}
 
-\item{subsamplingSizes}{a vector of integers, which are the sizes of subsamples for 
-peak calling. subsamplingPeakFiles should match subsamplingSizes
-in a correct order.}
+\item{subsamplingSizes}{A named vector of integers, which are the sizes of 
+subsamples for peak calling. The names of subsamplingPeakFiles should be identical
+to the basenames of subsamplingPeakFiles.}
 
-\item{peakCaller}{"MACS2", "ZINBA", "SPP", or "F-seq". Current only support MACS2 output}
+\item{sep}{A character vector of length 1L, which is the column separator used 
+in peak files.}
 
-\item{sep}{a string, column separator}
+\item{header}{A boolean (TRUE or FASLE) vector of length 1L, showing whether 
+there are column headers in the peak files.}
 
-\item{header}{a boolean (TRUE or FASLE), showing whether there are headers in the 
-peak files}
+\item{fdr}{A decimal between 0 and 1, a cutoff of statistical significance of 
+peak detection.}
 
-\item{fdr}{decimal between 0 and 1, a cutoff of statistical significance of peak detection}
+\item{fdrCol}{An integer, column index for fdr.}
 
-\item{fdrCol}{integer, column index for fdr}
+\item{startCol}{An integer, column index for start positions of peak regions.}
 
-\item{startCol}{integer, column index for start positions of peak regions}
+\item{endCol}{An integer, column index for end positions of peak regions.}
 
-\item{endCol}{integer, column index for end positions of peak regions}
+\item{skipLines}{An integer, the number of lines (comments or instruction) to 
+skip when peak files are read into R.}
 
-\item{skipLines}{integer, the number of lines (comment or instruction) to skip when peak 
-files are read into R}
+\item{peakCaller}{A character vector of length 1L contatining the name of the 
+peak caller used to generate the peak files, such as "MACS2". Currently only 
+MACS2 output (XXX.narrowPeak or XXX.broadPeak) is support.}
 
-\item{...}{parameters could be passed to plot.}
+\item{outPrefix}{A character vector of length 1L, the file prefix for outputting
+saturation plots.}
+
+\item{span}{An integer, the span parameter for loess smoothing to fit a smoothed 
+saturation curve.}
+
+\item{degree}{An integer, the degree of local polynomial used for loess.}
+}
+\value{
+A data frame of three columns:
+subsamplingSizes, the number of subsampled fragments;
+numPeaks, the number of peaks with fdr less than a given threshold when a given
+number of fragmetns are subsampled;
+breadth, the total breadth of peaks with fdr less than a given threshold for 
+give subsampling when a given number of fragmetns are subsampled.
 }
 \description{
-plot the saturations
+Plotting the saturation curves.
 }
 \examples{
 if(interactive()){

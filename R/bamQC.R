@@ -46,14 +46,29 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
     ## need to double check duplicate rate
     if(testPairedEndBam(file)){
       ## PE, remove the fragments with same cigar and positions.
-      gal <- readGAlignmentPairs(file, use.names = TRUE, 
-                                 param=param)
-      gal <- granges(gal, on.discordant.seqnames="drop")
+      file1 <- BamFile(file=bamfile, index=index, yieldSize=50000)
+      open(file1)
+      gal.names <- gal.ranges <- character(length = ceiling(length(qname)/2) + 1)
+      curr.idx <- 0
+      while(length(chunk0 <- readGAlignmentPairs(file1, use.names = TRUE))){
+        gal <- granges(chunk0, on.discordant.seqnames="drop")
+        gal.names[curr.idx+seq_along(gal)] <- names(gal)
+        gal.ranges[curr.idx+seq_along(gal)] <- paste(as.character(seqnames(gal)), 
+                                                     start(gal), end(gal),
+                                                     strand(gal))
+      }
+      close(file1)
+      gal.names <- gal.names[!is.na(gal.names)]
+      gal.ranges <- gal.ranges[!is.na(gal.ranges)]
+      duplicated.qname <- gal.names[duplicated(gal.ranges)]
+      rm(gal.names)
+      rm(gal.ranges)
+      curr.idx <- qname %in% duplicated.qname
       ## Here, may introduce some bug, if the cigar is switched
       cigar <- do.call(rbind, 
-                       split(res[["cigar"]], qname)[names(gal)])
-      duplicated.qname <- 
-        names(gal)[duplicated(gal) & duplicated(cigar)]
+                       split(res[["cigar"]][curr.idx],
+                             qname[curr.idx])[duplicated.qname])
+      duplicated.qname <- duplicated.qname[duplicated(cigar)]
       isDuplicate <- qname %in% duplicated.qname
     }else{
       ## SE, remove the reads with same cigar and positions.
