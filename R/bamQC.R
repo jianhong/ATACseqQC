@@ -20,75 +20,44 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
                               basename(bamfile))){
   stopifnot(length(bamfile)==1)
   stopifnot(is.character(bamfile))
-  file <- BamFile(file = bamfile, index = index)
-  # flag <- scanBamFlag(isSecondaryAlignment = FALSE, 
-  #                     isNotPassingQualityControls = FALSE)
+  isPE <- testPairedEndBam(file = bamfile, index = index)
   flag <- scanBamFlag(isSecondaryAlignment = FALSE)
-  param <- ScanBamParam(what=c("qname", "flag", "rname",
-                               "cigar", "pos", "qwidth",
-                               "mapq"),
-                        flag = flag)
+  if(isPE){
+    param <- ScanBamParam(what=c("qname", "flag", "rname",
+                                 "cigar", "pos", "qwidth",
+                                 "mapq", "isize"),
+                          flag = flag)
+  }else{
+    param <- ScanBamParam(what=c("qname", "flag", "rname",
+                                 "cigar", "pos", "qwidth",
+                                 "mapq"),
+                          flag = flag)
+  }
+  file <- BamFile(file = bamfile, index = index)
   res <- scanBam(file, param = param)[[1L]]
-  qname <- res[["qname"]]
-  if(all(qname=="*")){
+  if(all(res[["qname"]]=="*")){
     stop("Can not get qname.")
   }
-  flag <- res[["flag"]]
-  rname <- res[["rname"]]
-  mapq <- res[["mapq"]]
-  mapq <- as.data.frame(table(mapq))
-  totalQNAMEs <- length(unique(qname))
-  isDuplicate <- 
-    as.logical(bamFlagAsBitMatrix(flag, "isDuplicate"))
-  isMitochondria <- rname %in% mitochondria
-  dupRate <- sum(isDuplicate)/length(qname)
-  if(dupRate==0){
-    ## need to double check duplicate rate
-    if(testPairedEndBam(file)){
-      ## PE, remove the fragments with same cigar and positions.
-      file1 <- BamFile(file=bamfile, index=index, yieldSize=50000)
-      open(file1)
-      gal.names <- gal.ranges <- character(length = ceiling(length(qname)/2) + 1)
-      curr.idx <- 0
-      while(length(chunk0 <- readGAlignmentPairs(file1, use.names = TRUE))){
-        gal <- granges(chunk0, on.discordant.seqnames="drop")
-        gal.names[curr.idx+seq_along(gal)] <- names(gal)
-        gal.ranges[curr.idx+seq_along(gal)] <- paste(as.character(seqnames(gal)), 
-                                                     start(gal), end(gal),
-                                                     strand(gal))
-      }
-      close(file1)
-      gal.names <- gal.names[!is.na(gal.names)]
-      gal.ranges <- gal.ranges[!is.na(gal.ranges)]
-      duplicated.qname <- gal.names[duplicated(gal.ranges)]
-      rm(gal.names)
-      rm(gal.ranges)
-      curr.idx <- qname %in% duplicated.qname
-      ## Here, may introduce some bug, if the cigar is switched
-      cigar <- do.call(rbind, 
-                       split(res[["cigar"]][curr.idx],
-                             qname[curr.idx])[duplicated.qname])
-      duplicated.qname <- duplicated.qname[duplicated(cigar)]
-      isDuplicate <- qname %in% duplicated.qname
-    }else{
-      ## SE, remove the reads with same cigar and positions.
-      se <- do.call(cbind, 
-                    res[c("rname", "cigar", "pos", "qwidth")])
-      isDuplicate <- duplicated(se)
-    }
-  }
-  lenQ <- length(qname)
-  dupRate <- sum(isDuplicate)/lenQ
+  lenQ <- length(res[["qname"]])
+  mapq <- as.data.frame(table(res[["mapq"]]))
+  totalQNAMEs <- length(unique(res[["qname"]]))
+  isMitochondria <- res[["rname"]] %in% mitochondria
   mitRate <- sum(isMitochondria)/lenQ
   
-  isProperPair <- as.logical(bamFlagAsBitMatrix(flag, "isProperPair"))
-  isUnmappedQuery <- as.logical(bamFlagAsBitMatrix(flag, "isUnmappedQuery"))
-  hasUnmappedMate <- as.logical(bamFlagAsBitMatrix(flag, "hasUnmappedMate"))
-  isNotPassingQualityControls <- as.logical(bamFlagAsBitMatrix(flag, "isNotPassingQualityControls"))
+  isDuplicate <- 
+    as.logical(bamFlagAsBitMatrix(res[["flag"]], "isDuplicate"))
+  isProperPair <- as.logical(bamFlagAsBitMatrix(res[["flag"]], "isProperPair"))
+  isUnmappedQuery <- as.logical(bamFlagAsBitMatrix(res[["flag"]], "isUnmappedQuery"))
+  hasUnmappedMate <- as.logical(bamFlagAsBitMatrix(res[["flag"]], "hasUnmappedMate"))
+  isNotPassingQualityControls <- as.logical(bamFlagAsBitMatrix(res[["flag"]], "isNotPassingQualityControls"))
   properPairRate <- sum(isProperPair)/lenQ
   unmappedRate <- sum(isUnmappedQuery)/lenQ
   hasUnmappedMateRate <- sum(hasUnmappedMate)/lenQ
   badQualityRate <- sum(isNotPassingQualityControls)/lenQ
+  dupRate <- sum(isDuplicate)/lenQ
+  res$mapq <- NULL
+  res <- as.data.frame(res, stringsAsFactors=FALSE)
+  #res <- res[order(res$qname), ]
   
   ## PCR Bottlenecking Coefficient 1 (PBC1) = M1/M_DISTINCT where
   ## M1: number of genomic locations where exactly one read maps uniquely
@@ -98,30 +67,85 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   ## number of genomic locations where two reads map uniquely
   ## Non-Redundant Fraction (NRF) = 
   ## Number of distinct uniquely mapping reads (i.e. after removing duplicates) / Total number of reads. 
-  if(testPairedEndBam(file)){ ## Could we calculate dupRate in the meanwhile?
-    pe <- do.call(cbind, res[c("qname", "rname", "pos", "qwidth")])
-    pe <- split(pe[, -1], pe[, 1])
-    pe.len <- lengths(pe)
-    pe <- split(pe, pe.len)
-    pe <- lapply(pe, function(.ele){
-      .ele <- do.call(rbind, .ele)
-      Reduce(paste, as.data.frame(.ele))
-    })
-    pos <- unlist(pe, use.names = FALSE)
-  }else{ ## SE
-    pos <- Reduce(paste, res[c("rname", "pos", "qwidth")])
+  seqlev <- levels(res$rname)
+  if(dupRate == 0){
+    isDuplicate <- logical(length=nrow(res))
   }
-  stats <- table(pos)
+  pos <- NULL
+  if(isPE){ ## Could we calculate dupRate in the meanwhile?
+    for(i in seqlev){
+      res.sub <- res[res$rname == i, ]
+      isPaired <- as.logical(bamFlagAsBitMatrix(res.sub$flag, "isPaired"))
+      res.se <- res.sub[!isPaired, ]
+      res.pe <- res.sub[isPaired, ]
+      isFirstMateRead <- as.logical(bamFlagAsBitMatrix(res.pe$flag, "isFirstMateRead"))
+      isSecondMateRead <- as.logical(bamFlagAsBitMatrix(res.pe$flag, "isSecondMateRead"))
+      firstMate <- res.pe[isFirstMateRead, ]
+      secondMate <- res.pe[isSecondMateRead, ]
+      rm(res.pe)
+      mates.qname <- intersect(firstMate$qname, secondMate$qname)
+      res.se <- rbind(res.se, 
+                      firstMate[!firstMate$qname %in% mates.qname, ],
+                      secondMate[!secondMate$qname %in% mates.qname, ])
+      firstMate <- firstMate[match(mates.qname, firstMate$qname), ]
+      secondMate <- secondMate[match(mates.qname, secondMate$qname), ]
+      if(dupRate==0){
+        ## need to double check duplicate rate
+        ## PE, remove the fragments with same cigar and positions.
+        mates <- cbind(firstMate[, c("rname", "pos", "cigar", "isize")], 
+                       secondMate[, c("rname", "pos", "cigar", "isize")])
+        duplicated.qname <- firstMate[duplicated(mates), "qname"]
+        rm(mates)
+        duplicated.qname <- c(duplicated.qname, res.se[duplicated(res.se), "qname"])
+        isDuplicate[res$rname == i] <- res.sub$qname %in% duplicated.qname
+      }
+      
+      mates <- cbind(firstMate[, c("rname", "pos", "isize")], 
+                     secondMate[, c("rname", "pos", "isize")])
+      rm(firstMate)
+      rm(secondMate)
+      pos <- rbind(pos, mates)
+      rm(mates)
+      if(nrow(res.se)>0){
+        res.se.cp <- res.se[, c("rname", "pos", "isize")]
+        res.se.cp$rname <- NA
+        res.se.cp$pos <- NA
+        res.se.cp$isize <- NA
+        pos <- rbind(pos, cbind(res.se[, c("rname", "pos", "isize")], res.se.cp))
+        rm(res.se)
+        rm(res.se.cp)
+      }
+    }
+  }else{ ## SE
+    if(dupRate==0){
+      ## need to double check duplicate rate
+      ## SE, remove the reads with same cigar and positions.
+      isDuplicate <- duplicated(res[, c("rname", "cigar", "pos", "qwidth")])
+    }
+    pos <- res[, c("rname", "pos", "qwidth")]
+  }
+  if(dupRate == 0){
+    dupRate <- sum(isDuplicate)/lenQ
+  }
+  qname <- res$qname
+  rm(res)
+  gc(reset=TRUE)
+  M_DISTINCT <- nrow(unique(pos))
+  pos.dup <- duplicated(pos) | duplicated(pos, fromLast = TRUE)
+  M1 <- sum(!pos.dup)
+  pos.dup <- pos[pos.dup, , drop=FALSE]
+  pos.dup <- apply(pos.dup, 1, paste, collapse=" ")
+  stats <- table(pos.dup)
   dup.stats <- table(stats)
-  M1 <- ifelse("1" %in% names(dup.stats), dup.stats[["1"]], 0)
   M2 <- ifelse("2" %in% names(dup.stats), dup.stats[["2"]], 1) ## avoid x/0
-  M_DISTINCT <- sum(dup.stats)
+
   NRF <- M1/totalQNAMEs
   PBC1 <- M1/M_DISTINCT
   PBC2 <- M1/M2
   
   if(length(outPath)){
-    keepQNAME <- qname[(!isMitochondria) & (!isDuplicate) & isProperPair & (!isNotPassingQualityControls)]
+    keepQNAME <- qname[(!isMitochondria) & (!isDuplicate) & 
+                                  isProperPair & (!isNotPassingQualityControls)]
     filter <- FilterRules(list(qn = function(x){ 
       x$qname %in% keepQNAME}))
     filterBam(file = bamfile, 

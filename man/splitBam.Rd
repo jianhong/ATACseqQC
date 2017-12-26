@@ -46,6 +46,7 @@ an invisible list of \link[GenomicAlignments]{GAlignments}
 shift the bam files by 5'ends and split the bam files.
 }
 \examples{
+if(Sys.getenv("USER")=="jianhongou"){
 bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
 tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
 library(BSgenome.Hsapiens.UCSC.hg19)
@@ -56,7 +57,7 @@ objs <- splitBam(bamfile, tags,
                  txs=txs, genome=Hsapiens,
                  conservation=phastCons100way.UCSC.hg19,
                  seqlev="chr1")
-
+}
 }
 \seealso{
 \link{shiftGAlignmentsList}, \link{splitGAlignmentsByCut}, and 

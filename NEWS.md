@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.3.12
+
+* improve the efficiency of bamQC.
+* add new function footprintsScanner.
+
 # CHANGES IN VERSION 1.3.11
 
 * update the documentation for function estimateLibComplexity, readsDupFreq, saturationPlot 

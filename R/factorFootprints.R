@@ -1,7 +1,8 @@
 #' plot ATAC-seq footprints infer factor occupancy genome wide
 #' @description Aggregate ATAC-seq footprint for a given motif generated
 #'              over binding sites within the genome.
-#' @param bamfiles A vector of characters indicates the file names of bams.
+#' @param bamfiles A vector of characters indicates the file names of bams.  
+#' All the bamfiles will be pulled together.
 #' @param index The names of the index file of the 'BAM' file being processed;
 #'        This is given without the '.bai' extension.
 #' @param pfm A Position frequency Matrix represented as a numeric matrix

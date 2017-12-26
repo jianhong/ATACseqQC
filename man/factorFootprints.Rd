@@ -9,7 +9,8 @@ factorFootprints(bamfiles, index = bamfiles, pfm, genome,
   "Y")), upstream = 100, downstream = 100, maxSiteNum = 1e+06)
 }
 \arguments{
-\item{bamfiles}{A vector of characters indicates the file names of bams.}
+\item{bamfiles}{A vector of characters indicates the file names of bams.
+All the bamfiles will be pulled together.}
 
 \item{index}{The names of the index file of the 'BAM' file being processed;
 This is given without the '.bai' extension.}

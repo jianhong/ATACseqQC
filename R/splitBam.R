@@ -24,6 +24,7 @@
 #' @seealso \link{shiftGAlignmentsList}, \link{splitGAlignmentsByCut}, and 
 #' \link{writeListOfGAlignments}
 #' @examples
+#'if(Sys.getenv("USER")=="jianhongou"){
 #' bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
 #' tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
 #' library(BSgenome.Hsapiens.UCSC.hg19)
@@ -34,7 +35,7 @@
 #'                  txs=txs, genome=Hsapiens,
 #'                  conservation=phastCons100way.UCSC.hg19,
 #'                  seqlev="chr1")
-#'
+#'}
 
 splitBam <- function(bamfile, tags, outPath=NULL,
                      txs, genome, conservation,
