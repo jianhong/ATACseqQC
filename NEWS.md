@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.2.6
+
+* improve bamQC
+
 # CHANGES IN VERSION 1.2.5
 
 * output NRF, PBC1, and PBC2 from bamQC.

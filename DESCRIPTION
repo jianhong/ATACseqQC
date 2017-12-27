@@ -1,7 +1,7 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.2.5
+Version: 1.2.6
 Author: Jianhong Ou, Jun Yu, Haibo Liu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jianhong.ou@duke.com>
 Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
