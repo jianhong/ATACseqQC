@@ -1,6 +1,7 @@
 # CHANGES IN VERSION 1.3.13
 
 * fix a bug in footprintsScanner.
+* update the vignette.
 
 # CHANGES IN VERSION 1.3.12
 
