@@ -14,8 +14,8 @@ test_that("bamQC works not correct", {
   exp <- list(totalQNAMEs=500,
               mitochondriaRate=0.01,
               nonRedundantFraction=491/500,
-              PCRbottleneckingCoefficient_1=491/493,
-              PCRbottleneckingCoefficient_2=491)
+              PCRbottleneckCoefficient_1=491/493,
+              PCRbottleneckCoefficient_2=491)
   for(i in names(exp)){
     expect_equal(x[[i]], exp[[i]])
   }
