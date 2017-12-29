@@ -162,8 +162,8 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
               hasUnmappedMateRate=hasUnmappedMateRate,
               notPassingQualityControlsRate=badQualityRate,
               nonRedundantFraction=NRF,
-              PCRbottleneckingCoefficient_1=PBC1,
-              PCRbottleneckingCoefficient_2=PBC2,
+              PCRbottleneckCoefficient_1=PBC1,
+              PCRbottleneckCoefficient_2=PBC2,
               MAPQ=mapq,
               idxstats=idxstatsBam(file=bamfile, index=index)))
 }

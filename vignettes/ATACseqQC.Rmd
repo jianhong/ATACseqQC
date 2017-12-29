@@ -170,7 +170,7 @@ objs <- splitBam(bamfile, tags=tags, outPath=outPath,
                  conservation=phastCons100way.UCSC.hg19)
 ```
 
-Conservation is an optional parameter. If you do not have the conservation score or you would like to simply split the bams using the fragment length, then you will just need to run the command without providing the conservation argument. Without setting the conservation parameter, it will run much faster.
+Conservation is an optional parameter. If you do not have the conservation score or you would like to simply split the bam files using the fragment length, then you will just need to run the command without providing the conservation argument. Without setting the conservation parameter, it will run much faster.
 
 ### Heatmap and coverage curve for nucleosome positions
 

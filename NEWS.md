@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.2.7
+
+* update the vignette.
+
 # CHANGES IN VERSION 1.2.6
 
 * improve bamQC
