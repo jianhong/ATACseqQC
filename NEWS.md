@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.13
+
+* fix a bug in footprintsScanner.
+
 # CHANGES IN VERSION 1.3.12
 
 * improve the efficiency of bamQC.

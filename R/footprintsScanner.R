@@ -161,7 +161,7 @@ footprintsScanner <- function(bamfiles, index=bamfiles, bindingSitesList,
       ## find the nearest pair
       tmp <- ups[rep(seq.int(nrow(ups)), each=nrow(downs)), -1] - 
         downs[rep(seq.int(nrow(downs)), nrow(ups)), -1]
-      tmp <- sum(abs(tmp))
+      tmp <- rowSums(abs(tmp))
       wm <- which.min(tmp)
       i <- ceiling(wm / nrow(ups))
       j <- wm - (i-1)*nrow(ups)
