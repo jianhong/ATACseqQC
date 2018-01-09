@@ -1,5 +1,9 @@
 # CHANGES IN VERSION 1.3.13
 
+* add new function vPlot.
+
+# CHANGES IN VERSION 1.3.13
+
 * fix a bug in footprintsScanner.
 * update the vignette.
 
