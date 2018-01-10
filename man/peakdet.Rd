@@ -24,7 +24,3 @@ vectors of numeric which indicate the positions of peak or valley.
 Detect the peaks positions and valley positions. The algorithm is modified
 from github::dgromer/peakdet
 }
-\examples{
-y <- runif(200)
-peakdet(y)
-}

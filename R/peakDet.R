@@ -13,9 +13,6 @@
 #' @return A list with peakpos and valleypos. Both peakpos and valleypos are
 #' vectors of numeric which indicate the positions of peak or valley.
 #'
-#' @examples
-#' y <- runif(200)
-#' peakdet(y)
 
 peakdet <- function(y, delta=0, silence=TRUE){
     peakpos <- NULL
