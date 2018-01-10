@@ -4,10 +4,11 @@
 #' @param fragLenRanges  A numeric vector (length=3) for fragment size of nucleosome free and mono-nucleosome.
 #' Default c(60, 180, 250).
 #' @param draw Plot the results or not. Default TRUE.
-#' @param .... Prameters could be passed to plot.
+#' @param ... Prameters could be passed to plot.
 #' @return an invisible list with distance of nucleosome and the linear model.
 #' @importFrom scales rescale
 #' @importFrom stats loess.smooth lm
+#' @importFrom graphics abline
 #' @export
 #' @author Jianhong Ou
 #' @seealso \link{vPlot}

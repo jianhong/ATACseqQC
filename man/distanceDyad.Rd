@@ -14,7 +14,7 @@ Default c(60, 180, 250).}
 
 \item{draw}{Plot the results or not. Default TRUE.}
 
-\item{....}{Prameters could be passed to plot.}
+\item{...}{Prameters could be passed to plot.}
 }
 \value{
 an invisible list with distance of nucleosome and the linear model.
