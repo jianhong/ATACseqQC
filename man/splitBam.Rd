@@ -27,7 +27,7 @@ splitBam(bamfile, tags, outPath = NULL, txs, genome, conservation,
 
 \item{negative}{integer(1). the size to be shift for negative strand}
 
-\item{breaks}{A numeric vector for fragment size of nucleosome freee,
+\item{breaks}{A numeric vector for fragment size of nucleosome free,
 mononucleosome, dinucleosome and trinucleosome}
 
 \item{labels}{A vector of characters indicates the labels for the levels

@@ -8,7 +8,7 @@
 #' @param conservation An object of \link[GenomicScores]{GScores}.
 #' @param positive integer(1). the size to be shift for positive strand
 #' @param negative integer(1). the size to be shift for negative strand
-#' @param breaks A numeric vector for fragment size of nucleosome freee,
+#' @param breaks A numeric vector for fragment size of nucleosome free,
 #' mononucleosome, dinucleosome and trinucleosome
 #' @param labels A vector of characters indicates the labels for the levels
 #' of the resulting category.

@@ -22,6 +22,7 @@
 #' @param maxSiteNum numeric(1). Maximal number of predicted binding sites.
 #'        if predicted binding sites is more than this number, top maxSiteNum binding
 #'        sites will be used.
+#' @param draw Plot or not. Default TRUE.
 #' @param ... parameters could be used by \link[graphics]{smoothScatter}
 #' @importFrom ChIPpeakAnno reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignmentPairs
@@ -39,7 +40,7 @@
 #' David M. MacAlpine, and Steven Henikoff.
 #' Epigenome characterization at single base-pair resolution.
 #' PNAS 2011 108 (45) 18318-18323
-#' @author Jianhong Ou, Julie Zhu
+#' @author Jianhong Ou
 #' @examples
 #'
 #'bamfile <- system.file("extdata", "GL1.bam",
@@ -57,8 +58,7 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
                   min.score="95%", bindingSites,
                   seqlev=paste0("chr", c(1:22, "X", "Y")),
                   upstream=200, downstream=200,
-                  maxSiteNum=1e6, ...){
-  #stopifnot(length(bamfiles)==4)
+                  maxSiteNum=1e6, draw=TRUE, ...){
   stopifnot(is(genome, "BSgenome"))
   stopifnot(all(round(colSums(pfm), digits=4)==1))
   stopifnot(upstream>10 && downstream>10)
@@ -132,7 +132,11 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
   seqinfo(mt) <- Seqinfo(seqlev, seqlengths = seqlengths(mt))
   ## read in bam file with input seqlev specified by users
   which <- as(seqinfo(mt), "GRanges")
-  param <- ScanBamParam(which=which)
+  param <- ScanBamParam(which=which, 
+                        flag = scanBamFlag(isProperPair=TRUE, 
+                                           isSecondaryAlignment=FALSE, 
+                                           isNotPassingQualityControls=FALSE, 
+                                           isDuplicate=FALSE))
   
   bamIn <- mapply(function(.b, .i) readGAlignmentPairs(.b, .i, param = param), 
                   bamfiles, index, SIMPLIFY = FALSE)
@@ -154,7 +158,7 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
   rel$FragmentLength <- bam.query$w
   rel$distanceToBindingSite <- rel$distanceToStart - upstream - floor(wid/2)
   rel <- rel[order(rel$distanceToStart, rel$FragmentLength), c("distanceToBindingSite", "FragmentLength")]
-  smoothScatter(rel, ...)
+  if(draw) smoothScatter(rel, ...)
   return(invisible(rel))
 }
 

@@ -9,7 +9,7 @@
 #' @param txs GRanges of transcripts
 #' @param genome an object of BSgenome
 #' @param conservation an object of \link[GenomicScores]{GScores}.
-#' @param breaks a numeric vector for fragment size of nucleosome freee,
+#' @param breaks a numeric vector for fragment size of nucleosome free,
 #' mononucleosome, dinucleosome and trinucleosome. The breaks pre-defined
 #' here is following the description of Greenleaf's paper (see reference).
 #' @param labels a character vector for labels of the levels 

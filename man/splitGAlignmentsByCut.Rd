@@ -21,7 +21,7 @@ splitGAlignmentsByCut(obj, txs, genome, conservation, breaks = c(0, 100, 180,
 
 \item{conservation}{an object of \link[GenomicScores]{GScores}.}
 
-\item{breaks}{a numeric vector for fragment size of nucleosome freee,
+\item{breaks}{a numeric vector for fragment size of nucleosome free,
 mononucleosome, dinucleosome and trinucleosome. The breaks pre-defined
 here is following the description of Greenleaf's paper (see reference).}
 

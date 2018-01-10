@@ -1,4 +1,8 @@
-# CHANGES IN VERSION 1.3.13
+# CHANGES IN VERSION 1.3.15
+
+* add new function distanceDyad.
+
+# CHANGES IN VERSION 1.3.14
 
 * add new function vPlot.
 

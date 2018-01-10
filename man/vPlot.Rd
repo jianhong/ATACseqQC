@@ -5,8 +5,8 @@
 \title{V-plot}
 \usage{
 vPlot(bamfiles, index = bamfiles, pfm, genome, min.score = "95\%",
-  bindingSites, seqlev = paste0("chr", c(1:22, "X", "Y")), upstream = 100,
-  downstream = 100, maxSiteNum = 1e+06, ...)
+  bindingSites, seqlev = paste0("chr", c(1:22, "X", "Y")), upstream = 200,
+  downstream = 200, maxSiteNum = 1e+06, draw = TRUE, ...)
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.
@@ -39,6 +39,8 @@ aggregate ATAC-seq footprint.}
 if predicted binding sites is more than this number, top maxSiteNum binding
 sites will be used.}
 
+\item{draw}{Plot or not. Default TRUE.}
+
 \item{...}{parameters could be used by \link[graphics]{smoothScatter}}
 }
 \value{
@@ -59,8 +61,7 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 vPlot(bamfile, pfm=CTCF[[1]],
      genome=Hsapiens,
      min.score="95\%", seqlev="chr1",
-     upstream=100, downstream=100, 
-     ylim=c(30, 200))
+     ylim=c(30, 250))
 
 }
 \references{
@@ -70,5 +71,5 @@ Epigenome characterization at single base-pair resolution.
 PNAS 2011 108 (45) 18318-18323
 }
 \author{
-Jianhong Ou, Julie Zhu
+Jianhong Ou
 }
