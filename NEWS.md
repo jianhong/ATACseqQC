@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.16
+
+* copy getRelationship from ChIPpeakAnno.
+
 # CHANGES IN VERSION 1.3.15
 
 * add new function distanceDyad.

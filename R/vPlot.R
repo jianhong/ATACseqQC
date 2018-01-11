@@ -154,7 +154,7 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
   ol <- findOverlaps(bamIn, mt.ext)
   bam.query <- bamIn[queryHits(ol)]
   mt.ext.subject <- mt.ext[subjectHits(ol)]
-  rel <- ChIPpeakAnno:::getRelationship(bam.query, mt.ext.subject)
+  rel <- getRelationship(bam.query, mt.ext.subject)
   rel$FragmentLength <- bam.query$w
   rel$distanceToBindingSite <- rel$distanceToStart - upstream - floor(wid/2)
   rel <- rel[order(rel$distanceToStart, rel$FragmentLength), c("distanceToBindingSite", "FragmentLength")]
@@ -162,3 +162,32 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
   return(invisible(rel))
 }
 
+
+
+getRelationship <- function(queryHits, subjectHits){
+  if(!inherits(queryHits, "GRanges")) 
+    stop("queryHits must be an object of GRanges")
+  if(!inherits(subjectHits, "GRanges")) 
+    stop("subjectHits must be an object of GRanges")
+  strand <- strand(subjectHits)=="-"
+  FeatureStart <- as.numeric(ifelse(strand, 
+                                    end(subjectHits), 
+                                    start(subjectHits)))
+  FeatureEnd <- as.numeric(ifelse(strand, 
+                                  start(subjectHits), 
+                                  end(subjectHits)))
+  PeakStart <- as.numeric(ifelse(strand, end(queryHits), 
+                                 start(queryHits)))
+  PeakEnd <- as.numeric(ifelse(strand, start(queryHits), end(queryHits)))
+  ss <- PeakStart - FeatureStart
+  ee <- PeakEnd - FeatureEnd
+  se <- PeakStart - FeatureEnd
+  es <- PeakEnd - FeatureStart
+  shortestDistance <- apply(cbind(ss, ee, se, es), 1,
+                            function(.ele) min(abs(.ele)))
+  shortestDistanceToStart <- apply(cbind(ss, es), 1, 
+                                   function(.ele) min(abs(.ele)))
+  data.frame(shortestDistance=shortestDistance, 
+             ss=ss,
+             distanceToStart=shortestDistanceToStart)
+}
