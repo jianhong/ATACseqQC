@@ -324,6 +324,8 @@ vp <- vPlot(shiftedBamfile, pfm=CTCF[[1]],
 distanceDyad(vp, pch=20, cex=.5)
 ```
 
+Here is the CTCF vPlot for the full dataset.
+![CTCF footprints](CTCFvPlot.png)
 
 # Plot correlations for multiple samples
 
