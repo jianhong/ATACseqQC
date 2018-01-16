@@ -59,7 +59,8 @@ distanceDyad <- function(vPlotOut, fragLenRanges=c(60, 180, 250), draw=TRUE, ...
   
   distanceNucl <- c(-1 * data4ncul.peak, data4ncul.peak)
   
-  data4bw.bk <- data4bw <- vPlotOut
+  data4bw.bk.1 <- data4bw <- vPlotOut[vPlotOut$distanceToBindingSite > -250 & 
+                                        vPlotOut$distanceToBindingSite < 250,, drop=FALSE]
   data4bw$FragmentLength <- floor(data4bw$FragmentLength/10)*10 + 5
   data4bw <- split(data4bw$distanceToBindingSite, data4bw$FragmentLength)
   data4bw <- lapply(data4bw, table)
@@ -98,7 +99,7 @@ distanceDyad <- function(vPlotOut, fragLenRanges=c(60, 180, 250), draw=TRUE, ...
   data4bw <- data4bw[, apply(data4bw, 2, function(.ele) !any(is.na(.ele)))]
   data4bw.colsum <- colSums(data4bw)
   data4bw.mean <- mean(abs(data4bw))
-  data4bw <- data4bw[, abs(data4bw.colsum) < data4bw.mean/5]
+  data4bw <- data4bw[, abs(data4bw.colsum) < data4bw.mean/5, drop=FALSE]
   data4bw <- colMeans(abs(data4bw))
   data4bw <- data4bw[seq.int(which.max(data4bw))]
   
@@ -112,7 +113,7 @@ distanceDyad <- function(vPlotOut, fragLenRanges=c(60, 180, 250), draw=TRUE, ...
       angels <- -atan(coefficients)
       data4bw.bk.rot <- lapply(angels, function(angel){
         R <- matrix(c(cos(angel), sin(angel), -sin(angel), cos(angel)), nrow = 2)
-        data4bw.bk <- vPlotOut
+        data4bw.bk <- data4bw.bk.1
         data4bw.bk$distanceToBindingSite <- abs(data4bw.bk$distanceToBindingSite)
         data4bw.bk <- t(R %*% t(as.matrix(data4bw.bk)))
         data4bw.bk <- round(data4bw.bk, digits = 0)
