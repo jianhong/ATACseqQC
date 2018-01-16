@@ -185,13 +185,9 @@ footprintsScanner <- function(bamfiles, index=bamfiles, bindingSitesList,
 #' @param pfms A list of Position frequency Matrix represented as a numeric matrix
 #'        with row names A, C, G and T.
 #' @param genome An object of \link[BSgenome]{BSgenome}.
-#' @param min.score The minimum score for counting a match.
-#'                  Can be given as a character string containing a
-#'                  percentage (e.g. "95%") of the highest possible
-#'                  score or as a single number.
-#'                  See \link[Biostrings]{matchPWM}.
-#' @param maxSiteNum numeric(1). Maximal number of predicted binding sites.
-#'        if predicted binding sites is more than this number, top maxSiteNum binding
+#' @param seqlev A vector of characters indicates the sequence levels.
+#' @param expSiteNum numeric(1). Expect number of predicted binding sites.
+#'        if predicted binding sites is more than this number, top expSiteNum binding
 #'        sites will be used.
 #' @importFrom Biostrings matchPWM maxScore
 #' @examples
@@ -200,20 +196,30 @@ footprintsScanner <- function(bamfiles, index=bamfiles, bindingSitesList,
 #' motifs <- as.list(motifs)
 #' library(BSgenome.Hsapiens.UCSC.hg19)
 #' #bindingSitesList <- prepareBindingSitesList(motifs, genome=Hsapiens)
-prepareBindingSitesList <- function(pfms, genome, min.score="85%", maxSiteNum=5000){
+prepareBindingSitesList <- function(pfms, genome, 
+                                    seqlev=paste0("chr", c(1:22, "X", "Y")),
+                                    expSiteNum=5000){
   mts <- lapply(pfms, function(pfm){
     if(!all(round(colSums(pfm), digits=4)==1)){
       stop("pfms must be list of Position frequency Matrix")
     }
     pwm <- motifStack::pfm2pwm(pfm)
+    min.score <- 95
     suppressWarnings({
-      mt <- matchPWM(pwm, genome, min.score = min.score,
-                     with.score=TRUE)
+      mt <- matchPWM(pwm, genome, min.score = paste0(min.score, "%"),
+                     with.score=TRUE, exclude=names(genome)[!names(genome) %in% seqlev])
     })
-    if(length(mt)>maxSiteNum){## subsample
+    while(length(mt)<expSiteNum && min.score>80){
+      min.score <- min.score - 5
+      suppressWarnings({
+        mt <- matchPWM(pwm, genome, min.score = paste0(min.score, "%"),
+                       with.score=TRUE, exclude=names(genome)[!names(genome) %in% seqlev])
+      })
+    }
+    if(length(mt)>expSiteNum){## subsample
       mt$oid <- seq_along(mt)
       mt <- mt[order(mt$score, decreasing = TRUE)]
-      mt <- mt[seq.int(maxSiteNum)]
+      mt <- mt[seq.int(expSiteNum)]
       mt <- mt[order(mt$oid)]
       mt$oid <- NULL
     }

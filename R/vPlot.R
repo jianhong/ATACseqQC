@@ -60,12 +60,12 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
                   upstream=200, downstream=200,
                   maxSiteNum=1e6, draw=TRUE, ...){
   stopifnot(is(genome, "BSgenome"))
-  stopifnot(all(round(colSums(pfm), digits=4)==1))
   stopifnot(upstream>10 && downstream>10)
   stopifnot(is.numeric(maxSiteNum))
   maxSiteNum <- ceiling(maxSiteNum[1])
   stopifnot(maxSiteNum>1)
   if(missing(bindingSites)){
+    stopifnot(all(round(colSums(pfm), digits=4)==1))
     pwm <- motifStack::pfm2pwm(pfm)
     maxS <- maxScore(pwm)
     if(!is.numeric(min.score)){
@@ -116,17 +116,18 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
         mt <- mt[mt$userdefined | mt.keep]
       }
     }
+    wid <- ncol(pfm)
   }else{
     stopifnot(is(bindingSites, "GRanges"))
     stopifnot(length(bindingSites)>1)
     stopifnot(length(bindingSites$score)==length(bindingSites))
     mt <- bindingSites
     mt$userdefined <- TRUE
+    wid <- mean(width(mt))
   }
   if(sum(mt$userdefined)<2){
     stop("less than 2 binding sites by input min.score")
   }
-  wid <- ncol(pfm)
   #mt <- mt[seqnames(mt) %in% seqlev]
   seqlevels(mt) <- seqlev
   seqinfo(mt) <- Seqinfo(seqlev, seqlengths = seqlengths(mt))

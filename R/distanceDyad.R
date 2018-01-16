@@ -6,7 +6,6 @@
 #' @param draw Plot the results or not. Default TRUE.
 #' @param ... Prameters could be passed to plot.
 #' @return an invisible list with distance of nucleosome and the linear model.
-#' @importFrom scales rescale
 #' @importFrom stats loess.smooth lm
 #' @importFrom graphics abline
 #' @export
@@ -39,16 +38,28 @@ distanceDyad <- function(vPlotOut, fragLenRanges=c(60, 180, 250), draw=TRUE, ...
   data4nucl <- vPlotOut[vPlotOut$FragmentLength>=fragLenRanges[2] & 
                           vPlotOut$FragmentLength<=fragLenRanges[3], , drop=FALSE]
   data4nucl$FragmentLength <- 1
+  data4nucl$distanceToBindingSite <- abs(data4nucl$distanceToBindingSite)
   data4nucl <- rowsum(data4nucl$FragmentLength, data4nucl$distanceToBindingSite)
-  data4nucl <- data.frame(x=as.numeric(rownames(data4nucl)), y=data4nucl[, 1])
-  data4nucl <- loess.smooth(data4nucl$x, data4nucl$y, span=1/10, evaluation = nrow(data4nucl))
-  distanceNucl <- c(data4nucl$x[data4nucl$x<0][which.max(data4nucl$y[data4nucl$x<0])], 
-                    data4nucl$x[data4nucl$x>0][which.max(data4nucl$y[data4nucl$x>0])])
-  data4nucl$y <- rescale(data4nucl$y, to = fragLenRanges[-2])
+  delta <- diff(range(data4nucl[, 1]))/4
+  data4nucl <- tryCatch(loess.smooth(as.numeric(rownames(data4nucl)), data4nucl[, 1], 
+                                     span=1/10, evaluation = length(data4nucl)),
+                        error=function(e) NULL)
+  if(length(data4nucl)==2){
+    data4nucl.peak <- peakdet(data4nucl$y, delta = delta)
+    if(length(data4nucl.peak$peakpos)>0){
+      data4nucl.peak$x <- data4nucl$x[data4nucl.peak$peakpos]
+      data4nucl.peak$y <- data4nucl$x[data4nucl.peak$peakpos]
+      data4ncul.peak <- data4nucl.peak$x[which.max(data4nucl.peak$y)]
+    }else{
+      data4ncul.peak <- max(data4nucl$x)
+    }
+  }else{
+    data4ncul.peak <- max(data4nucl$x)
+  }
   
+  distanceNucl <- c(-1 * data4ncul.peak, data4ncul.peak)
   
-  data4bw.bk <- data4bw <- vPlotOut[vPlotOut$FragmentLength>=fragLenRanges[1] & 
-                                      vPlotOut$FragmentLength<fragLenRanges[2], , drop=FALSE]
+  data4bw.bk <- data4bw <- vPlotOut
   data4bw$FragmentLength <- floor(data4bw$FragmentLength/10)*10 + 5
   data4bw <- split(data4bw$distanceToBindingSite, data4bw$FragmentLength)
   data4bw <- lapply(data4bw, table)
@@ -70,13 +81,13 @@ distanceDyad <- function(vPlotOut, fragLenRanges=c(60, 180, 250), draw=TRUE, ...
       vr <- .valley[.valley > 0]
       if(length(vl)) {
         vl <- vl[which.max(vl)]
-        if(vl < distanceNucl[1]) return(NULL)
+        #if(vl < distanceNucl[1]) return(NULL)
       }else{
         return(NULL)
       }
       if(length(vr)){
         vr <- vr[which.min(vr)]
-        if(vr > distanceNucl[2]) return(NULL)
+        #if(vr > distanceNucl[2]) return(NULL)
       }else{
         return(NULL)
       }
@@ -84,30 +95,72 @@ distanceDyad <- function(vPlotOut, fragLenRanges=c(60, 180, 250), draw=TRUE, ...
     })
   })
   data4bw <- do.call(cbind, data4bw)
-  data4bw <- colMeans(abs(data4bw), na.rm = TRUE)
+  data4bw <- data4bw[, apply(data4bw, 2, function(.ele) !any(is.na(.ele)))]
+  data4bw.colsum <- colSums(data4bw)
+  data4bw.mean <- mean(abs(data4bw))
+  data4bw <- data4bw[, abs(data4bw.colsum) < data4bw.mean/5]
+  data4bw <- colMeans(abs(data4bw))
   data4bw <- data4bw[seq.int(which.max(data4bw))]
   
-  if(length(data4bw)>3){
+  if(length(data4bw)>=3){
     data4bw <- data.frame(x=data4bw, y=as.numeric(names(data4bw)))
     lm <- lm(y ~ 0+x, data4bw) ## cross zero
-    coefficient <- summary(lm)$coefficients[1]
-    ## rotate matrix
-    angel <- -atan(coefficient)
-    R <- matrix(c(cos(angel), sin(angel), -sin(angel), cos(angel)), nrow = 2)
-    data4bw.bk$distanceToBindingSite <- abs(data4bw.bk$distanceToBindingSite)
-    data4bw.bk <- t(R %*% t(as.matrix(data4bw.bk)))
-    data4bw.bk <- round(data4bw.bk, digits = 0)
-    data4bw.bk <- sapply(split(data4bw.bk[, 1], data4bw.bk[, 2]), mean, na.rm=FALSE)
-    data4bw.bk <- loess.smooth(x=as.numeric(names(data4bw.bk)), y=data4bw.bk, 
-                                span=1/10, evaluation = length(data4bw.bk))
-    data4bw.bk <- as.data.frame(data4bw.bk)
-    data4bw.bk.bottom <- data4bw.bk$x[which.min(data4bw.bk$y)]
-    q50 <- quantile(data4bw.bk$y, probs = .5)
-    data4bw.bk.left <- data4bw.bk[data4bw.bk$x<data4bw.bk.bottom & data4bw.bk$y<q50, "x"]
-    data4bw.bk.right <- data4bw.bk[data4bw.bk$x>data4bw.bk.bottom & data4bw.bk$y<q50, "x"]
-    if(length(data4bw.bk.left)>0 && length(data4bw.bk.right)>0){
-      bindingWidth <- max(data4bw.bk.right) - max(data4bw.bk.left)
+    if(summary(lm)$r.squared>.9){
+      coefficient <- summary(lm)$coefficients[1]
+      ## rotate matrix
+      coefficients <- coefficient + seq(-0.5, .5, by = 0.02)
+      angels <- -atan(coefficients)
+      data4bw.bk.rot <- lapply(angels, function(angel){
+        R <- matrix(c(cos(angel), sin(angel), -sin(angel), cos(angel)), nrow = 2)
+        data4bw.bk <- vPlotOut
+        data4bw.bk$distanceToBindingSite <- abs(data4bw.bk$distanceToBindingSite)
+        data4bw.bk <- t(R %*% t(as.matrix(data4bw.bk)))
+        data4bw.bk <- round(data4bw.bk, digits = 0)
+        list(a=data4bw.bk, b=sum(data4bw.bk[, 2]==0))
+      })
+      data4bw.bk.rot.min <- which.min(sapply(data4bw.bk.rot, function(.ele) .ele$b))
+      data4bw.bk.rot.min <- data4bw.bk.rot.min[which.min(abs(data4bw.bk.rot.min-25))]
+      coefficient <- coefficients[data4bw.bk.rot.min]
+      data4bw.bk <- data4bw.bk.rot[[data4bw.bk.rot.min]]$a
+      data4bw.bk <- sapply(split(data4bw.bk[, 1], data4bw.bk[, 2]), mean, na.rm=FALSE)
+      data4bw.bk <- tryCatch(loess.smooth(x=as.numeric(names(data4bw.bk)), y=data4bw.bk, 
+                                 span=1/10, evaluation = length(data4bw.bk)),
+                             error=function(e) NULL)
+      if(length(data4bw.bk)==2){
+        data4bw.bk <- as.data.frame(data4bw.bk)
+        data4bw.bk.peak <- peakdet(data4bw.bk$y)
+        if(length(data4bw.bk.peak$valleypos)>0){
+          data4bw.bk.bottom <- min(data4bw.bk$x[data4bw.bk.peak$valleypos])
+        }else{
+          data4bw.bk.bottom <- 0
+        }
+        if(length(data4bw.bk.peak$peakpos)>0){
+          zero <- which(data4bw.bk$x==data4bw.bk.bottom)
+          data4bw.bk.peak <- data4bw.bk.peak$peakpos[which.min(abs(data4bw.bk.peak$peakpos - zero))]
+          if(data4bw.bk.peak<zero){
+            Apoint <- data4bw.bk.peak
+            Bpoint <- data4bw.bk.peak + zero
+          }else{
+            Apoint <- zero - (data4bw.bk.peak - zero) 
+            Bpoint <- data4bw.bk.peak
+          }
+          Apoint <- max(c(1, Apoint))
+          Bpoint <- min(c(Bpoint, nrow(data4bw.bk)))
+          data4bw.bk <- data4bw.bk[Apoint:Bpoint, ]
+        }
+        q50 <- quantile(data4bw.bk$y, probs = .25)
+        data4bw.bk.left <- data4bw.bk[data4bw.bk$x<data4bw.bk.bottom & data4bw.bk$y<q50, "x"]
+        data4bw.bk.right <- data4bw.bk[data4bw.bk$x>data4bw.bk.bottom & data4bw.bk$y<q50, "x"]
+        if(length(data4bw.bk.left)>0 && length(data4bw.bk.right)>0){
+          bindingWidth <- max(data4bw.bk.right) - min(data4bw.bk.left)
+        }else{
+          bindingWidth <- NA
+        }
+      }else{
+        bindingWidth <- NA
+      }
     }else{
+      coefficient <- NA
       bindingWidth <- NA
     }
   }else{

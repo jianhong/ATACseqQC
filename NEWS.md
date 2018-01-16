@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.17
+
+* update vPlot.
+
 # CHANGES IN VERSION 1.3.16
 
 * copy getRelationship from ChIPpeakAnno.

@@ -4,7 +4,8 @@
 \alias{prepareBindingSitesList}
 \title{helper function for preparing the binding list}
 \usage{
-prepareBindingSitesList(pfms, genome, min.score = "85\%", maxSiteNum = 5000)
+prepareBindingSitesList(pfms, genome, seqlev = paste0("chr", c(1:22, "X",
+  "Y")), expSiteNum = 5000)
 }
 \arguments{
 \item{pfms}{A list of Position frequency Matrix represented as a numeric matrix
@@ -12,14 +13,10 @@ with row names A, C, G and T.}
 
 \item{genome}{An object of \link[BSgenome]{BSgenome}.}
 
-\item{min.score}{The minimum score for counting a match.
-Can be given as a character string containing a
-percentage (e.g. "95%") of the highest possible
-score or as a single number.
-See \link[Biostrings]{matchPWM}.}
+\item{seqlev}{A vector of characters indicates the sequence levels.}
 
-\item{maxSiteNum}{numeric(1). Maximal number of predicted binding sites.
-if predicted binding sites is more than this number, top maxSiteNum binding
+\item{expSiteNum}{numeric(1). Expect number of predicted binding sites.
+if predicted binding sites is more than this number, top expSiteNum binding
 sites will be used.}
 }
 \description{
