@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.18
+
+* Remove the dependence of SRAdb.
+
 # CHANGES IN VERSION 1.3.17
 
 * update vPlot.

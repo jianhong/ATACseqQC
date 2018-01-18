@@ -27,7 +27,7 @@
 #' @author Haibo Liu
 #' @return None
 #' @export
-#' @importFrom SRAdb startIGV IGVsocket IGVgenome IGVload IGVgoto IGVsnapshot IGVsession
+#' #@importFrom SRAdb startIGV IGVsocket IGVgenome IGVload IGVgoto IGVsnapshot IGVsession
 #' @examples
 #' if(interactive()){
 #' library(SRAdb)
@@ -43,6 +43,9 @@ IGVSnapshot <- function(maxMem, genomeBuild="hg38", bamFileFullPathOrURLs,
                                     "GPI", "PSMB2", "PSMB4", "RAB7A", "REEP5", 
                                     "VCP", "VPS29"), genomicRegions, sessionFile, outDir=getwd())
 {
+  if(!require("SRAdb")){
+    stop("SRAdb is required for IGVSnapshot.")
+  }
     startIGV(maxMem)
     while (TRUE && interactive())
     {
