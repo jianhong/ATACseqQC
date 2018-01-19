@@ -27,10 +27,11 @@
 #' @author Haibo Liu
 #' @return None
 #' @export
-#' #@importFrom SRAdb startIGV IGVsocket IGVgenome IGVload IGVgoto IGVsnapshot IGVsession
+#' @importFrom utils installed.packages
+#' @details This function depend on SRAdb startIGV IGVsocket IGVgenome IGVload IGVgoto IGVsnapshot IGVsession
 #' @examples
 #' if(interactive()){
-#' library(SRAdb)
+#' #library(SRAdb)
 #' exampleBams = file.path(system.file('extdata',package='SRAdb'),
 #'              dir(system.file('extdata',package='SRAdb'),pattern='bam$'))
 #' IGVSnapshot(maxMem="mm", genomeBuild="hg18", bamFileFullPathOrURLs= exampleBams,
@@ -43,10 +44,10 @@ IGVSnapshot <- function(maxMem, genomeBuild="hg38", bamFileFullPathOrURLs,
                                     "GPI", "PSMB2", "PSMB4", "RAB7A", "REEP5", 
                                     "VCP", "VPS29"), genomicRegions, sessionFile, outDir=getwd())
 {
-  if(!require("SRAdb")){
+  if(!"SRAdb" %in% installed.packages()[, 1]){
     stop("SRAdb is required for IGVSnapshot.")
   }
-    startIGV(maxMem)
+    SRAdb::startIGV(maxMem)
     while (TRUE && interactive())
     {
         setupIGV <- readline(prompt="Is IGV starting up and port enabled? Y or N \n")
@@ -61,9 +62,9 @@ IGVSnapshot <- function(maxMem, genomeBuild="hg38", bamFileFullPathOrURLs,
         }
     }
     
-    sock <- IGVsocket()
-    IGVgenome(sock, genome=genomeBuild)
-    IGVload(sock, bamFileFullPathOrURLs)
+    sock <- SRAdb::IGVsocket()
+    SRAdb::IGVgenome(sock, genome=genomeBuild)
+    SRAdb::IGVload(sock, bamFileFullPathOrURLs)
     
     if (!missing(genomicRegions))
     {
@@ -90,11 +91,11 @@ IGVSnapshot <- function(maxMem, genomeBuild="hg38", bamFileFullPathOrURLs,
         saveSession <- readline(prompt="Save the IGV sessionfile? Y or N \n")
         if (grepl("Y|y", saveSession, perl=TRUE))
         {
-            IGVsession(files=bamFileFullPathOrURLs, sessionFile=sessionFile, 
+          SRAdb::IGVsession(files=bamFileFullPathOrURLs, sessionFile=sessionFile, 
                        genome=genomeBuild, VisibleAttribute='', destdir=outDir)
         }
     }else{
-        IGVsession(files=bamFileFullPathOrURLs, sessionFile=sessionFile, 
+      SRAdb::IGVsession(files=bamFileFullPathOrURLs, sessionFile=sessionFile, 
                    genome=genomeBuild, VisibleAttribute='', destdir=outDir)
     }
     
@@ -124,16 +125,16 @@ takeSnapshotOUponInput <- function(sock, gene, outDir)
 #### helper function to take a IGV snapshot after asking
 takeSnapshot <- function(sock, gene, outDir)
 {
-    IGVgoto(sock, gene)
+  SRAdb::IGVgoto(sock, gene)
     if (interactive())
     {
         takeSnapshot <- readline(prompt="Take a snapshot? Y or N \n")
         if (grepl("Y|y", takeSnapshot, perl =TRUE))
         {
-            IGVsnapshot(sock)
+          SRAdb::IGVsnapshot(sock)
         }
     }else{
-        IGVsnapshot(sock)
+      SRAdb::IGVsnapshot(sock)
     }
 }
 

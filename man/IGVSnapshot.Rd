@@ -47,6 +47,9 @@ To utilize this functionality, be sure that the box for "Enable port", which
 can be found under the toolbar (View -> Preference -> Advanced), is checked 
 to allow communication via port.
 }
+\details{
+This function depend on SRAdb startIGV IGVsocket IGVgenome IGVload IGVgoto IGVsnapshot IGVsession
+}
 \examples{
 if(interactive()){
 library(SRAdb)
