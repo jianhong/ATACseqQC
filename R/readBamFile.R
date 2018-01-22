@@ -3,9 +3,16 @@
 #' wraper for readGAlignments/readGAlignmentsList to read in bam files.
 #'
 #' @param bamFile character(1). Bam file name.
+<<<<<<< HEAD
 #' @param which A \link[GenomicRanges:GRanges-class]{GRanges}, \link[IRanges:IntegerRangesList-class]{IntegerRangesList}, 
 #' or any object that can be coerced to a RangesList, or missing object, 
 #' from which a IRangesList instance will be constructed. 
+=======
+#' @param which A \link[GenomicRanges]{GRanges},
+#' \link[IRanges]{IntegerRangesList}, or any object that can be coerced
+#' to an IntegerRangesList, or missing object, 
+#' from which an IRangesList instance will be constructed. 
+>>>>>>> 4c5acadf07cdb6384a6057e1a2253a247c8c41f2
 #' See \link[Rsamtools]{ScanBamParam}.
 #' @param tag A vector of characters indicates the tag names to be read.
 #' See \link[Rsamtools]{ScanBamParam}.
