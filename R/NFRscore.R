@@ -6,7 +6,7 @@
 #' The NFR score for each TSS is calculated as NFR-score = log2(nf) - log2((n1+n2)/2). 
 #' A plot can be generate with the NFR scores as Y-axis and the average signals of 400 bp window as X-axis,
 #' very much like a MA plot for gene expression data. 
-#' @param obj an object of \link[GenomicAlignments]{GAlignments}
+#' @param obj an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 #' @param txs GRanges of transcripts
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param nucleosomeSize numeric(1) or integer(1). Default is 150
@@ -16,7 +16,7 @@
 #' @importFrom GenomicRanges promoters coverage shift
 #' @importFrom IRanges viewMeans Views
 #' @export
-#' @return A object of \link[GenomicRanges]{GRanges} with NFR scores
+#' @return A object of \link[GenomicRanges:GRanges-class]{GRanges} with NFR scores
 #' @author Jianhong Ou
 #' @examples  
 #' library(GenomicRanges)

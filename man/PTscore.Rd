@@ -8,7 +8,7 @@ PTscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
   upstream = 2000, downstream = 500)
 }
 \arguments{
-\item{obj}{an object of \link[GenomicAlignments]{GAlignments}}
+\item{obj}{an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}}
 
 \item{txs}{GRanges of transcripts}
 
@@ -19,7 +19,7 @@ PTscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
 \item{downstream}{numeric(1) or integer(1). End position of promoter. Default is 500}
 }
 \value{
-A object of \link[GenomicRanges]{GRanges} with PT scores
+A object of \link[GenomicRanges:GRanges-class]{GRanges} with PT scores
 }
 \description{
 PT score is calculated for coverage of promoter divided by the coverage of transcripts body.

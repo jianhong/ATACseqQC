@@ -18,7 +18,7 @@ This is given without the '.bai' extension.}
 \item{gal}{A GAlignmentsList object or a list of GAlignmentPairs.
 If bamfiles is missing, gal is required.}
 
-\item{TSS}{an object of \link[GenomicRanges]{GRanges} indicates
+\item{TSS}{an object of \link[GenomicRanges:GRanges-class]{GRanges} indicates
 the transcript start sites. All the width of TSS should equal to 1.
 Otherwise, TSS will be reset to the center of input TSS.}
 

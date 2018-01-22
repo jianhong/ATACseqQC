@@ -7,7 +7,7 @@
 writeListOfGAlignments(objs, outPath = ".")
 }
 \arguments{
-\item{objs}{A list of \link[GenomicAlignments]{GAlignments}.}
+\item{objs}{A list of \link[GenomicAlignments:GAlignments-class]{GAlignments}.}
 
 \item{outPath}{character(1). Output file path.}
 }

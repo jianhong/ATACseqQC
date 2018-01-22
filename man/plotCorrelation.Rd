@@ -9,7 +9,7 @@ plotCorrelation(objs, txs, seqlev = intersect(seqlevels(objs[[1]]),
   "PCA"), ...)
 }
 \arguments{
-\item{objs}{an object of \link[GenomicAlignments]{GAlignmentsList}}
+\item{objs}{an object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}}
 
 \item{txs}{GRanges of transcripts}
 
@@ -24,7 +24,7 @@ plotCorrelation(objs, txs, seqlev = intersect(seqlevels(objs[[1]]),
 \item{...}{parameters could be passed to downstream functions such as plot for pca or heatmap for heatmap.}
 }
 \value{
-A invisible object of \link[GenomicRanges]{GRanges} with counts
+A invisible object of \link[GenomicRanges:GRanges-class]{GRanges} with counts
 }
 \description{
 plot PCA or heatmap for multiple bamfiles. The correlation is 

@@ -52,7 +52,7 @@ This function depend on SRAdb startIGV IGVsocket IGVgenome IGVload IGVgoto IGVsn
 }
 \examples{
 if(interactive()){
-library(SRAdb)
+#library(SRAdb)
 exampleBams = file.path(system.file('extdata',package='SRAdb'),
              dir(system.file('extdata',package='SRAdb'),pattern='bam$'))
 IGVSnapshot(maxMem="mm", genomeBuild="hg18", bamFileFullPathOrURLs= exampleBams,

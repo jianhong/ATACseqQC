@@ -12,7 +12,7 @@ readBamFile(bamFile, which, tag = character(0), what = c("qname", "flag",
 \arguments{
 \item{bamFile}{character(1). Bam file name.}
 
-\item{which}{A \link[GenomicRanges]{GRanges}, \link[IRanges]{RangesList}, 
+\item{which}{A \link[GenomicRanges:GRanges-class]{GRanges}, \link[IRanges:IntegerRangesList-class]{IntegerRangesList}, 
 or any object that can be coerced to a RangesList, or missing object, 
 from which a IRangesList instance will be constructed. 
 See \link[Rsamtools]{ScanBamParam}.}
@@ -29,7 +29,7 @@ Fields are described on the \link{Rsamtools}[scanBam] help page.}
 
 \item{asMates}{logical(1). Paired ends or not}
 
-\item{...}{parameters used by \link[GenomicAlignments]{readGAlignmentsList} 
+\item{...}{parameters used by \link[GenomicAlignments:readGAlignments]{readGAlignmentsList} 
 or \link[GenomicAlignments]{readGAlignments}}
 }
 \value{

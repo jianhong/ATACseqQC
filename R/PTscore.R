@@ -1,7 +1,7 @@
 #' Promoter/Transcript body (PT) score
 #' @description PT score is calculated for coverage of promoter divided by the coverage of transcripts body.
 #' PT score will show if the signal is enriched in promoters.
-#' @param obj an object of \link[GenomicAlignments]{GAlignments}
+#' @param obj an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 #' @param txs GRanges of transcripts
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param upstream numeric(1) or integer(1). Start position of promoter. Default is 2000
@@ -11,7 +11,7 @@
 #' @importFrom GenomicRanges promoters coverage shift
 #' @importFrom IRanges viewMeans Views
 #' @export
-#' @return A object of \link[GenomicRanges]{GRanges} with PT scores
+#' @return A object of \link[GenomicRanges:GRanges-class]{GRanges} with PT scores
 #' @author Jianhong Ou
 #' @examples  
 #' library(GenomicRanges)

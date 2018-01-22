@@ -8,7 +8,7 @@ NFRscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
   nucleosomeSize = 150, nucleosomeFreeSize = 100)
 }
 \arguments{
-\item{obj}{an object of \link[GenomicAlignments]{GAlignments}}
+\item{obj}{an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}}
 
 \item{txs}{GRanges of transcripts}
 
@@ -19,7 +19,7 @@ NFRscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
 \item{nucleosomeFreeSize}{numeric(1) or integer(1). Default is 100}
 }
 \value{
-A object of \link[GenomicRanges]{GRanges} with NFR scores
+A object of \link[GenomicRanges:GRanges-class]{GRanges} with NFR scores
 }
 \description{
 NFR score is a raio between cut signal adjacent to TSS and that flanking 

@@ -11,7 +11,7 @@ prepareBindingSitesList(pfms, genome, seqlev = paste0("chr", c(1:22, "X",
 \item{pfms}{A list of Position frequency Matrix represented as a numeric matrix
 with row names A, C, G and T.}
 
-\item{genome}{An object of \link[BSgenome]{BSgenome}.}
+\item{genome}{An object of \link[BSgenome:BSgenome-class]{BSgenome}.}
 
 \item{seqlev}{A vector of characters indicates the sequence levels.}
 

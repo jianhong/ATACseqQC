@@ -3,7 +3,7 @@
 #' wraper for readGAlignments/readGAlignmentsList to read in bam files.
 #'
 #' @param bamFile character(1). Bam file name.
-#' @param which A \link[GenomicRanges]{GRanges}, \link[IRanges]{RangesList}, 
+#' @param which A \link[GenomicRanges:GRanges-class]{GRanges}, \link[IRanges:IntegerRangesList-class]{IntegerRangesList}, 
 #' or any object that can be coerced to a RangesList, or missing object, 
 #' from which a IRangesList instance will be constructed. 
 #' See \link[Rsamtools]{ScanBamParam}.
@@ -15,7 +15,7 @@
 #' 'flag' entry. This is most easily created with the 
 #' \link{Rsamtools}[scanBamFlag] helper function.
 #' @param asMates logical(1). Paired ends or not
-#' @param ... parameters used by \link[GenomicAlignments]{readGAlignmentsList} 
+#' @param ... parameters used by \link[GenomicAlignments:readGAlignments]{readGAlignmentsList} 
 #' or \link[GenomicAlignments]{readGAlignments}
 #' @import GenomeInfoDb
 #' @import S4Vectors

@@ -5,7 +5,7 @@
 #' All the bamfiles will be pulled together.
 #' @param index The names of the index file of the 'BAM' file being processed;
 #'        This is given without the '.bai' extension.
-#' @param bindingSitesList A object of \link[GenomicRanges]{GRangesList} indicates
+#' @param bindingSitesList A object of \link[GenomicRanges:GRangesList-class]{GRangesList} indicates
 #' candidate binding sites (eg. the output of fimo).
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param upstream,downstream numeric(1) or integer(1).
@@ -184,7 +184,7 @@ footprintsScanner <- function(bamfiles, index=bamfiles, bindingSitesList,
 #' helper function for preparing the binding list
 #' @param pfms A list of Position frequency Matrix represented as a numeric matrix
 #'        with row names A, C, G and T.
-#' @param genome An object of \link[BSgenome]{BSgenome}.
+#' @param genome An object of \link[BSgenome:BSgenome-class]{BSgenome}.
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param expSiteNum numeric(1). Expect number of predicted binding sites.
 #'        if predicted binding sites is more than this number, top expSiteNum binding

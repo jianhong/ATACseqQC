@@ -18,7 +18,7 @@ This is given without the '.bai' extension.}
 \item{pfm}{A Position frequency Matrix represented as a numeric matrix
 with row names A, C, G and T.}
 
-\item{genome}{An object of \link[BSgenome]{BSgenome}.}
+\item{genome}{An object of \link[BSgenome:BSgenome-class]{BSgenome}.}
 
 \item{min.score}{The minimum score for counting a match.
 Can be given as a character string containing a
@@ -26,7 +26,7 @@ percentage (e.g. "95%") of the highest possible
 score or as a single number.
 See \link[Biostrings]{matchPWM}.}
 
-\item{bindingSites}{A object of \link[GenomicRanges]{GRanges} indicates
+\item{bindingSites}{A object of \link[GenomicRanges:GRanges-class]{GRanges} indicates
 candidate binding sites (eg. the output of fimo).}
 
 \item{seqlev}{A vector of characters indicates the sequence levels.}

@@ -1,7 +1,7 @@
 #' plot Correlations of multiple samples
 #' @description plot PCA or heatmap for multiple bamfiles. The correlation is 
 #' calculated by the counts in promoter regions.
-#' @param objs an object of \link[GenomicAlignments]{GAlignmentsList}
+#' @param objs an object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}
 #' @param txs GRanges of transcripts
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param upstream numeric(1) or integer(1). Start position of promoter. Default is 2000
@@ -16,7 +16,7 @@
 #' @importFrom stats prcomp heatmap
 #' @importFrom graphics legend
 #' @export
-#' @return A invisible object of \link[GenomicRanges]{GRanges} with counts
+#' @return A invisible object of \link[GenomicRanges:GRanges-class]{GRanges} with counts
 #' @author Jianhong Ou
 #' @examples
 #' library(GenomicRanges)

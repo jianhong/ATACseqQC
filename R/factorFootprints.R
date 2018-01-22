@@ -7,13 +7,13 @@
 #'        This is given without the '.bai' extension.
 #' @param pfm A Position frequency Matrix represented as a numeric matrix
 #'        with row names A, C, G and T.
-#' @param genome An object of \link[BSgenome]{BSgenome}.
+#' @param genome An object of \link[BSgenome:BSgenome-class]{BSgenome}.
 #' @param min.score The minimum score for counting a match.
 #'                  Can be given as a character string containing a
 #'                  percentage (e.g. "95%") of the highest possible
 #'                  score or as a single number.
 #'                  See \link[Biostrings]{matchPWM}.
-#' @param bindingSites A object of \link[GenomicRanges]{GRanges} indicates
+#' @param bindingSites A object of \link[GenomicRanges:GRanges-class]{GRanges} indicates
 #' candidate binding sites (eg. the output of fimo).
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param upstream,downstream numeric(1) or integer(1).

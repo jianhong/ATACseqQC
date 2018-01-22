@@ -2,10 +2,10 @@
 #' @description shift the GAlignmentsLists by 5' ends. 
 #' All reads aligning to the positive strand will be offset by +4bp, 
 #' and all reads aligning to the negative strand will be offset -5bp by default.
-#' @param gal An object of \link[GenomicAlignments]{GAlignmentsList}.
+#' @param gal An object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}.
 #' @param positive integer(1). the size to be shift for positive strand
 #' @param negative integer(1). the size to be shift for negative strand
-#' @return An object of \link[GenomicAlignments]{GAlignments} with 5' end 
+#' @return An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 
 #' shifted reads.
 #' @author Jianhong Ou
 #' @export

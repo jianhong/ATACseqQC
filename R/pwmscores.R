@@ -2,10 +2,10 @@
 #' @description calculate the maximal PWM scores for each given sequences
 #' @param pwm A Position Weight Matrix represented as a numeric matrix
 #'            with row names A, C, G and T.
-#' @param subject Typically a \link[Biostrings]{DNAString} object.
-#'            A \link[IRanges]{Views} objecton
-#'            a \link[Biostrings]{DNAString} subject,
-#'            a \link[Biostrings]{MaskedDNAString} object,
+#' @param subject Typically a \link[Biostrings:DNAString-class]{DNAString} object.
+#'            A \link[IRanges:Views-class]{Views} object on
+#'            a \link[Biostrings:DNAString-class]{DNAString} subject,
+#'            a \link[Biostrings:MaskedXString-class]{MaskedDNAString} object,
 #'            or a single character string, are also supported.
 #'            IUPAC ambiguity letters in \code{subject} are ignored (i.e.
 #'            assigned weight 0) with a warning.

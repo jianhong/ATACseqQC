@@ -14,7 +14,7 @@ All the bamfiles will be pulled together.}
 \item{index}{The names of the index file of the 'BAM' file being processed;
 This is given without the '.bai' extension.}
 
-\item{bindingSitesList}{A object of \link[GenomicRanges]{GRangesList} indicates
+\item{bindingSitesList}{A object of \link[GenomicRanges:GRangesList-class]{GRangesList} indicates
 candidate binding sites (eg. the output of fimo).}
 
 \item{seqlev}{A vector of characters indicates the sequence levels.}

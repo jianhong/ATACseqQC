@@ -7,14 +7,14 @@
 shiftGAlignmentsList(gal, positive = 4L, negative = 5L)
 }
 \arguments{
-\item{gal}{An object of \link[GenomicAlignments]{GAlignmentsList}.}
+\item{gal}{An object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}.}
 
 \item{positive}{integer(1). the size to be shift for positive strand}
 
 \item{negative}{integer(1). the size to be shift for negative strand}
 }
 \value{
-An object of \link[GenomicAlignments]{GAlignments} with 5' end 
+An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 
 shifted reads.
 }
 \description{

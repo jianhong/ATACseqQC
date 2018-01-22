@@ -6,7 +6,7 @@
 #'        This is given without the '.bai' extension.
 #' @param gal A GAlignmentsList object or a list of GAlignmentPairs.
 #'        If bamfiles is missing, gal is required.
-#' @param TSS an object of \link[GenomicRanges]{GRanges} indicates
+#' @param TSS an object of \link[GenomicRanges:GRanges-class]{GRanges} indicates
 #' the transcript start sites. All the width of TSS should equal to 1.
 #' Otherwise, TSS will be reset to the center of input TSS.
 #' @param librarySize A vector of numeric indicates the library size. Output of
