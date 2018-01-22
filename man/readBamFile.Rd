@@ -12,9 +12,10 @@ readBamFile(bamFile, which, tag = character(0), what = c("qname", "flag",
 \arguments{
 \item{bamFile}{character(1). Bam file name.}
 
-\item{which}{A \link[GenomicRanges]{GRanges}, \link[IRanges]{RangesList}, 
-or any object that can be coerced to a RangesList, or missing object, 
-from which a IRangesList instance will be constructed. 
+\item{which}{A \link[GenomicRanges]{GRanges},
+\link[IRanges]{IntegerRangesList}, or any object that can be coerced
+to an IntegerRangesList, or missing object, 
+from which an IRangesList instance will be constructed. 
 See \link[Rsamtools]{ScanBamParam}.}
 
 \item{tag}{A vector of characters indicates the tag names to be read.
