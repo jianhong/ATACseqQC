@@ -15,10 +15,10 @@ readBamFile(bamFile, which, tag = character(0), what = c("qname", "flag",
 \item{which}{A \link[GenomicRanges:GRanges-class]{GRanges}, \link[IRanges:IntegerRangesList-class]{IntegerRangesList}, 
 or any object that can be coerced to a RangesList, or missing object, 
 from which a IRangesList instance will be constructed. 
-See \link[Rsamtools]{ScanBamParam}.}
+See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.}
 
 \item{tag}{A vector of characters indicates the tag names to be read.
-See \link[Rsamtools]{ScanBamParam}.}
+See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.}
 
 \item{what}{A character vector naming the fields to return. 
 Fields are described on the \link{Rsamtools}[scanBam] help page.}

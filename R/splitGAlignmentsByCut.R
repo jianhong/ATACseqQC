@@ -5,10 +5,10 @@
 #'              The features used in random forest including 
 #'              fragment length, GC content, and 
 #'              UCSC phastCons conservation scores.
-#' @param obj an object of \link[GenomicAlignments]{GAlignments}
+#' @param obj an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 #' @param txs GRanges of transcripts
 #' @param genome an object of BSgenome
-#' @param conservation an object of \link[GenomicScores]{GScores}.
+#' @param conservation an object of \link[GenomicScores:GScores-class]{GScores}.
 #' @param breaks a numeric vector for fragment size of nucleosome free,
 #' mononucleosome, dinucleosome and trinucleosome. The breaks pre-defined
 #' here is following the description of Greenleaf's paper (see reference).

@@ -17,11 +17,11 @@ splitBam(bamfile, tags, outPath = NULL, txs, genome, conservation,
 
 \item{outPath}{Output file path.}
 
-\item{txs}{\link[GenomicRanges]{GRanges} of transcripts.}
+\item{txs}{\link[GenomicRanges:GRanges-class]{GRanges} of transcripts.}
 
-\item{genome}{An object of \link[BSgenome]{BSgenome}}
+\item{genome}{An object of \link[BSgenome:BSgenome-class]{BSgenome}}
 
-\item{conservation}{An object of \link[GenomicScores]{GScores}.}
+\item{conservation}{An object of \link[GenomicScores:GScores-class]{GScores}.}
 
 \item{positive}{integer(1). the size to be shift for positive strand}
 
@@ -40,7 +40,7 @@ The length of labels = length of breaks - 1}
 \link[randomForest]{randomForest}.}
 }
 \value{
-an invisible list of \link[GenomicAlignments]{GAlignments}
+an invisible list of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 }
 \description{
 shift the bam files by 5'ends and split the bam files.

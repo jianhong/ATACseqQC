@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.20
+
+* fix the missing links in documentation.
+
 # CHANGES IN VERSION 1.3.19
 
 * fix the missing links in documentation.

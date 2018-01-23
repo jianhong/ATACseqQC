@@ -13,13 +13,13 @@ splitGAlignmentsByCut(obj, txs, genome, conservation, breaks = c(0, 100, 180,
   cutoff = 0.8, halfSizeOfNucleosome = 80L)
 }
 \arguments{
-\item{obj}{an object of \link[GenomicAlignments]{GAlignments}}
+\item{obj}{an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}}
 
 \item{txs}{GRanges of transcripts}
 
 \item{genome}{an object of BSgenome}
 
-\item{conservation}{an object of \link[GenomicScores]{GScores}.}
+\item{conservation}{an object of \link[GenomicScores:GScores-class]{GScores}.}
 
 \item{breaks}{a numeric vector for fragment size of nucleosome free,
 mononucleosome, dinucleosome and trinucleosome. The breaks pre-defined

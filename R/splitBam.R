@@ -3,9 +3,9 @@
 #' @param bamfile character(1). File name of bam.
 #' @param tags A vector of characters indicates the tags in bam file.
 #' @param outPath Output file path.
-#' @param txs \link[GenomicRanges]{GRanges} of transcripts.
-#' @param genome An object of \link[BSgenome]{BSgenome}
-#' @param conservation An object of \link[GenomicScores]{GScores}.
+#' @param txs \link[GenomicRanges:GRanges-class]{GRanges} of transcripts.
+#' @param genome An object of \link[BSgenome:BSgenome-class]{BSgenome}
+#' @param conservation An object of \link[GenomicScores:GScores-class]{GScores}.
 #' @param positive integer(1). the size to be shift for positive strand
 #' @param negative integer(1). the size to be shift for negative strand
 #' @param breaks A numeric vector for fragment size of nucleosome free,
@@ -16,7 +16,7 @@
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param cutoff numeric(1). Cutoff value for prediction by
 #' \link[randomForest]{randomForest}.
-#' @return an invisible list of \link[GenomicAlignments]{GAlignments}
+#' @return an invisible list of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 #' @author Jianhong Ou
 #' @export
 #' @import GenomeInfoDb

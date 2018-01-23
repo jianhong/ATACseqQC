@@ -6,9 +6,9 @@
 #' @param which A \link[GenomicRanges:GRanges-class]{GRanges}, \link[IRanges:IntegerRangesList-class]{IntegerRangesList}, 
 #' or any object that can be coerced to a RangesList, or missing object, 
 #' from which a IRangesList instance will be constructed. 
-#' See \link[Rsamtools]{ScanBamParam}.
+#' See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.
 #' @param tag A vector of characters indicates the tag names to be read.
-#' See \link[Rsamtools]{ScanBamParam}.
+#' See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.
 #' @param what A character vector naming the fields to return. 
 #' Fields are described on the \link{Rsamtools}[scanBam] help page.
 #' @param flag An integer(2) vector used to filter reads based on their 
