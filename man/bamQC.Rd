@@ -5,7 +5,8 @@
 \title{Mapping quality control}
 \usage{
 bamQC(bamfile, index = bamfile, mitochondria = "chrM",
-  outPath = sub(".bam", ".clean.bam", basename(bamfile)))
+  outPath = sub(".bam", ".clean.bam", basename(bamfile)),
+  doubleCheckDup = FALSE)
 }
 \arguments{
 \item{bamfile}{character(1). File name of bam.}
@@ -15,6 +16,8 @@ bamQC(bamfile, index = bamfile, mitochondria = "chrM",
 \item{mitochondria}{character(1). Sequence name of mitochondria.}
 
 \item{outPath}{character(1). File name of cleaned bam.}
+
+\item{doubleCheckDup}{logical(1). Double check duplicates or not if there is no tags for that.}
 }
 \value{
 A list of quality summary.

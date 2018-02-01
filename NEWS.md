@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.21
+
+* Add doubleCheckDup parameter for bamQC.
+
 # CHANGES IN VERSION 1.3.20
 
 * fix the missing links in documentation.

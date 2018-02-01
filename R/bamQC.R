@@ -5,6 +5,7 @@
 #' @param index character(1). File name of index file.
 #' @param mitochondria character(1). Sequence name of mitochondria.
 #' @param outPath character(1). File name of cleaned bam.
+#' @param doubleCheckDup logical(1). Double check duplicates or not if there is no tags for that.
 #' @return A list of quality summary.
 #' @author Jianhong Ou
 #' @export
@@ -17,7 +18,8 @@
 #' bamQC(bamfile, outPath=NULL)
 bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
                   outPath=sub(".bam", ".clean.bam", 
-                              basename(bamfile))){
+                              basename(bamfile)),
+                  doubleCheckDup=FALSE){
   stopifnot(length(bamfile)==1)
   stopifnot(is.character(bamfile))
   isPE <- testPairedEndBam(file = bamfile, index = index)
@@ -89,7 +91,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
                       secondMate[!secondMate$qname %in% mates.qname, ])
       firstMate <- firstMate[match(mates.qname, firstMate$qname), ]
       secondMate <- secondMate[match(mates.qname, secondMate$qname), ]
-      if(dupRate==0){
+      if(dupRate==0 & doubleCheckDup){
         ## need to double check duplicate rate
         ## PE, remove the fragments with same cigar and positions.
         mates <- cbind(firstMate[, c("rname", "pos", "cigar", "isize")], 
@@ -117,7 +119,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
       }
     }
   }else{ ## SE
-    if(dupRate==0){
+    if(dupRate==0 & doubleCheckDup){
       ## need to double check duplicate rate
       ## SE, remove the reads with same cigar and positions.
       isDuplicate <- duplicated(res[, c("rname", "cigar", "pos", "qwidth")])

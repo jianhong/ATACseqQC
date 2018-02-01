@@ -73,7 +73,7 @@ footprintsScanner <- function(bamfiles, index=bamfiles, bindingSitesList,
   bamIn <- mapply(function(.b, .i) readGAlignments(.b, .i, param = param), 
                   bamfiles, index, SIMPLIFY = FALSE)
   bamIn <- lapply(bamIn, as, Class = "GRanges")
-  if(class(bamIn)!="GRangesList") bamIn <- GRangesList(bamIn)
+  if(!is(bamIn, "GRangesList")) bamIn <- GRangesList(bamIn)
   bamIn <- unlist(bamIn)
   seqlevelsStyle(mts.unlist) <- seqlevelsStyle(bamIn)
   ## keep 5'end as cutting sites
