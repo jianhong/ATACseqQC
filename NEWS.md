@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.22
+
+* Try to reduce the memory cost for bamQC.
+
 # CHANGES IN VERSION 1.3.21
 
 * Add doubleCheckDup parameter for bamQC.
