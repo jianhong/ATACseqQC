@@ -11,7 +11,6 @@
 #' @export
 #' @importFrom S4Vectors FilterRules
 #' @importFrom Rsamtools BamFile scanBamFlag ScanBamParam scanBam bamFlagAsBitMatrix filterBam idxstatsBam testPairedEndBam scanBamHeader
-#' @importFrom GenomicAlignments readGAlignmentPairs
 #' @import GenomicRanges
 #' @examples
 #' bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
@@ -55,7 +54,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
                             which = file.targets[i])
     }
     res <- scanBam(file, param = param)[[1L]]
-    if(length(res)==0){
+    if(length(res[["qname"]])==0){
       next()
     }
     if(all(res[["qname"]]=="*")){
