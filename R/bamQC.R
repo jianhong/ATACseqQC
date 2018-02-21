@@ -27,7 +27,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   file.targets <- scanBamHeader(files = file, what="targets")$targets
   if(length(file.targets)<1) return(NA)
   file.targets <- GRanges(names(file.targets), IRanges(rep(1, length(file.targets)), file.targets))
-  uniqQname <- NULL
+  qname <- NULL
   M1 <- NULL
   M_DISTINCT <- NULL
   M2 <- NULL
@@ -69,7 +69,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
     }else{
       mapqs <- mapq
     }
-    uniqQname <- c(uniqQname, unique(res[["qname"]]))
+    qname <- c(qname, res[["qname"]])
     isMitochondria <- c(isMitochondria, rep(as.character(seqnames(file.targets))[i] %in% mitochondria, lenQ))
     isDup <- 
       as.logical(bamFlagAsBitMatrix(res[["flag"]], "isDuplicate"))
@@ -139,7 +139,6 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
     if(dupRate == 0 & doubleCheckDup){
       dupRate <- sum(isDup)/lenQ
     }
-    #qname <- res$qname
     rm(res)
     gc(reset=TRUE)
     M_DISTINCT <- c(M_DISTINCT, nrow(unique(pos)))
@@ -155,7 +154,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
     lenQs <- c(lenQs, lenQ)
   }
   
-  totalQNAMEs <- length(unique(uniqQname))
+  totalQNAMEs <- length(unique(qname))
   M1 <- sum(M1)
   NRF <- M1/totalQNAMEs
   PBC1 <- M1/sum(M_DISTINCT)
