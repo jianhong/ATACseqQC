@@ -139,7 +139,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
     if(dupRate == 0 & doubleCheckDup){
       dupRate <- sum(isDup)/lenQ
     }
-    qname <- res$qname
+    #qname <- res$qname
     rm(res)
     gc(reset=TRUE)
     M_DISTINCT <- c(M_DISTINCT, nrow(unique(pos)))
