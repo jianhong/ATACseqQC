@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.2.9
+
+* Try to improve bamQC.
+
 # CHANGES IN VERSION 1.2.8
 
 * Try to improve bamQC.
