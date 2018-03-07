@@ -35,7 +35,7 @@
 #' @importFrom GenomicAlignments coverage 
 #' @importFrom randomForest randomForest
 #' @importFrom stats predict
-#' @importFrom GenomicScores scores
+#' @importFrom GenomicScores gscores
 #' @export
 #' @references Buenrostro, J.D., Giresi, P.G., Zaba, L.C., Chang, H.Y. and 
 #' Greenleaf, W.J., 2013. Transposition of native chromatin for fast and 
@@ -192,7 +192,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nd.gc <- letterFrequency(nd.seq, letters="CG", as.prob = TRUE)
   # conservation
   getScoresFromCons <- function(cons, gr){
-      gr.cons <- scores(object=cons, ranges=gr, scores.only=FALSE)
+      gr.cons <- gscores(x=cons, ranges=gr)
       stopifnot(identical(ranges(gr), ranges(gr.cons)))
       gr.cons <- gr.cons$scores
       gr.cons[is.na(gr.cons)] <- 0

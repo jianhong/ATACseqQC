@@ -66,6 +66,14 @@ bamfile <- system.file("extdata", "GL1.bam",
 bamfile.labels <- gsub(".bam", "", basename(bamfile))
 ```
 
+## IGV snapshot
+
+Source coud of IGVSnapshot function if available in extdata folder. To call the function, please try
+
+```{r, eval=FALSE}
+source(system.file("extdata", "IGVSnapshot.R", package = "ATACseqQC"))
+```
+
 
 ## Estimate the library complexity
 

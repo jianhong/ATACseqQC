@@ -22,11 +22,13 @@
 #' @param maxSiteNum numeric(1). Maximal number of predicted binding sites.
 #'        if predicted binding sites is more than this number, top maxSiteNum binding
 #'        sites will be used.
+#' @param anchor "cut site" or "fragment center". If "fragment center" is used, 
+#'        the input bamfiles must be paired-end.
 #' @importFrom stats cor.test
 #' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments
 #' @importFrom Biostrings matchPWM maxScore
-#' @importFrom Rsamtools ScanBamParam
+#' @importFrom Rsamtools ScanBamParam testPairedEndBam
 #' @import GenomeInfoDb
 #' @import GenomicRanges
 #' @import IRanges
@@ -61,7 +63,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
                              min.score="95%", bindingSites,
                              seqlev=paste0("chr", c(1:22, "X", "Y")),
                              upstream=100, downstream=100,
-                             maxSiteNum=1e6){
+                             maxSiteNum=1e6, anchor="cut site"){
   #stopifnot(length(bamfiles)==4)
   stopifnot(is(genome, "BSgenome"))
   stopifnot(all(round(colSums(pfm), digits=4)==1))
@@ -69,6 +71,15 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   stopifnot(is.numeric(maxSiteNum))
   maxSiteNum <- ceiling(maxSiteNum[1])
   stopifnot(maxSiteNum>1)
+  anchor <- match.arg(anchor, choices = c("cut site", "fragment center"))
+  if(anchor=="fragment center"){
+    null <- mapply(function(.bam, .index){
+      suppressMessages(pe <- testPairedEndBam(.bam, .index))
+      if(!pe){
+        stop("If anchor is fragment center, the bamfiles must be paired end reads.")
+      }
+    }, bamfiles, index)
+  }
   if(missing(bindingSites)){
       pwm <- motifStack::pfm2pwm(pfm)
       maxS <- maxScore(pwm)
@@ -122,6 +133,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       }
   }else{
       stopifnot(is(bindingSites, "GRanges"))
+      stopifnot(all(!is.na(seqlengths(bindingSites))))
       stopifnot(length(bindingSites)>1)
       stopifnot(length(bindingSites$score)==length(bindingSites))
       mt <- bindingSites
@@ -137,14 +149,24 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   ## read in bam file with input seqlev specified by users
   which <- as(seqinfo(mt), "GRanges")
   param <- ScanBamParam(which=which)
-  bamIn <- mapply(function(.b, .i) readGAlignments(.b, .i, param = param), 
-                  bamfiles, index, SIMPLIFY = FALSE)
+  if(anchor=="cut site"){
+    bamIn <- mapply(function(.b, .i) readGAlignments(.b, .i, param = param), 
+                    bamfiles, index, SIMPLIFY = FALSE)
+  }else{
+    bamIn <- mapply(function(.b, .i) readGAlignmentPairs(.b, .i, param = param), 
+                    bamfiles, index, SIMPLIFY = FALSE)
+  }
   bamIn <- lapply(bamIn, as, Class = "GRanges")
   if(!is(bamIn, "GRangesList")) bamIn <- GRangesList(bamIn)
   bamIn <- unlist(bamIn)
   seqlevelsStyle(bamIn) <- seqlevelsStyle(genome)
-  ## keep 5'end as cutting sites
-  bamIn <- promoters(bamIn, upstream=0, downstream=1)
+  if(anchor=="cut site"){
+    ## keep 5'end as cutting sites
+    bamIn <- promoters(bamIn, upstream=0, downstream=1)
+  }else{
+    ## keep fragment center
+    bamIn <- reCenterPeaks(bamIn, width=1)
+  }
   libSize <- length(bamIn)
   coverageSize <- sum(as.numeric(width(reduce(bamIn, ignore.strand=TRUE))))
   libFactor <- libSize / coverageSize
@@ -250,8 +272,9 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   Profile.seg[3] <- Profile.seg[2]+Profile.seg[3]
   names(Profile.seg)[2:3] <- c("distal_abun", "proximal_abun")
   tryCatch({ ## try to avoid the error when ploting.
+    ylab <- ifelse(anchor=="cut site", "Cut-site probability", "reads density (arbitrary unit)")
     plotFootprints(c(Profile[["+"]], Profile[["-"]]), 
-                   Mlen=wid, motif=pwm2pfm(pfm), 
+                   Mlen=wid, motif=pwm2pfm(pfm), ylab=ylab,
                    segmentation=Profile.seg)
   }, error=function(e){
     message(e)

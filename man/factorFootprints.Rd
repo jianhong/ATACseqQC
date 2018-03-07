@@ -6,7 +6,8 @@
 \usage{
 factorFootprints(bamfiles, index = bamfiles, pfm, genome,
   min.score = "95\%", bindingSites, seqlev = paste0("chr", c(1:22, "X",
-  "Y")), upstream = 100, downstream = 100, maxSiteNum = 1e+06)
+  "Y")), upstream = 100, downstream = 100, maxSiteNum = 1e+06,
+  anchor = "cut site")
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.
@@ -38,6 +39,9 @@ aggregate ATAC-seq footprint.}
 \item{maxSiteNum}{numeric(1). Maximal number of predicted binding sites.
 if predicted binding sites is more than this number, top maxSiteNum binding
 sites will be used.}
+
+\item{anchor}{"cut site" or "fragment center". If "fragment center" is used, 
+the input bamfiles must be paired-end.}
 }
 \value{
 an invisible list of matrixes with the signals for plot.

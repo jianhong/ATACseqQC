@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.3.23
+
+* Move IGVSnapshot to extdata because it is not support windows.
+* add seqlenghts check for footprints.
+
 # CHANGES IN VERSION 1.3.22
 
 * Try to reduce the memory cost for bamQC.

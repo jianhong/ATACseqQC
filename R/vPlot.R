@@ -119,6 +119,7 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
     wid <- ncol(pfm)
   }else{
     stopifnot(is(bindingSites, "GRanges"))
+    stopifnot(all(!is.na(seqlengths(bindingSites))))
     stopifnot(length(bindingSites)>1)
     stopifnot(length(bindingSites$score)==length(bindingSites))
     mt <- bindingSites
