@@ -1,0 +1,20 @@
+citHeader("Please cite the paper below for the ATACseqQC package.")
+
+citEntry(entry="Article",
+	title="ATACseqQC: a Bioconductor package for post-alignment quality assessment of ATAC-seq data",
+	author=personList(as.person("Jianhong Ou"), as.person("Haibo Liu"), as.person("Jun Yu"), as.person("Michelle A. Kelliher"), as.person("Lucio H. Castilla"), as.person("Nathan D. Lawson"), as.person("Lihua Julie Zhu")),
+	journal="BMC Genomics",
+	year="2018",
+  month="Mar",
+  day="01",
+  volume="19",
+  number="1",
+  pages="169",
+	url="https://doi.org/10.1186/s12864-018-4559-3",
+	doi="10.1186/s12864-018-4559-3",
+	PubMedID="29490630",
+	ISSN="1471-2164",
+	abstract="ATAC-seq (Assays for Transposase-Accessible Chromatin using sequencing) is a recently developed technique for genome-wide analysis of chromatin accessibility. Compared to earlier methods for assaying chromatin accessibility, ATAC-seq is faster and easier to perform, does not require cross-linking, has higher signal to noise ratio, and can be performed on small cell numbers. However, to ensure a successful ATAC-seq experiment, step-by-step quality assurance processes, including both wet lab quality control and in silico quality assessment, are essential. While several tools have been developed or adopted for assessing read quality, identifying nucleosome occupancy and accessible regions from ATAC-seq data, none of the tools provide a comprehensive set of functionalities for preprocessing and quality assessment of aligned ATAC-seq datasets.",
+	textVersion="Ou J, Liu H, Yu J, Kelliher MA, Castilla LH, Lawson ND, Zhu LJ. ATACseqQC: a Bioconductor package for post-alignment quality assessment of ATAC-seq data. BMC Genomics. 2018 Mar 1;19(1):169. doi: 10.1186/s12864-018-4559-3. PubMed PMID:29490630."
+)
+

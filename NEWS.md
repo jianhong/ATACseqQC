@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.2.10
+
+* Add citation.
+
 # CHANGES IN VERSION 1.2.9
 
 * Try to improve bamQC.
