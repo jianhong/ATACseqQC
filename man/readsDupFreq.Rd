@@ -7,7 +7,10 @@
 readsDupFreq(bamFile, index = bamFile)
 }
 \arguments{
-\item{bamFile}{A character vector of length 1L containing the name of a BAM file.}
+\item{bamFile}{A character vector of length 1L containing the name of a BAM file.
+Only a BAM file with duplication reads are meaningful for estimating the library
+complexity. For example, a raw BAM file output by aligners, or a BAM file with 
+mitochondrial reads removed.}
 
 \item{index}{A character vector of length 1L containing the name of a BAM index file.}
 }

@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.25
+
+* Add warning message for readsDupFreq when bam files without duplicates.
+
 # CHANGES IN VERSION 1.3.24
 
 * Fix a bug in NFRscore.

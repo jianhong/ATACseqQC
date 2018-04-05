@@ -2,6 +2,9 @@
 #' @description Calculating the frequency of read duplication based on alignment
 #' status determined by rname, strand, pos, cigar, mrnm, mpos and isize. 
 #' @param bamFile A character vector of length 1L containing the name of a BAM file.
+#' Only a BAM file with duplication reads are meaningful for estimating the library
+#' complexity. For example, a raw BAM file output by aligners, or a BAM file with 
+#' mitochondrial reads removed.
 #' @param index A character vector of length 1L containing the name of a BAM index file.
 #' @importFrom Rsamtools ScanBamParam scanBamFlag scanBam testPairedEndBam
 #' @export
@@ -42,5 +45,12 @@ readsDupFreq <- function(bamFile, index = bamFile){
     freqByDuplication <- as.data.frame(table(freqByPos$Freq))
     freqByDuplication$Var1 <- as.numeric(as.character(freqByDuplication$Var1))
     freqByDuplication <- as.matrix(freqByDuplication)
+    
+    if (nrow(freqByDuplication) <= 3)
+    {
+        warning("There is not much information for estimating library complexity.\n",
+             "Are you sure that you used a BAM file without remove duplication reads?", 
+             call. = FALSE)
+    }
     return(freqByDuplication)
 }
