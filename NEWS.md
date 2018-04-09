@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.3.26
+
+* Add index parameter for fragSizeDist and splitBam.
+
 # CHANGES IN VERSION 1.3.25
 
 * Add warning message for readsDupFreq when bam files without duplicates.

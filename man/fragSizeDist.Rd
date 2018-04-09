@@ -4,12 +4,16 @@
 \alias{fragSizeDist}
 \title{fragment size distribution}
 \usage{
-fragSizeDist(bamFiles, bamFiles.labels, ylim = NULL, logYlim = NULL)
+fragSizeDist(bamFiles, bamFiles.labels, index = bamFiles, ylim = NULL,
+  logYlim = NULL)
 }
 \arguments{
 \item{bamFiles}{A vector of characters indicates the file names of bams.}
 
 \item{bamFiles.labels}{labels of the bam files, used for pdf file naming.}
+
+\item{index}{The names of the index file of the 'BAM' file being processed;
+This is given without the '.bai' extension.}
 
 \item{ylim}{numeric(2). ylim of the histogram.}
 
@@ -22,10 +26,9 @@ Invisible fragment length distribution list.
 estimate the fragment size of bams
 }
 \examples{
-bamFiles <- system.file("extdata", "GL1.bam", package="ATACseqQC")
-bamFiles.labels <- "GL1"
-fragSizeDist(bamFiles, bamFiles.labels,
-             ylim=c(0, 1e4), logYlim=log10(c(5e-3, 2)))
+bamFiles <- dir(system.file("extdata", package="ATACseqQC"), "GL.*.bam$", full.names=TRUE)
+bamFiles.labels <- sub(".bam", "", basename(bamFiles))
+fragSizeDist(bamFiles, bamFiles.labels)
 }
 \author{
 Jianhong Ou

@@ -1,6 +1,8 @@
 #' @title fragment size distribution
 #' @description estimate the fragment size of bams
 #' @param bamFiles A vector of characters indicates the file names of bams.
+#' @param index The names of the index file of the 'BAM' file being processed;
+#'        This is given without the '.bai' extension.
 #' @param bamFiles.labels labels of the bam files, used for pdf file naming.
 #' @param ylim numeric(2). ylim of the histogram.
 #' @param logYlim numeric(2). ylim of log-transformed histogram for the insert.
@@ -11,38 +13,36 @@
 #' @export
 #' @author Jianhong Ou
 #' @examples
-#' bamFiles <- system.file("extdata", "GL1.bam", package="ATACseqQC")
-#' bamFiles.labels <- "GL1"
-#' fragSizeDist(bamFiles, bamFiles.labels,
-#'              ylim=c(0, 1e4), logYlim=log10(c(5e-3, 2)))
+#' bamFiles <- dir(system.file("extdata", package="ATACseqQC"), "GL.*.bam$", full.names=TRUE)
+#' bamFiles.labels <- sub(".bam", "", basename(bamFiles))
+#' fragSizeDist(bamFiles, bamFiles.labels)
 
-fragSizeDist <- function(bamFiles, bamFiles.labels, ylim=NULL,
+fragSizeDist <- function(bamFiles, bamFiles.labels, index=bamFiles, ylim=NULL,
                          logYlim=NULL){
   opar <- par(c("fig", "mar"))
   on.exit(par(opar))
-  pe <- sapply(bamFiles, testPairedEndBam)
+  pe <- mapply(testPairedEndBam, bamFiles, index)
   if(any(!pe)){
     stop(paste(bamFiles[!pe], collapse = ", "), 
          "is not Paired-End file.")
   }
-  summaryFunction <- function(seqname, seqlength, bamFile, ...) {
+  summaryFunction <- function(seqname, seqlength, bamFile, ind, ...) {
     param <-
       ScanBamParam(what=c('isize'),
                    which=GRanges(seqname, IRanges(1, seqlength)),
                    flag=scanBamFlag(isSecondaryAlignment = FALSE,
                                     isUnmappedQuery=FALSE,
                                     isNotPassingQualityControls = FALSE))
-    table(abs(unlist(sapply(scanBam(bamFile, ..., param=param), 
+    table(abs(unlist(sapply(scanBam(bamFile, index=ind, ..., param=param), 
                             `[[`, "isize"), use.names = FALSE)))
   }
 
-  idxstats <- unique(do.call(rbind, lapply(bamFiles, function(.ele)
-    idxstatsBam(.ele)[, c("seqnames", "seqlength")])))
+  idxstats <- unique(do.call(rbind, mapply(function(.ele, .ind)
+    idxstatsBam(.ele, index = .ind)[, c("seqnames", "seqlength")], bamFiles, index, SIMPLIFY=FALSE)))
   seqnames <- as.character(idxstats[, "seqnames"])
   seqlen <- as.numeric(idxstats[, "seqlength"])
-  fragment.len <- lapply(bamFiles, summaryFunction,
-                         seqname=seqnames, seqlength=seqlen,
-                         SIMPLIFY=FALSE)
+  fragment.len <- mapply(function(bamFile, ind) summaryFunction(seqname=seqnames, seqlength=seqlen, bamFile, ind), 
+                         bamFiles, index, SIMPLIFY=FALSE)
 
   names(fragment.len) <- bamFiles.labels
 
@@ -92,6 +92,7 @@ fragSizeDist <- function(bamFiles, bamFiles.labels, ylim=NULL,
          xlab="Fragment length (bp)", ylab="Norm. read density",
          type="l", yaxt="n")
     minor.ticks.axis(2)
+    par(opar)
   }, fragment.len, names(fragment.len))
 
   return(invisible(fragment.len))

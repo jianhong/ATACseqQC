@@ -4,16 +4,19 @@
 \alias{splitBam}
 \title{prepare bam files for downstream analysis}
 \usage{
-splitBam(bamfile, tags, outPath = NULL, txs, genome, conservation,
-  positive = 4L, negative = 5L, breaks = c(0, 100, 180, 247, 315, 473,
-  558, 615, Inf), labels = c("NucleosomeFree", "inter1", "mononucleosome",
-  "inter2", "dinucleosome", "inter3", "trinucleosome", "others"),
-  seqlev = paste0("chr", c(1:22, "X", "Y")), cutoff = 0.8)
+splitBam(bamfile, tags, index = bamfile, outPath = NULL, txs, genome,
+  conservation, positive = 4L, negative = 5L, breaks = c(0, 100, 180, 247,
+  315, 473, 558, 615, Inf), labels = c("NucleosomeFree", "inter1",
+  "mononucleosome", "inter2", "dinucleosome", "inter3", "trinucleosome",
+  "others"), seqlev = paste0("chr", c(1:22, "X", "Y")), cutoff = 0.8)
 }
 \arguments{
 \item{bamfile}{character(1). File name of bam.}
 
 \item{tags}{A vector of characters indicates the tags in bam file.}
+
+\item{index}{The names of the index file of the 'BAM' file being processed;
+This is given without the '.bai' extension.}
 
 \item{outPath}{Output file path.}
 

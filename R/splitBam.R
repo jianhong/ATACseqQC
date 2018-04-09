@@ -2,6 +2,8 @@
 #' @description shift the bam files by 5'ends and split the bam files.
 #' @param bamfile character(1). File name of bam.
 #' @param tags A vector of characters indicates the tags in bam file.
+#' @param index The names of the index file of the 'BAM' file being processed;
+#'        This is given without the '.bai' extension.
 #' @param outPath Output file path.
 #' @param txs \link[GenomicRanges:GRanges-class]{GRanges} of transcripts.
 #' @param genome An object of \link[BSgenome:BSgenome-class]{BSgenome}
@@ -37,7 +39,7 @@
 #'                  seqlev="chr1")
 #'}
 
-splitBam <- function(bamfile, tags, outPath=NULL,
+splitBam <- function(bamfile, tags, index=bamfile, outPath=NULL,
                      txs, genome, conservation,
                      positive=4L, negative=5L,
                      breaks=c(0, 100, 180, 247, 315, 473, 558, 615, Inf),
@@ -81,7 +83,7 @@ splitBam <- function(bamfile, tags, outPath=NULL,
 
   ## shift
   which <- as(seqinfo(genome)[seqlev], "GRanges")
-  gal <- readBamFile(bamfile, tag=tags, which=which, 
+  gal <- readBamFile(bamfile, index=index, tag=tags, which=which, 
                      what=c("qname", "flag", "mapq", "isize", 
                             "seq", "qual", "mrnm"),
                      flag=scanBamFlag(),
