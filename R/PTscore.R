@@ -59,6 +59,9 @@ PTscore <- function(obj, txs,
   sel.gr <- unlist(sel.gr)
   sel.gr$score <- unlist(vms)
   
+  # sets any NAN values equal to zero
+  sel.gr$score[is.na(sel.gr$score)] <- 0
+
   pro <- sel.gr[sel.gr$source %in% "promoter"]
   body <- sel.gr[sel.gr$source %in% "transcript"]
   stopifnot(identical(pro$oid, body$oid))
