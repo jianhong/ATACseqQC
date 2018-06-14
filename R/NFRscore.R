@@ -83,6 +83,7 @@ NFRscore <- function(obj, txs,
   sel$nf <- nf$score
   sel$n2 <- n2$score
   smallNumber <- max(c(1e-6, min(nf$score, na.rm=TRUE), min(n1$score, na.rm=TRUE), min(n2$score, na.rm=TRUE)))
+  if(is.na(smallNumber)) smallNumber <- 1e-6
   sel$log2meanCoverage <- log2((3 * (n1$score + n2$score) + 2 * nf$score)/8 + smallNumber)
   sel$NFR_score <- log2(nf$score + smallNumber) + 1 - log2(n1$score + n2$score + smallNumber)
   sel <- sel[order(sel$NFR_score, decreasing = TRUE)]

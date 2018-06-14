@@ -67,7 +67,8 @@ PTscore <- function(obj, txs,
   sel$transcriptPart <- ranges(body)
   sel$promoter <- pro$score
   sel$transcriptBody <- body$score
-  smallNumber <- max(c(1e-6, min(pro$score), min(body$score)))
+  smallNumber <- max(c(1e-6, min(pro$score, na.rm=TRUE), min(body$score, na.rm=TRUE)))
+  if(is.na(smallNumber)) smallNumber <- 1e-6
   sel$log2meanCoverage <- log2(pro$score + smallNumber) + log2(body$score + smallNumber)
   sel$PT_score <- log2(pro$score + smallNumber) - log2(body$score + smallNumber)
   sel <- sel[order(sel$PT_score, decreasing = TRUE)]
