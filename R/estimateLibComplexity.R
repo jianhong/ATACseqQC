@@ -31,7 +31,7 @@ estimateLibComplexity <- function(histFile, times=100,
     estimates <- data.frame(relative.size=sequences, values=rep(NA, length(sequences)))
     for ( i in seq_along(sequences))
     {
-        estimates$values[i] <- result$FUN.bootstrap(sequences[i])
+        estimates$values[i] <- result$f(sequences[i])
     }
     estimates$reads <- estimates$relative.size * total ## added
     plot(x=estimates$reads/10^6, y=estimates$values/10^6,  
