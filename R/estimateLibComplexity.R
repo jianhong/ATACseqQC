@@ -11,7 +11,7 @@
 #' successful estimation. Default is 100.
 #' @param interpolate.sample.sizes A numeric vector with values between (0, 1].
 #' @param extrapolate.sample.sizes A numeric vector with values greater than 1.
-#' @importFrom preseqR ds.mincount.bootstrap
+#' @importFrom preseqR ds.rSAC.bootstrap
 #' @export
 #' @author Haibo Liu
 #' @return invisible estimates, a data frame of 3 columns: relative sequence depth, 
@@ -26,7 +26,7 @@ estimateLibComplexity <- function(histFile, times=100,
                                   interpolate.sample.sizes=seq(0.1, 1, by=0.1),
                                   extrapolate.sample.sizes=seq(5, 20, by=5)){
     total <- histFile[,1] %*% histFile[,2]  ## added
-    suppressWarnings({result = ds.mincount.bootstrap(histFile, r=1, times=times)})
+    suppressWarnings({result = ds.rSAC.bootstrap(histFile, r=1, times=times)})
     sequences <- c(interpolate.sample.sizes, extrapolate.sample.sizes)
     estimates <- data.frame(relative.size=sequences, values=rep(NA, length(sequences)))
     for ( i in seq_along(sequences))
