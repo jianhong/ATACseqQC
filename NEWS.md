@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.5.2
+
+* replace 'ds.mincount.bootstrap' with 'ds.rSAC.bootstrap'
+* add Transcription Start Site (TSS) Enrichment Score: TSSEscore
+
 # CHANGES IN VERSION 1.5.1
 
 * avoid NA in PTscores

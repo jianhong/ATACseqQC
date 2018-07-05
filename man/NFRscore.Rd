@@ -28,7 +28,7 @@ the most upstream 150 bp (n1), the most downstream of 150 bp (n2), and the middl
 Then the number of fragments with 5' ends overlapping each region are calculated for each TSS.
 The NFR score for each TSS is calculated as NFR-score = log2(nf) - log2((n1+n2)/2). 
 A plot can be generate with the NFR scores as Y-axis and the average signals of 400 bp window as X-axis,
-very much like a MA plot for gene expression data.
+very like a MA plot for gene expression data.
 }
 \examples{
  

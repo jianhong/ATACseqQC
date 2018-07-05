@@ -2,6 +2,7 @@
 
 export(NFRscore)
 export(PTscore)
+export(TSSEscore)
 export(bamQC)
 export(distanceDyad)
 export(enrichedFragments)

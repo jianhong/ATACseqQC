@@ -149,7 +149,7 @@ the most downstream of 150 bp (n2), and the middle 100 bp (nf).
 Then the number of fragments with 5' ends overlapping each region are calculated for each TSS.
 The NFR score for each TSS is calculated as NFR-score = log2(nf) - log2((n1+n2)/2). 
 A plot can be generated with the NFR scores as Y-axis and the average signals of 400 bp window as X-axis, 
-very much like a MA plot for gene expression data. 
+very like a MA plot for gene expression data. 
 
 ```{r}
 nfr <- NFRscore(gal1, txs)
@@ -158,6 +158,17 @@ plot(nfr$log2meanCoverage, nfr$NFR_score,
      ylab="Nucleosome Free Regions score",
      main="NFRscore for 200bp flanking TSSs",
      xlim=c(-10, 0), ylim=c(-5, 5))
+```
+
+
+### Transcription Start Site (TSS) Enrichment Score
+
+TSS enrichment score is a raio between aggregate distribution of reads centered on TSSs and that flanking 
+the corresponding TSSs. TSS score = the depth of TSS (1000 bp each side) / the depth of end flanks (100bp each end).
+
+```{r}
+tsse <- TSSEscore(gal1, txs)
+hist(tsse$TSS.enrichment.score)
 ```
 
 
