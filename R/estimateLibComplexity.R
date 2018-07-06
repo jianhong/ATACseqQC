@@ -13,7 +13,7 @@
 #' @param extrapolate.sample.sizes A numeric vector with values greater than 1.
 #' @importFrom preseqR ds.rSAC.bootstrap
 #' @export
-#' @author Haibo Liu
+#' @author Haibo Liu, Feng Yan
 #' @return invisible estimates, a data frame of 3 columns: relative sequence depth, 
 #' number of distinct fragments, number of putative sequenced reads.
 #' @seealso \link{readsDupFreq}
