@@ -40,5 +40,5 @@ estimateLibComplexity(histFile=FisherButterflyHist, times=100)
 \link{readsDupFreq}
 }
 \author{
-Haibo Liu
+Haibo Liu, Feng Yan
 }

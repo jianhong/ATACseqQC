@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.4.2
+
+* replace 'ds.mincount.bootstrap' with 'ds.rSAC.bootstrap'
+
 # CHANGES IN VERSION 1.4.1
 
 * replace any NA with 1e-6 in PTscores.
