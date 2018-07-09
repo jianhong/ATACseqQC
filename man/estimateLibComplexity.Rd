@@ -33,8 +33,8 @@ Estimating the library complexity.
 }
 \examples{
 library(preseqR)
-data(FisherButterflyHist)
-estimateLibComplexity(histFile=FisherButterflyHist, times=100)
+data(FisherButterfly)
+estimateLibComplexity(histFile=FisherButterfly, times=100)
 }
 \seealso{
 \link{readsDupFreq}

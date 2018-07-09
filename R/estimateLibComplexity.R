@@ -19,8 +19,8 @@
 #' @seealso \link{readsDupFreq}
 #' @examples 
 #' library(preseqR)
-#' data(FisherButterflyHist)
-#' estimateLibComplexity(histFile=FisherButterflyHist, times=100)
+#' data(FisherButterfly)
+#' estimateLibComplexity(histFile=FisherButterfly, times=100)
 
 estimateLibComplexity <- function(histFile, times=100, 
                                   interpolate.sample.sizes=seq(0.1, 1, by=0.1),
