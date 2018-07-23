@@ -24,6 +24,7 @@
 #'        sites will be used.
 #' @param anchor "cut site" or "fragment center". If "fragment center" is used, 
 #'        the input bamfiles must be paired-end.
+#' @param ... xlab, legTitle, xlim or ylim could be used by \link{plotFootprints}
 #' @importFrom stats cor.test
 #' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments
@@ -63,7 +64,8 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
                              min.score="95%", bindingSites,
                              seqlev=paste0("chr", c(1:22, "X", "Y")),
                              upstream=100, downstream=100,
-                             maxSiteNum=1e6, anchor="cut site"){
+                             maxSiteNum=1e6, anchor="cut site",
+                             ...){
   #stopifnot(length(bamfiles)==4)
   stopifnot(is(genome, "BSgenome"))
   stopifnot(all(round(colSums(pfm), digits=4)==1))
@@ -272,10 +274,13 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   Profile.seg[3] <- Profile.seg[2]+Profile.seg[3]
   names(Profile.seg)[2:3] <- c("distal_abun", "proximal_abun")
   tryCatch({ ## try to avoid the error when ploting.
-    ylab <- ifelse(anchor=="cut site", "Cut-site probability", "reads density (arbitrary unit)")
-    plotFootprints(c(Profile[["+"]], Profile[["-"]]), 
-                   Mlen=wid, motif=pwm2pfm(pfm), ylab=ylab,
-                   segmentation=Profile.seg)
+    args <- list(...)
+    args$Profile <- c(Profile[["+"]], Profile[["-"]])
+    args$ylab <- ifelse(anchor=="cut site", "Cut-site probability", "reads density (arbitrary unit)")
+    args$Mlen <- wid
+    args$motif <- pwm2pfm(pfm)
+    args$segmentation <- Profile.seg
+    do.call(plotFootprints, args = args)
   }, error=function(e){
     message(e)
   })

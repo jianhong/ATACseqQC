@@ -7,7 +7,7 @@
 factorFootprints(bamfiles, index = bamfiles, pfm, genome,
   min.score = "95\%", bindingSites, seqlev = paste0("chr", c(1:22, "X",
   "Y")), upstream = 100, downstream = 100, maxSiteNum = 1e+06,
-  anchor = "cut site")
+  anchor = "cut site", ...)
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.
@@ -42,6 +42,8 @@ sites will be used.}
 
 \item{anchor}{"cut site" or "fragment center". If "fragment center" is used, 
 the input bamfiles must be paired-end.}
+
+\item{...}{xlab, legTitle, xlim or ylim could be used by \link{plotFootprints}}
 }
 \value{
 an invisible list of matrixes with the signals for plot.

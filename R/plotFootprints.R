@@ -17,6 +17,7 @@
 #' unit grid.legend grid.text grid.lines grid.segments
 #' @importFrom motifStack plotMotifLogoA
 #' @importClassesFrom motifStack pfm
+#' @export
 #' @return Null.
 #' @author Jianhong Ou
 #' @examples

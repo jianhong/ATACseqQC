@@ -38,34 +38,48 @@ TSSEscore <- function(obj, txs,
   cvg <- cvg[seqlev]
   txs <- txs[seqnames(txs) %in% seqlev]
   txs <- unique(txs)
-  sel <- promoters(txs, upstream = upstream + endSize, downstream = downstream + endSize)
-  sel$id <- seq_along(sel)
-  sel <- split(sel, seqnames(sel))
-  sel <- sel[names(cvg)]
   sel.center <- promoters(txs, upstream = upstream, downstream = downstream)
   sel.center$id <- seq_along(sel.center)
+  
+  sel.left.flank <- flank(sel.center, width=endSize, both=FALSE)
+  sel.right.flank <- flank(sel.center, width=endSize, start=FALSE, both = FALSE)
+  
   sel.center <- split(sel.center, seqnames(sel.center))
   sel.center <- sel.center[names(cvg)]
-  sel.id <- unlist(sel)$id
+  sel.left.flank <- split(sel.left.flank, seqnames(sel.left.flank))
+  sel.left.flank <- sel.left.flank[names(cvg)]
+  sel.right.flank <- split(sel.right.flank, seqnames(sel.right.flank))
+  sel.right.flank <- sel.right.flank[names(cvg)]
+  
   sel.center.id <- unlist(sel.center)$id
-  stopifnot(identical(sel.id, sel.center.id))
-  vws <- Views(cvg, sel)
-  vms <- viewMeans(vws)
-  vms <- unlist(vms)
-  vms <- vms[order(sel.id)]
+  sel.left.id <- unlist(sel.left.flank)$id
+  sel.right.id <- unlist(sel.right.flank)$id
+  stopifnot(identical(sel.left.id, sel.center.id))
+  stopifnot(identical(sel.right.id, sel.center.id))
+  
   vws.center <- Views(cvg, sel.center)
   vms.center <- viewMeans(vws.center)
   vms.center <- unlist(vms.center)
   vms.center <- vms.center[order(sel.center.id)]
-  flank.means <- vms + (vms - vms.center)*(upstream + downstream)/2/endSize
-  smallNumber <- min(c(flank.means[vms.center!=0], 1e-6), na.rm = TRUE)
-  vms.center[vms.center!=0] <- vms.center[vms.center!=0] + smallNumber
-  flank.means[vms.center!=0] <- flank.means[vms.center!=0] + smallNumber
-  TSS.score <- vms.center/flank.means
+  
+  vws.left.flank <- Views(cvg, sel.left.flank)
+  vws.left.flank <- viewSums(vws.left.flank)
+  vws.left.flank <- unlist(vws.left.flank)
+  vws.left.flank <- vws.left.flank[order(sel.left.id)]
+  
+  vws.right.flank <- Views(cvg, sel.right.flank)
+  vws.right.flank <- viewSums(vws.right.flank)
+  vws.right.flank <- unlist(vws.right.flank)
+  vws.right.flank <- vws.right.flank[order(sel.right.id)]
+  
+  vws.flank <- (vws.left.flank + vws.right.flank)/2/endSize
+  
+  TSS.score <- vms.center/vws.flank
+  
   sel.center <- unlist(sel.center)
   sel.center <- sel.center[order(sel.center.id)]
   sel.center$TSS.mean <- vms.center
-  sel.center$flank.mean <- flank.means
+  sel.center$flank.mean <- vws.flank
   sel.center$TSS.enrichment.score <- TSS.score
   return(sel.center)
 }

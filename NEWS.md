@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.5.4
+
+* export plotFootprints.
+
 # CHANGES IN VERSION 1.5.3
 
 * add Feng Yan as an author for function of estimateLibComplexity.
