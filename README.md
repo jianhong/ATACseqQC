@@ -24,8 +24,8 @@ pattern, and CTCF or other Transcript Factor footprints.
 To install this package, start R and enter:
 
 ```r
-library(BiocInstaller)
-biocLite("ATACseqQC")
+library(BiocManager)
+BiocManager::install("ATACseqQC")
 ```
 
 ## Documentation
