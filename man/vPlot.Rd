@@ -5,8 +5,9 @@
 \title{V-plot}
 \usage{
 vPlot(bamfiles, index = bamfiles, pfm, genome, min.score = "95\%",
-  bindingSites, seqlev = paste0("chr", c(1:22, "X", "Y")), upstream = 200,
-  downstream = 200, maxSiteNum = 1e+06, draw = TRUE, ...)
+  bindingSites, seqlev = paste0("chr", c(1:22, "X", "Y")),
+  upstream = 200, downstream = 200, maxSiteNum = 1e+06,
+  draw = TRUE, ...)
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.

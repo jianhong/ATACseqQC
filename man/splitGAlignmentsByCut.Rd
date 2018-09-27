@@ -5,12 +5,13 @@
 \title{split bams into nucleosome free, mononucleosome,
 dinucleosome and trinucleosome}
 \usage{
-splitGAlignmentsByCut(obj, txs, genome, conservation, breaks = c(0, 100, 180,
-  247, 315, 473, 558, 615, Inf), labels = c("NucleosomeFree", "inter1",
-  "mononucleosome", "inter2", "dinucleosome", "inter3", "trinucleosome",
-  "others"), labelsOfNucleosomeFree = "NucleosomeFree",
-  labelsOfMononucleosome = "mononucleosome", trainningSetPercentage = 0.15,
-  cutoff = 0.8, halfSizeOfNucleosome = 80L)
+splitGAlignmentsByCut(obj, txs, genome, conservation, breaks = c(0, 100,
+  180, 247, 315, 473, 558, 615, Inf), labels = c("NucleosomeFree",
+  "inter1", "mononucleosome", "inter2", "dinucleosome", "inter3",
+  "trinucleosome", "others"), labelsOfNucleosomeFree = "NucleosomeFree",
+  labelsOfMononucleosome = "mononucleosome",
+  trainningSetPercentage = 0.15, cutoff = 0.8,
+  halfSizeOfNucleosome = 80L)
 }
 \arguments{
 \item{obj}{an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}}

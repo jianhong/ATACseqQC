@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.5.6
+
+* fix the bug when the reads length is smaller than 5 for shiftGAlignmentsList
+
 # CHANGES IN VERSION 1.5.4
 
 * export plotFootprints.

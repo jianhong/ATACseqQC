@@ -5,8 +5,9 @@
 \title{Plotting Saturation curves}
 \usage{
 saturationPlot(subsamplingPeakFiles, subsamplingSizes, sep = "\\t",
-  header = FALSE, fdr = 0.05, fdrCol = 9, startCol = 2, endCol = 3,
-  skipLines = 1, peakCaller = "MACS2", outPrefix, span = 2, degree = 2)
+  header = FALSE, fdr = 0.05, fdrCol = 9, startCol = 2,
+  endCol = 3, skipLines = 1, peakCaller = "MACS2", outPrefix,
+  span = 2, degree = 2)
 }
 \arguments{
 \item{subsamplingPeakFiles}{A character vector containing peak files from peak
