@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.4.3
+
+* fix the bug when reads length is smaller than 5 for shiftGAlignmentsList.
+
 # CHANGES IN VERSION 1.4.2
 
 * replace 'ds.mincount.bootstrap' with 'ds.rSAC.bootstrap'

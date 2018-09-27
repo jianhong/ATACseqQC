@@ -28,6 +28,12 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L){
     ## move the 5'end
     ## first reads is 5'end
     gal1 <- unlist(gal)
+    gp <- rep(seq_along(gal), elementNROWS(gal))
+    k <- width(gal1) <= max(c(positive, negative))
+    if(any(k)){
+      gal <- gal[-gp[k]]
+      gal1 <- unlist(gal)
+    }
     gp <- rep(1, length(gal1))
     gp1 <- rep(seq_along(gal), elementNROWS(gal))
     gp[duplicated(gp1)] <- 2

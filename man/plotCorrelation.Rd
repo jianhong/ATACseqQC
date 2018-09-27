@@ -5,8 +5,8 @@
 \title{plot Correlations of multiple samples}
 \usage{
 plotCorrelation(objs, txs, seqlev = intersect(seqlevels(objs[[1]]),
-  seqlevels(txs)), upstream = 2000, downstream = 500, type = c("heatmap",
-  "PCA"), ...)
+  seqlevels(txs)), upstream = 2000, downstream = 500,
+  type = c("heatmap", "PCA"), ...)
 }
 \arguments{
 \item{objs}{an object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}}

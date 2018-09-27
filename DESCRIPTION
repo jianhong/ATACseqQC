@@ -1,7 +1,7 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.4.2
+Version: 1.4.3
 Author: Jianhong Ou, Haibo Liu, Jun Yu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jianhong.ou@duke.com>
 Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
@@ -30,6 +30,6 @@ Suggests: BiocStyle, knitr, BSgenome.Hsapiens.UCSC.hg19,
 License: GPL (>= 2)
 LazyData: TRUE
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
 biocViews: Sequencing, DNASeq, ATACSeq, GeneRegulation, QualityControl,
         Coverage, NucleosomePositioning
