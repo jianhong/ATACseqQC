@@ -7,7 +7,8 @@
 readBamFile(bamFile, which, tag = character(0), what = c("qname",
   "flag", "mapq", "isize", "seq", "qual", "mrnm"),
   flag = scanBamFlag(isSecondaryAlignment = FALSE, isUnmappedQuery =
-  FALSE, isNotPassingQualityControls = FALSE), asMates = FALSE, ...)
+  FALSE, isNotPassingQualityControls = FALSE), asMates = FALSE,
+  bigFile = FALSE, ...)
 }
 \arguments{
 \item{bamFile}{character(1). Bam file name.}
@@ -24,10 +25,12 @@ See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.}
 Fields are described on the \link{Rsamtools}[scanBam] help page.}
 
 \item{flag}{An integer(2) vector used to filter reads based on their 
-'flag' entry. This is most easily created with the 
-\link{Rsamtools}[scanBamFlag] helper function.}
+'flag' entry. This is most easily created with the}
 
 \item{asMates}{logical(1). Paired ends or not}
+
+\item{bigFile}{If the file take too much memory, set it to true to avoid read the reads into memory.
+\link{Rsamtools}[scanBamFlag] helper function.}
 
 \item{...}{parameters used by \link[GenomicAlignments:readGAlignments]{readGAlignmentsList} 
 or \link[GenomicAlignments]{readGAlignments}}

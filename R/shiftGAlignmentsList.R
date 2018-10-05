@@ -11,6 +11,7 @@
 #' @export
 #' @import S4Vectors
 #' @import GenomicRanges
+#' @importFrom Rsamtools mergeBam
 #' @examples
 #' bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
 #' tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
@@ -23,6 +24,50 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L){
     stopifnot(is.integer(positive))
     stopifnot(is.integer(negative))
     stopifnot(is(gal, "GAlignmentsList"))
+    if(length(gal)==0){
+      ## big file mode
+      meta <- metadata(gal)
+      if(!all(c("file", "param") %in% names(meta))){
+        stop("length of gal could not be 0.")
+      }
+      ow <- getOption("warn")
+      on.exit(options(warn = ow))
+      options(warn=-1)
+      chunk <- 100000
+      index <- ifelse(length(meta$index)>0, meta$index, meta$file)
+      bamfile <- BamFile(meta$file, index=index, yieldSize=chunk, asMates = meta$asMates)
+      outfile <- NULL
+      mpos <- NULL
+      open(bamfile)
+      while (length(chunk0 <- readGAlignmentsList(bamfile, param=meta$param))) {
+        gal1 <- shiftGAlignmentsList(chunk0, positive = positive, negative = negative)
+        outfile <- c(tempfile(fileext = ".bam"), outfile)
+        this.mpos <- mcols(gal1)$mpos
+        names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
+        mpos <- c(mpos, this.mpos)
+        export(gal1, outfile[1], format="BAM")
+        rm(gal1)
+      }
+      close(bamfile)
+      if(length(outfile)>1){
+        mergedfile <- mergeBam(outfile, 
+                               destination=tempfile(fileext = ".bam"), 
+                               byQname=TRUE,
+                               indexDestination=TRUE)
+        unlink(outfile)
+        unlink(paste0(outfile, ".bai"))
+      }else{
+        mergedfile <- outfile
+      }
+      gal1 <- readGAlignments(mergedfile, param = meta$param)
+      unlink(mergedfile)
+      unlink(paste0(mergedfile, ".bai"))
+      mcols(gal1)$MD <- NULL
+      names(gal1) <- mcols(gal1)$qname
+      gal1 <- gal1[order(names(gal1))]
+      mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
+      return(gal1)
+    }
     stopifnot(length(gal)>0)
     stopifnot(all(elementNROWS(gal)<3))
     ## move the 5'end

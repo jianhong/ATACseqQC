@@ -68,7 +68,7 @@ bamfile.labels <- gsub(".bam", "", basename(bamfile))
 
 ## IGV snapshot
 
-Source coud of IGVSnapshot function if available in extdata folder. To call the function, please try
+Source code of IGVSnapshot function is available in extdata folder. To call the function, please try
 
 ```{r, eval=FALSE}
 source(system.file("extdata", "IGVSnapshot.R", package = "ATACseqQC"))
@@ -121,7 +121,7 @@ dir.create(outPath)
 library(BSgenome.Hsapiens.UCSC.hg19)
 seqlev <- "chr1" ## subsample data for quick run
 which <- as(seqinfo(Hsapiens)[seqlev], "GRanges")
-gal <- readBamFile(bamfile, tag=tags, which=which, asMates=TRUE)
+gal <- readBamFile(bamfile, tag=tags, which=which, asMates=TRUE, bigFile=TRUE)
 gal1 <- shiftGAlignmentsList(gal)
 shiftedBamfile <- file.path(outPath, "shifted.bam")
 export(gal1, shiftedBamfile)

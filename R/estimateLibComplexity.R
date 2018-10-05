@@ -33,7 +33,7 @@ estimateLibComplexity <- function(histFile, times=100,
     {
         estimates$values[i] <- result$f(sequences[i])
     }
-    estimates$reads <- estimates$relative.size * total ## added
+    suppressWarnings(estimates$reads <- estimates$relative.size * total) ## added
     plot(x=estimates$reads/10^6, y=estimates$values/10^6,  
          type="o", xlab =expression(Putative~sequenced~fragments~x~10^6), 
          ylab=expression(Distinct~fragments~x~10^6),

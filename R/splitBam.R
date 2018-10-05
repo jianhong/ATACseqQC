@@ -87,7 +87,7 @@ splitBam <- function(bamfile, tags, index=bamfile, outPath=NULL,
                      what=c("qname", "flag", "mapq", "isize", 
                             "seq", "qual", "mrnm"),
                      flag=scanBamFlag(),
-                     asMates=TRUE)
+                     asMates=TRUE, bigFile = TRUE)
   gal1 <- shiftGAlignmentsList(gal,
                    positive=positive, negative=negative)
   ## split

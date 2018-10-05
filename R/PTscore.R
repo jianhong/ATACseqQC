@@ -27,6 +27,9 @@ PTscore <- function(obj, txs,
                      seqlev=intersect(seqlevels(obj), seqlevels(txs)),
                      upstream=2000, downstream=500){
   stopifnot(is(obj, "GAlignments"))
+  if(length(obj)==0){
+    obj <- loadBamFile(obj)
+  }
   stopifnot(is(txs, "GRanges"))
   obj <- as(obj, "GRanges")
   mcols(obj) <- NULL

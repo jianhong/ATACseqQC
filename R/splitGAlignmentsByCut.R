@@ -77,6 +77,9 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   stopifnot(labelsOfMononucleosome %in% labels)
   stopifnot(labelsOfNucleosomeFree %in% labels)
   stopifnot(is(obj, "GAlignments"))
+  if(length(obj)==0){
+    obj <- loadBamFile(obj)
+  }
   stopifnot(length(names(obj))==length(obj))
   conservationFlag <- FALSE
   if(!missing(conservation)){

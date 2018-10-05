@@ -28,6 +28,9 @@ TSSEscore <- function(obj, txs,
                       seqlev=intersect(seqlevels(obj), seqlevels(txs)),
                       upstream=1000, downstream=1000, endSize=100){
   stopifnot(is(obj, "GAlignments"))
+  if(length(obj)==0){
+    obj <- loadBamFile(obj)
+  }
   stopifnot(is(txs, "GRanges"))
   obj <- as(obj, "GRanges")
   mcols(obj) <- NULL
