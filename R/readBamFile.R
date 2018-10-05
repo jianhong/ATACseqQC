@@ -41,6 +41,10 @@ readBamFile <- function(bamFile, which, tag=character(0),
                         asMates=FALSE, bigFile=FALSE,
                         ...) {
   stopifnot(length(bamFile)==1)
+  if(file.size(bamFile)>1e9 && !bigFile && interactive()){
+    bigFile <- readline("This is a big BAM file. Do you want to set bigFile=TRUE to save memory? (Y/n)? ")
+    bigFile <- bigFile=="" || bigFile=="Y" || bigFile=="y"
+  }
   if(!bigFile){
     if(!missing(which)){
       which <- keepSeqlevels(which, as.character(unique(seqnames(which))))
