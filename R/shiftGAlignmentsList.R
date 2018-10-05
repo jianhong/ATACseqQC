@@ -52,7 +52,6 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L){
       if(length(outfile)>1){
         mergedfile <- mergeBam(outfile, 
                                destination=tempfile(fileext = ".bam"), 
-                               byQname=TRUE,
                                indexDestination=TRUE)
         unlink(outfile)
         unlink(paste0(outfile, ".bai"))
