@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.1
+
+* add more documentation for bigFile parameter in readBamFile.R
+
 # CHANGES IN VERSION 1.5.7
 
 * fix the memory issue of big bam file.
