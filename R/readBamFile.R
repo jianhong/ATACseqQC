@@ -25,6 +25,8 @@
 #' @export
 #' @return A GAlignmentsList object when asMats=TRUE,
 #' otherwise A GAlignments object.
+#' If bigFile is set to TRUE, no reads will be read into memory at this step and 
+#' empty GAlignments/GAlignmentsList will be returned.
 #' @author Jianhong Ou
 #' @examples 
 #' library(BSgenome.Hsapiens.UCSC.hg19)
