@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.2
+
+* add the new biocViews tag "ImmunoOncology"
+
 # CHANGES IN VERSION 1.7.1
 
 * add more documentation for bigFile parameter in readBamFile.R
