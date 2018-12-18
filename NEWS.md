@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.3
+
+* Update documentation for Transcription start site (TSS) enrichment values
+
 # CHANGES IN VERSION 1.7.2
 
 * add the new biocViews tag "ImmunoOncology"
