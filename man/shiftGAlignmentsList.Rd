@@ -4,7 +4,7 @@
 \alias{shiftGAlignmentsList}
 \title{shift 5' ends}
 \usage{
-shiftGAlignmentsList(gal, positive = 4L, negative = 5L)
+shiftGAlignmentsList(gal, positive = 4L, negative = 5L, outbam)
 }
 \arguments{
 \item{gal}{An object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}.}
@@ -12,6 +12,8 @@ shiftGAlignmentsList(gal, positive = 4L, negative = 5L)
 \item{positive}{integer(1). the size to be shift for positive strand}
 
 \item{negative}{integer(1). the size to be shift for negative strand}
+
+\item{outbam}{file path to save shift reads. If missing, no file will be write.}
 }
 \value{
 An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 

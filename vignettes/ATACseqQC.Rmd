@@ -122,9 +122,8 @@ library(BSgenome.Hsapiens.UCSC.hg19)
 seqlev <- "chr1" ## subsample data for quick run
 which <- as(seqinfo(Hsapiens)[seqlev], "GRanges")
 gal <- readBamFile(bamfile, tag=tags, which=which, asMates=TRUE, bigFile=TRUE)
-gal1 <- shiftGAlignmentsList(gal)
 shiftedBamfile <- file.path(outPath, "shifted.bam")
-export(gal1, shiftedBamfile)
+gal1 <- shiftGAlignmentsList(gal, outbam=shiftedBamfile)
 ```
 
 ### Promoter/Transcript body (PT) score

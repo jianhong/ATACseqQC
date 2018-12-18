@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.4
+
+* add parameter outbam for shiftGAlignmentsList.
+
 # CHANGES IN VERSION 1.7.3
 
 * Update documentation for Transcription start site (TSS) enrichment values

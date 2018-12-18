@@ -5,6 +5,7 @@
 #' @param gal An object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}.
 #' @param positive integer(1). the size to be shift for positive strand
 #' @param negative integer(1). the size to be shift for negative strand
+#' @param outbam file path to save shift reads. If missing, no file will be write.
 #' @return An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 
 #' shifted reads.
 #' @author Jianhong Ou
@@ -12,6 +13,7 @@
 #' @import S4Vectors
 #' @import GenomicRanges
 #' @importFrom Rsamtools mergeBam
+#' @importFrom rtracklayer export
 #' @examples
 #' bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
 #' tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
@@ -20,7 +22,7 @@
 #' gal <- readBamFile(bamfile, tag=tags, which=which, asMates=TRUE)
 #' objs <- shiftGAlignmentsList(gal)
 #' export(objs, "shift.bam")
-shiftGAlignmentsList <- function(gal, positive=4L, negative=5L){
+shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
     stopifnot(is.integer(positive))
     stopifnot(is.integer(negative))
     stopifnot(is(gal, "GAlignmentsList"))
@@ -59,8 +61,18 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L){
         mergedfile <- outfile
       }
       gal1 <- readGAlignments(mergedfile, param = meta$param)
-      unlink(mergedfile)
-      unlink(paste0(mergedfile, ".bai"))
+      if(missing(outbam)){
+        unlink(mergedfile)
+        unlink(paste0(mergedfile, ".bai"))
+      }else{
+        tryCatch({
+          file.rename(from=mergedfile, to=outbam)
+          file.rename(from=paste0(mergedfile, ".bai"), 
+                      to=paste0(outbam, ".bai"))
+        }, error=function(e){
+          message(e)
+        })
+      }
       mcols(gal1)$MD <- NULL
       names(gal1) <- mcols(gal1)$qname
       gal1 <- gal1[order(names(gal1))]
@@ -93,5 +105,11 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L){
     stopifnot(length(mcols(gal1)$mpos)>0)
     stopifnot(length(mcols(gal1)$flag)>0)
     stopifnot(length(names(gal1))>0)
+    if(!(missing(outbam))){
+      tryCatch(export(gal1, outbam),
+               error=function(e){
+                 message(e)
+               })
+    }
     return(gal1)
 }
