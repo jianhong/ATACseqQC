@@ -43,7 +43,7 @@ PTscore <- function(obj, txs,
   txs <- unique(txs)
   pro <- promoters(txs, upstream = upstream, downstream = downstream)
   body <- shift(pro, shift = upstream + downstream)
-  body[strand(pro)=="-"] <- shift(body[strand(pro)=="-"], 
+  body[strand(pro)=="-"] <- shift(pro[strand(pro)=="-"], 
                                   shift = -1 * (upstream + downstream))
   pro$source <- "promoter"
   body$source <- "transcript"

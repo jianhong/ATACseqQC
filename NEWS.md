@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.6.4
+
+* fix a bug in PTscore
+
 # CHANGES IN VERSION 1.6.3
 
 * update documentation for Transcription Start Site (TSS) Enrichment Score
