@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.6
+
+* fix a bug in PTscore.
+
 # CHANGES IN VERSION 1.7.5
 
 * use `file.copy` instead of `file.rename`.
