@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.5
+
+* use `file.copy` instead of `file.rename`.
+
 # CHANGES IN VERSION 1.7.4
 
 * add parameter outbam for shiftGAlignmentsList.
