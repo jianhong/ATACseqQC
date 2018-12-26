@@ -88,15 +88,22 @@ splitBam <- function(bamfile, tags, index=bamfile, outPath=NULL,
                             "seq", "qual", "mrnm"),
                      flag=scanBamFlag(),
                      asMates=TRUE, bigFile = TRUE)
-  gal1 <- shiftGAlignmentsList(gal,
-                   positive=positive, negative=negative)
-  ## split
-  objs <- splitGAlignmentsByCut(gal1, breaks=breaks, labels=labels,
-                        txs=txs, genome=genome, conservation=conservation,
-                        cutoff=cutoff)
-  ## output
   if(!is.null(outPath)){
-      null <- writeListOfGAlignments(objs, outPath)
+    gal1 <- shiftGAlignmentsList(gal,
+                                 positive=positive, negative=negative,
+                                 outbam = file.path(outPath, "shifted.bam"))
+    ## split
+    objs <- splitGAlignmentsByCut(gal1, breaks=breaks, labels=labels,
+                                  txs=txs, genome=genome, conservation=conservation,
+                                  outPath = outPath,
+                                  cutoff=cutoff)
+  }else{
+    gal1 <- shiftGAlignmentsList(gal,
+                                 positive=positive, negative=negative)
+    ## split
+    objs <- splitGAlignmentsByCut(gal1, breaks=breaks, labels=labels,
+                                  txs=txs, genome=genome, conservation=conservation,
+                                  cutoff=cutoff)
   }
   objs$all <- gal1
   return(invisible(objs))

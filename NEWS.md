@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.7
+
+* add parameter outPath for splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.7.6
 
 * fix a bug in PTscore.

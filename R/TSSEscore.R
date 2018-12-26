@@ -29,7 +29,7 @@ TSSEscore <- function(obj, txs,
                       upstream=1000, downstream=1000, endSize=100){
   stopifnot(is(obj, "GAlignments"))
   if(length(obj)==0){
-    obj <- loadBamFile(obj)
+    obj <- loadBamFile(obj, minimal=TRUE)
   }
   stopifnot(is(txs, "GRanges"))
   obj <- as(obj, "GRanges")

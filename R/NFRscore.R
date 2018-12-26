@@ -33,7 +33,7 @@ NFRscore <- function(obj, txs,
                      nucleosomeSize=150, nucleosomeFreeSize=100){
   stopifnot(is(obj, "GAlignments"))
   if(length(obj)==0){
-    obj <- loadBamFile(obj)
+    obj <- loadBamFile(obj, minimal=TRUE)
   }
   stopifnot(is(txs, "GRanges"))
   obj <- as(obj, "GRanges")

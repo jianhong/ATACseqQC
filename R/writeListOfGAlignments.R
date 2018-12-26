@@ -29,8 +29,17 @@ writeListOfGAlignments <- function(objs, outPath="."){
         dir.create(outPath, showWarnings = FALSE, recursive = TRUE)
     }
     mapply(function(data, n){
-        if(length(data)>0) try({
+        if(length(data)>0){
+          try({
             export(data, file.path(outPath, paste0(n, ".bam")))
-        })
+          })
+        }else{
+          meta <- metadata(data)
+          if("file" %in% names(meta)){
+            file.copy(from = meta$file, to = file.path(outPath, paste0(n, ".bam")))
+            file.copy(from = paste0(meta$file, ".bai"), 
+                      to = file.path(outPath, paste0(n, ".bam.bai")))
+          }
+        }
     }, objs, names(objs))
 }

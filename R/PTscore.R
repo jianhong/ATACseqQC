@@ -28,7 +28,7 @@ PTscore <- function(obj, txs,
                      upstream=2000, downstream=500){
   stopifnot(is(obj, "GAlignments"))
   if(length(obj)==0){
-    obj <- loadBamFile(obj)
+    obj <- loadBamFile(obj, minimal=TRUE)
   }
   stopifnot(is(txs, "GRanges"))
   obj <- as(obj, "GRanges")

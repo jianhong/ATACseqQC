@@ -9,6 +9,8 @@
 #' @param txs GRanges of transcripts
 #' @param genome an object of BSgenome
 #' @param conservation an object of \link[GenomicScores:GScores-class]{GScores}.
+#' @param outPath folder to save the splitted alignments. If outPath is setting, 
+#' the return of the function will not contain seq and qual fields.
 #' @param breaks a numeric vector for fragment size of nucleosome free,
 #' mononucleosome, dinucleosome and trinucleosome. The breaks pre-defined
 #' here is following the description of Greenleaf's paper (see reference).
@@ -62,6 +64,7 @@
 #'                       conservation=phastCons100way.UCSC.hg19)
 #' 
 splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
+                                  outPath,
                           breaks=c(0, 100, 180, 247, 315, 473, 558, 615, Inf),
                           labels = c("NucleosomeFree", "inter1",
                                      "mononucleosome", "inter2",
@@ -76,18 +79,92 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   stopifnot(length(labelsOfNucleosomeFree)==1)
   stopifnot(labelsOfMononucleosome %in% labels)
   stopifnot(labelsOfNucleosomeFree %in% labels)
+  conservationFlag <- FALSE
+  if(!missing(conservation)){
+    if(length(conservation)){
+      stopifnot(is(conservation, "GScores"))
+      conservationFlag <- TRUE ## conservation is supplied.
+    }
+  }
   stopifnot(is(obj, "GAlignments"))
+  
+  if(length(obj)==0 && (!missing(outPath)) && (!conservationFlag)){
+    ## big file mode
+    meta <- metadata(obj)
+    if(!all(c("file", "param") %in% names(meta))){
+      stop("length of obj could not be 0.")
+    }
+    
+    ow <- getOption("warn")
+    on.exit(options(warn = ow))
+    options(warn=-1)
+    chunk <- 100000
+    index <- ifelse(length(meta$index)>0, meta$index, meta$file)
+    bamfile <- BamFile(meta$file, index=index, yieldSize=chunk, asMates = meta$asMates)
+    outfile <- list()
+    mergedfile <- list()
+    mpos <- NULL
+    open(bamfile)
+    if(length(meta$mpos)>0){
+      mpos <- meta$mpos
+    }
+    while (length(chunk0 <- readGAlignments(bamfile, param=meta$param))) {
+      if(length(mpos)){
+        mcols(chunk0)$MD <- NULL
+        names(chunk0) <- mcols(chunk0)$qname
+        chunk0 <- chunk0[order(names(chunk0))]
+        mcols(chunk0)$mpos <- mpos[paste(mcols(chunk0)$qname, start(chunk0))]
+      }
+      gal1 <- splitGAlignmentsByCut(chunk0, txs=txs, genome = genome,
+                                    outPath = outPath, breaks = breaks,
+                                    labels = labels, labelsOfNucleosomeFree = labelsOfNucleosomeFree,
+                                    labelsOfMononucleosome = labelsOfMononucleosome,
+                                    trainningSetPercentage = trainningSetPercentage,
+                                    cutoff = cutoff, halfSizeOfNucleosome = halfSizeOfNucleosome)
+      ## gal1 is a list of GAlignments
+      ## save the gal1 to tmpfiles
+      for(i in seq_along(gal1)){
+        outfile[[names(gal1)[i]]] <- c(tempfile(fileext = ".bam"), outfile[[names(gal1)[i]]])
+        export(gal1[[i]], outfile[[names(gal1)[i]]][1], format="BAM")
+      }
+      rm(gal1)
+    }
+    close(bamfile)
+    for(i in seq_along(outfile)){
+      if(length(outfile[[i]])>1){
+        mergedfile[[names(outfile)[i]]] <- mergeBam(outfile[[i]], 
+                                                    destination=file.path(outPath, 
+                                                                          paste0(names(outfile)[i], ".bam")), 
+                                                    indexDestination=TRUE)
+        unlink(outfile[[i]])
+        unlink(paste0(outfile[[i]], ".bai"))
+      }else{
+        file.copy(outfile[[i]], 
+                  file.path(outPath, paste0(names(outfile)[i], ".bam")))
+        file.copy(paste0(outfile[[i]], ".bai"), 
+                  file.path(outPath, paste0(names(outfile)[i], ".bam.bai")))
+        mergedfile[[names(outfile)[i]]] <- 
+          file.path(outPath, paste0(names(outfile)[i], ".bam"))
+        unlink(outfile[[i]])
+        unlink(paste0(outfile[[i]], ".bai"))
+      }
+    }
+    meta$param <- ScanBamParam(flag=meta$param@flag, what=c("qname", "flag", "mapq", "isize"))
+    objs <- lapply(mergedfile, function(.ele){
+      ## read the bam files
+      chunk0 <- readGAlignments(.ele, param=meta$param)
+      names(chunk0) <- mcols(chunk0)$qname
+      chunk0 <- chunk0[order(names(chunk0))]
+      mcols(chunk0)$mpos <- mpos[paste(mcols(chunk0)$qname, start(chunk0))]
+      chunk0
+    })
+    return(objs)
+  }
+  
   if(length(obj)==0){
     obj <- loadBamFile(obj)
   }
   stopifnot(length(names(obj))==length(obj))
-  conservationFlag <- FALSE
-  if(!missing(conservation)){
-    if(length(conservation)){
-        stopifnot(is(conservation, "GScores"))
-        conservationFlag <- TRUE ## conservation is supplied.
-    }
-  }
   
   seqlev <- unique(seqlevels(obj))
   seqlev <- seqlev[seqlev %in% unique(seqnames(obj))]
@@ -99,6 +176,9 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
                     breaks = breaks,
                     labels = labels))
   if(!conservationFlag){
+    if(!missing(outPath)){
+      writeListOfGAlignments(objs, outPath = outPath)
+    }
     return(objs)
   }
   stopifnot(is(txs, "GRanges"))
@@ -246,6 +326,9 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
                           labels = labels))
   Nucleosome[[labelsOfNucleosomeFree]] <- NucleosomeFree
   for(i in seq_along(objs)) objs[[i]] <- c(Nucleosome[[i]], objs[[i]])
+  if(!missing(outPath)){
+    writeListOfGAlignments(objs, outPath = outPath)
+  }
   objs
 }
 

@@ -89,7 +89,7 @@ readBamFile <- function(bamFile, which, tag=character(0),
   }
 }
 
-loadBamFile <- function(gal){
+loadBamFile <- function(gal, which=NULL, minimal=FALSE){
   meta <- metadata(gal)
   if(!all(c("file", "param") %in% names(meta))){
     stop("length of gal could not be 0.")
@@ -97,10 +97,25 @@ loadBamFile <- function(gal){
   asMates <- meta$asMates
   if(length(asMates)==0) asMates <- FALSE
   meta$asMates <- NULL
-  meta$which <- NULL
+  meta$which <- which
+  if(minimal){
+    meta$param <- ScanBamParam(flag=meta$param@flag, what=("qname"))
+  }
   if(asMates){
+    meta$mpos <- NULL
     do.call(readGAlignmentsList, meta)
   }else{
-    do.call(readGAlignments, meta)
+    if(length(meta$mpos)>0){
+      mpos <- meta$mpos
+      meta$mpos <- NULL
+      gal1 <- do.call(readGAlignments, meta)
+      mcols(gal1)$MD <- NULL
+      names(gal1) <- mcols(gal1)$qname
+      gal1 <- gal1[order(names(gal1))]
+      mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
+      gal1
+    }else{
+      do.call(readGAlignments, meta)
+    }
   }
 }

@@ -60,23 +60,24 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       }else{
         mergedfile <- outfile
       }
-      gal1 <- readGAlignments(mergedfile, param = meta$param)
-      if(missing(outbam)){
+      if(!missing(outbam)){
+        file.copy(from=mergedfile, to=outbam)
+        file.copy(from=paste0(mergedfile, ".bai"), 
+                  to=paste0(outbam, ".bai"))
+        gal1 <- GAlignments()
+        meta$file <- outbam
+        meta$asMates <- FALSE
+        meta$mpos <- mpos
+        metadata(gal1) <- meta
+      }else{
+        gal1 <- readGAlignments(mergedfile, param = meta$param)
+        mcols(gal1)$MD <- NULL
+        names(gal1) <- mcols(gal1)$qname
+        gal1 <- gal1[order(names(gal1))]
+        mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
         unlink(mergedfile)
         unlink(paste0(mergedfile, ".bai"))
-      }else{
-        tryCatch({
-          file.copy(from=mergedfile, to=outbam)
-          file.copy(from=paste0(mergedfile, ".bai"), 
-                      to=paste0(outbam, ".bai"))
-        }, error=function(e){
-          message(e)
-        })
       }
-      mcols(gal1)$MD <- NULL
-      names(gal1) <- mcols(gal1)$qname
-      gal1 <- gal1[order(names(gal1))]
-      mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
       return(gal1)
     }
     stopifnot(length(gal)>0)

@@ -5,10 +5,11 @@
 \title{split bams into nucleosome free, mononucleosome,
 dinucleosome and trinucleosome}
 \usage{
-splitGAlignmentsByCut(obj, txs, genome, conservation, breaks = c(0, 100,
-  180, 247, 315, 473, 558, 615, Inf), labels = c("NucleosomeFree",
-  "inter1", "mononucleosome", "inter2", "dinucleosome", "inter3",
-  "trinucleosome", "others"), labelsOfNucleosomeFree = "NucleosomeFree",
+splitGAlignmentsByCut(obj, txs, genome, conservation, outPath,
+  breaks = c(0, 100, 180, 247, 315, 473, 558, 615, Inf),
+  labels = c("NucleosomeFree", "inter1", "mononucleosome", "inter2",
+  "dinucleosome", "inter3", "trinucleosome", "others"),
+  labelsOfNucleosomeFree = "NucleosomeFree",
   labelsOfMononucleosome = "mononucleosome",
   trainningSetPercentage = 0.15, cutoff = 0.8,
   halfSizeOfNucleosome = 80L)
@@ -21,6 +22,9 @@ splitGAlignmentsByCut(obj, txs, genome, conservation, breaks = c(0, 100,
 \item{genome}{an object of BSgenome}
 
 \item{conservation}{an object of \link[GenomicScores:GScores-class]{GScores}.}
+
+\item{outPath}{folder to save the splitted alignments. If outPath is setting, 
+the return of the function will not contain seq and qual fields.}
 
 \item{breaks}{a numeric vector for fragment size of nucleosome free,
 mononucleosome, dinucleosome and trinucleosome. The breaks pre-defined
