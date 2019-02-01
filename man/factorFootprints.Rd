@@ -7,7 +7,7 @@
 factorFootprints(bamfiles, index = bamfiles, pfm, genome,
   min.score = "95\%", bindingSites, seqlev = paste0("chr", c(1:22, "X",
   "Y")), upstream = 100, downstream = 100, maxSiteNum = 1e+06,
-  anchor = "cut site", ...)
+  anchor = "cut site", group = "strand", ...)
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.
@@ -42,6 +42,10 @@ sites will be used.}
 
 \item{anchor}{"cut site" or "fragment center". If "fragment center" is used, 
 the input bamfiles must be paired-end.}
+
+\item{group}{Group information for the bamfiles. Default by strand. Otherwise,
+a factor or vector of characters with same length of bamfiles. The
+group is limited to 2 groups.}
 
 \item{...}{xlab, legTitle, xlim or ylim could be used by \link{plotFootprints}}
 }

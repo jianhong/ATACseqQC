@@ -4,14 +4,18 @@
 \alias{footprintsScanner}
 \title{scan ATAC-seq footprints infer factor occupancy genome wide}
 \usage{
-footprintsScanner(bamfiles, index = bamfiles, bindingSitesList,
-  seqlev = "chr1", upstream = 100, downstream = 100)
+footprintsScanner(bamExp, bamCtl, indexExp = bamExp, indexCtl = bamCtl,
+  bindingSitesList, seqlev = paste0("chr", c(1:25, "X", "Y")),
+  proximal = 45L, distal = proximal, gap = 5L)
 }
 \arguments{
-\item{bamfiles}{A vector of characters indicates the file names of bams. 
-All the bamfiles will be pulled together.}
+\item{bamExp}{A vector of characters indicates the file names of experiment bams. 
+The bam file must be the one with shifted reads.}
 
-\item{index}{The names of the index file of the 'BAM' file being processed;
+\item{bamCtl}{A vector of characters indicates the file names of control bams. 
+The bam file must be the one with shifted reads.}
+
+\item{indexExp, indexCtl}{The names of the index file of the 'BAM' file being processed;
 This is given without the '.bai' extension.}
 
 \item{bindingSitesList}{A object of \link[GenomicRanges:GRangesList-class]{GRangesList} indicates
@@ -19,18 +23,19 @@ candidate binding sites (eg. the output of fimo).}
 
 \item{seqlev}{A vector of characters indicates the sequence levels.}
 
-\item{upstream, downstream}{numeric(1) or integer(1).
-Upstream and downstream of the binding region for
-aggregate ATAC-seq footprint.}
+\item{proximal, distal}{numeric(1) or integer(1).
+basepair for open region from binding sites (proximal) and extented region for background (distal) 
+of the binding region for aggregate ATAC-seq footprint.}
+
+\item{gap}{numeric(1) or integer(1). basepair for gaps among binding sites, 
+proximal, and distal. default is 5L.}
 }
 \value{
-an invisible list of matrixes with the signals for plot.
+a list.
 It includes:
- - signal    mean values of coverage for positive strand and negative strand
-             in feature regions
- - spearman.correlation    spearman correlations of cleavage counts in the 
-             highest 10-nucleotide-window and binding prediction score.
- - bindingSites    predicted binding sites.
+ - bindingSites            GRanges of binding site with hits of reads
+ - data                    a list with test result for each binding site
+ - results                 a data.frame with open score and enrichment score of motifs
 }
 \description{
 Aggregate ATAC-seq footprint for a bunch of motifs generated
@@ -43,14 +48,8 @@ bamfile <- system.file("extdata", "GL1.bam",
 bsl <- system.file("extdata", "jolma2013.motifs.bindingList.95.rds",
                   package="ATACseqQC")
 bindingSitesList <- readRDS(bsl)
-footprintsScanner(bamfile, bindingSitesList=bindingSitesList)
+footprintsScanner(bamfile, seqlev="chr1", bindingSitesList=bindingSitesList)
 
-}
-\references{
-Chen, K., Xi, Y., Pan, X., Li, Z., Kaestner, K., Tyler, J.,
-Dent, S., He, X. and Li, W., 2013.
-DANPOS: dynamic analysis of nucleosome position and occupancy by sequencing.
-Genome research, 23(2), pp.341-351.
 }
 \author{
 Jianhong Ou

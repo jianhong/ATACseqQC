@@ -24,6 +24,9 @@
 #'        sites will be used.
 #' @param anchor "cut site" or "fragment center". If "fragment center" is used, 
 #'        the input bamfiles must be paired-end.
+#' @param group Group information for the bamfiles. Default by strand. Otherwise,
+#'              a factor or vector of characters with same length of bamfiles. The
+#'              group is limited to 2 groups.
 #' @param ... xlab, legTitle, xlim or ylim could be used by \link{plotFootprints}
 #' @importFrom stats cor.test
 #' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
@@ -65,6 +68,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
                              seqlev=paste0("chr", c(1:22, "X", "Y")),
                              upstream=100, downstream=100,
                              maxSiteNum=1e6, anchor="cut site",
+                             group="strand",
                              ...){
   #stopifnot(length(bamfiles)==4)
   stopifnot(is(genome, "BSgenome"))
@@ -74,6 +78,19 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   maxSiteNum <- ceiling(maxSiteNum[1])
   stopifnot(maxSiteNum>1)
   anchor <- match.arg(anchor, choices = c("cut site", "fragment center"))
+  if(length(group) == 1){
+    if(group!="strand"){
+      stop("If length of group is 1, it must be strand.")
+    }
+    groupFlag <- TRUE
+  }else{
+    stopifnot(length(group)==length(bamfiles))
+    group <- as.factor(group)
+    if(length(levels(group))!=2){
+      stop("The length of levels of group must be 2.")
+    }
+    groupFlag <- FALSE
+  }
   if(anchor=="fragment center"){
     null <- mapply(function(.bam, .index){
       suppressMessages(pe <- testPairedEndBam(.bam, .index))
@@ -159,28 +176,45 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
                     bamfiles, index, SIMPLIFY = FALSE)
   }
   bamIn <- lapply(bamIn, as, Class = "GRanges")
-  if(!is(bamIn, "GRangesList")) bamIn <- GRangesList(bamIn)
-  bamIn <- unlist(bamIn)
-  seqlevelsStyle(bamIn) <- seqlevelsStyle(genome)
-  if(anchor=="cut site"){
-    ## keep 5'end as cutting sites
-    bamIn <- promoters(bamIn, upstream=0, downstream=1)
+  bamIn <- split(bamIn, group)
+  bamIn <- lapply(bamIn, function(.ele){
+    if(!is(.ele, "GRangesList")) .ele <- GRangesList(.ele)
+    .ele <- unlist(.ele)
+    seqlevelsStyle(.ele) <- seqlevelsStyle(genome)
+    if(anchor=="cut site"){
+      ## keep 5'end as cutting sites
+      promoters(.ele, upstream=0, downstream=1)
+    }else{
+      ## keep fragment center
+      reCenterPeaks(.ele, width=1)
+    }
+  })
+  libSize <- lengths(bamIn)
+  libFactor <- mapply(bamIn, libSize, FUN=function(.ele, .libSize){
+    coverageSize <- sum(as.numeric(width(reduce(.ele, ignore.strand=TRUE))))
+    .libSize / coverageSize
+  })
+  
+  if(groupFlag){
+    ## split into positive strand and negative strand
+    bamIn <- split(bamIn[[1]], strand(bamIn[[1]]))
+    ## get coverage
+    cvglist <- sapply(bamIn, coverage)
+    cvglist <- cvglist[c("+", "-")]
+    cvglist <- lapply(cvglist, function(.ele)
+      .ele[names(.ele) %in% seqlev])
+    ## coverage of mt, must be filtered, otherwise too much
+    cvgSum <- cvglist[["+"]] + cvglist[["-"]] ## used for filter mt
   }else{
-    ## keep fragment center
-    bamIn <- reCenterPeaks(bamIn, width=1)
+    ## it was splitted by groups
+    ## get coverage
+    cvglist <- sapply(bamIn, coverage)
+    cvglist <- lapply(cvglist, function(.ele)
+      .ele[names(.ele) %in% seqlev])
+    ## coverage of mt, must be filtered, otherwise too much
+    cvgSum <- cvglist[[1]] + cvglist[[2]] ## used for filter mt
   }
-  libSize <- length(bamIn)
-  coverageSize <- sum(as.numeric(width(reduce(bamIn, ignore.strand=TRUE))))
-  libFactor <- libSize / coverageSize
-  ## split into positive strand and negative strand
-  bamIn <- split(bamIn, strand(bamIn))
-  ## get coverage
-  cvglist <- sapply(bamIn, coverage)
-  cvglist <- cvglist[c("+", "-")]
-  cvglist <- lapply(cvglist, function(.ele)
-    .ele[names(.ele) %in% seqlev])
-  ## coverage of mt, must be filtered, otherwise too much
-  cvgSum <- cvglist[["+"]] + cvglist[["-"]]
+  
   mt.s <- split(mt, seqnames(mt))
   seqlev <- intersect(names(cvgSum), names(mt.s))
   cvgSum <- cvgSum[seqlev]
@@ -227,8 +261,14 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   mt <- mt[mt$userdefined]
   mt$userdefined <- NULL
   ## segmentation the signals
-  ## x2 because stranded.
-  Profile <- lapply(sigs, function(.ele) colMeans(.ele, na.rm = TRUE)*2/libFactor)
+  if(groupFlag){
+    ## x2 because stranded.
+    Profile <- lapply(sigs, function(.ele) colMeans(.ele, na.rm = TRUE)*2/libFactor[1])
+  }else{
+    Profile <- mapply(sigs, libFactor, FUN = function(.ele, .libFac){
+      colMeans(.ele, na.rm = TRUE)/.libFac
+    }, SIMPLIFY = FALSE)
+  }
   ## upstream + wid + downstream
   Profile.split <- lapply(Profile, function(.ele){
     list(upstream=.ele[seq.int(upstream)],
@@ -275,7 +315,13 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   names(Profile.seg)[2:3] <- c("distal_abun", "proximal_abun")
   tryCatch({ ## try to avoid the error when ploting.
     args <- list(...)
-    args$Profile <- c(Profile[["+"]], Profile[["-"]])
+    if(groupFlag){
+      args$Profile <- c(Profile[["+"]], Profile[["-"]])
+      args$legLabels <- c("For. strand", "Rev. strand")
+    }else{
+      args$Profile <- c(Profile[[1]], Profile[[2]])
+      args$legLabels <- names(Profile)
+    }
     args$ylab <- ifelse(anchor=="cut site", "Cut-site probability", "reads density (arbitrary unit)")
     args$Mlen <- wid
     args$motif <- pwm2pfm(pfm)

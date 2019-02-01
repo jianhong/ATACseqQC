@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.8
+
+* change the function of footprintsScanner.
+
 # CHANGES IN VERSION 1.7.7
 
 * add parameter outPath for splitGAlignmentsByCut.

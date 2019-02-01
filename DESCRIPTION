@@ -1,7 +1,7 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.7.7
+Version: 1.7.8
 Author: Jianhong Ou, Haibo Liu, Feng Yan, Jun Yu, Michelle Kelliher,
         Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jianhong.ou@duke.com>
@@ -24,7 +24,7 @@ Depends: R (>= 3.4), BiocGenerics, S4Vectors
 Imports: BSgenome, Biostrings, ChIPpeakAnno, IRanges, GenomicRanges,
         GenomicAlignments, GenomeInfoDb, GenomicScores, graphics, grid,
         limma, Rsamtools (>= 1.31.2), randomForest, rtracklayer, stats,
-        motifStack, preseqR, utils, KernSmooth
+        motifStack, preseqR, utils, KernSmooth, edgeR
 Suggests: BiocStyle, knitr, BSgenome.Hsapiens.UCSC.hg19,
         TxDb.Hsapiens.UCSC.hg19.knownGene, phastCons100way.UCSC.hg19,
         MotifDb, trackViewer, testthat
@@ -34,3 +34,5 @@ VignetteBuilder: knitr
 RoxygenNote: 6.1.1
 biocViews: Sequencing, DNASeq, ATACSeq, GeneRegulation, QualityControl,
         Coverage, NucleosomePositioning, ImmunoOncology
+Encoding: UTF-8
+

@@ -6,6 +6,7 @@
 #' @param Mlen Length of the motif for drawing vertical lines delimiting it
 #' @param xlab Label of the x axis
 #' @param ylab Label for the y axis
+#' @param legLabels Labels for legend.
 #' @param legTitle Title for one of the plot corners
 #' @param xlim xlim
 #' @param ylim ylim
@@ -30,6 +31,7 @@
 plotFootprints <- function (Profile, Mlen = 0,
                             xlab = "Dist. to motif (bp)",
                             ylab = "Cut-site probability",
+                            legLabels = c("For. strand", "Rev. strand"),
                             legTitle, xlim, ylim,
                             newpage = TRUE, motif, segmentation)
 {
@@ -99,7 +101,7 @@ plotFootprints <- function (Profile, Mlen = 0,
                       height=convertY(unit(3, "lines"), unitTo="npc"),
                       just=c("right", "top"), name="legendWraper")
     pushViewport(legvp)
-    grid.legend(labels=c("For. strand", "Rev. strand"),
+    grid.legend(labels=legLabels,
                 gp=gpar(lwd=2, lty=1, col=c("darkblue", "darkred")))
     upViewport()
   } else {

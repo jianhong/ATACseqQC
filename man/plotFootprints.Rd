@@ -5,8 +5,9 @@
 \title{Plots a footprint estimated by Centipede}
 \usage{
 plotFootprints(Profile, Mlen = 0, xlab = "Dist. to motif (bp)",
-  ylab = "Cut-site probability", legTitle, xlim, ylim, newpage = TRUE,
-  motif, segmentation)
+  ylab = "Cut-site probability", legLabels = c("For. strand",
+  "Rev. strand"), legTitle, xlim, ylim, newpage = TRUE, motif,
+  segmentation)
 }
 \arguments{
 \item{Profile}{A vector with the profile estimated by CENTIPEDE}
@@ -16,6 +17,8 @@ plotFootprints(Profile, Mlen = 0, xlab = "Dist. to motif (bp)",
 \item{xlab}{Label of the x axis}
 
 \item{ylab}{Label for the y axis}
+
+\item{legLabels}{Labels for legend.}
 
 \item{legTitle}{Title for one of the plot corners}
 
