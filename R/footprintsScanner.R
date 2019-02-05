@@ -15,8 +15,10 @@
 #'        of the binding region for aggregate ATAC-seq footprint.
 #' @param gap numeric(1) or integer(1). basepair for gaps among binding sites, 
 #'            proximal, and distal. default is 5L.
+#' @param maximalBindingWidth numeric(1) or integer(1). Maximal binding sites width for
+#'                            all the motifs. 
 #' @importFrom stats p.adjust pnorm
-#' @importFrom ChIPpeakAnno estLibSize
+#' @importFrom ChIPpeakAnno estLibSize reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments summarizeOverlaps
 #' @importFrom Biostrings matchPWM maxScore
 #' @importFrom Rsamtools ScanBamParam
@@ -43,7 +45,8 @@
 #'
 footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl, 
                               bindingSitesList, seqlev=paste0("chr", c(1:25, "X", "Y")),  
-                              proximal=45L, distal=proximal, gap=5L){
+                              proximal=45L, distal=proximal, gap=5L, 
+                              maximalBindingWidth=25L){
   ## compare signal vs. inputs, negative binomial test
   ## reads must be shifted. 5' end counts
   ## 2 steps: 
@@ -87,9 +90,17 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
   }
   mts.unlist <- unlist(GRangesList(mts), use.names = FALSE)
   mts.unlist$motif <- rep(names(mts), lengths(mts))
+  names(mts.unlist) <- 
+    paste0("pos", formatC(seq.int(length(mts.unlist)), 
+                          width = nchar(as.character(length(mts.unlist))), 
+                          flag = "0"))
   seqlev <- intersect(seqlevels(mts.unlist), seqlev)
   seqlevels(mts.unlist) <- seqlev
   seqinfo(mts.unlist) <- Seqinfo(seqlev, seqlengths = seqlengths(mts.unlist))
+  ## set all binding sites width identical
+  mts.unlist <- reCenterPeaks(mts.unlist, 
+                              width = min(c(max(width(mts.unlist)), 
+                                            maximalBindingWidth)))
   mts.unlist.with.proximal <- mts.unlist.with.distal <- mts.unlist
   mts.unlist.with.proximal.gap <- mts.unlist.with.distal.gap <- mts.unlist
   start(mts.unlist.with.proximal) <- start(mts.unlist) - proximal - gap

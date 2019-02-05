@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.7.9
+
+* add maximalBindingWidth parameter to footprintsScanner
+
 # CHANGES IN VERSION 1.7.8
 
 * change the function of footprintsScanner.
