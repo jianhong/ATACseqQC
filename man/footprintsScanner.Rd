@@ -7,7 +7,7 @@
 footprintsScanner(bamExp, bamCtl, indexExp = bamExp, indexCtl = bamCtl,
   bindingSitesList, seqlev = paste0("chr", c(1:25, "X", "Y")),
   proximal = 45L, distal = proximal, gap = 5L,
-  maximalBindingWidth = 25L)
+  maximalBindingWidth = NA)
 }
 \arguments{
 \item{bamExp}{A vector of characters indicates the file names of experiment bams. 
@@ -32,7 +32,8 @@ of the binding region for aggregate ATAC-seq footprint.}
 proximal, and distal. default is 5L.}
 
 \item{maximalBindingWidth}{numeric(1) or integer(1). Maximal binding sites width for
-all the motifs.}
+all the motifs. If setted, all motif binding sites will be 
+re-sized to this value.}
 }
 \value{
 a list.
