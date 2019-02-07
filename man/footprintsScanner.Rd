@@ -6,8 +6,9 @@
 \usage{
 footprintsScanner(bamExp, bamCtl, indexExp = bamExp, indexCtl = bamCtl,
   bindingSitesList, seqlev = paste0("chr", c(1:25, "X", "Y")),
-  proximal = 45L, distal = proximal, gap = 5L,
-  maximalBindingWidth = NA)
+  proximal = 40L, distal = proximal, gap = 10L,
+  maximalBindingWidth = NA, cutoffLogFC = log2(1.5),
+  cutoffPValue = 0.05)
 }
 \arguments{
 \item{bamExp}{A vector of characters indicates the file names of experiment bams. 
@@ -34,6 +35,8 @@ proximal, and distal. default is 5L.}
 \item{maximalBindingWidth}{numeric(1) or integer(1). Maximal binding sites width for
 all the motifs. If setted, all motif binding sites will be 
 re-sized to this value.}
+
+\item{cutoffLogFC, cutoffPValue}{numeric(1). Cutoff value for differential bindings.}
 }
 \value{
 a list.

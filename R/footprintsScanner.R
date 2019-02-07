@@ -18,6 +18,7 @@
 #' @param maximalBindingWidth numeric(1) or integer(1). Maximal binding sites width for
 #'                            all the motifs. If setted, all motif binding sites will be 
 #'                            re-sized to this value. 
+#' @param cutoffLogFC,cutoffPValue numeric(1). Cutoff value for differential bindings.
 #' @importFrom stats p.adjust pnorm
 #' @importFrom ChIPpeakAnno estLibSize reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments summarizeOverlaps
@@ -46,8 +47,10 @@
 #'
 footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl, 
                               bindingSitesList, seqlev=paste0("chr", c(1:25, "X", "Y")),  
-                              proximal=45L, distal=proximal, gap=5L, 
-                              maximalBindingWidth=NA){
+                              proximal=40L, distal=proximal, gap=10L, 
+                              maximalBindingWidth=NA, 
+                              cutoffLogFC=log2(1.5),
+                              cutoffPValue=0.05){
   ## compare signal vs. inputs, negative binomial test
   ## reads must be shifted. 5' end counts
   ## 2 steps: 
@@ -217,7 +220,7 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
   ## split the reads counts by factor
   res <- lapply(res, split, f=mts.unlist$motif)
   ## cutoff the values by logFC > log2(1.2) && FDR < 0.05
-  countTable <- function(x, fc=log2(1.2), pval=0.05, alternative=c("greater", "less")){
+  countTable <- function(x, fc=cutoffLogFC, pval=cutoffPValue, alternative=c("greater", "less")){
     alternative <- match.arg(alternative)
     x <- do.call(rbind, lapply(x, function(.ele){
       if(alternative=="greater"){
