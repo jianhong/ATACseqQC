@@ -14,7 +14,7 @@
 #' @param flag An integer(2) vector used to filter reads based on their 
 #' 'flag' entry. This is most easily created with the 
 #' @param bigFile If the file take too much memory, set it to true to avoid read the reads into memory.
-#' \link{Rsamtools}[scanBamFlag] helper function.
+#' \link[Rsamtools:ScanBamParam-class]{scanBamFlag} helper function.
 #' @param asMates logical(1). Paired ends or not
 #' @param ... parameters used by \link[GenomicAlignments:readGAlignments]{readGAlignmentsList} 
 #' or \link[GenomicAlignments]{readGAlignments}

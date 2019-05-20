@@ -30,7 +30,7 @@ Fields are described on the \link{Rsamtools}[scanBam] help page.}
 \item{asMates}{logical(1). Paired ends or not}
 
 \item{bigFile}{If the file take too much memory, set it to true to avoid read the reads into memory.
-\link{Rsamtools}[scanBamFlag] helper function.}
+\link[Rsamtools:ScanBamParam-class]{scanBamFlag} helper function.}
 
 \item{...}{parameters used by \link[GenomicAlignments:readGAlignments]{readGAlignmentsList} 
 or \link[GenomicAlignments]{readGAlignments}}

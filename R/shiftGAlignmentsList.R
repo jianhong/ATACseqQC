@@ -99,8 +99,15 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
                        positive=positive,
                        negative=negative)
     names(gal1) <- mcols(gal1)$qname
-    mcols(gal1)$mpos[gp==2] <- start(gal1)[which(gp==2)-1]
-    mcols(gal1)$mpos[gp==1] <- start(gal1)[which(gp==1)+1]
+    id2 <- which(gp==2)
+    id1 <- id2-1
+    mcols(gal1)$mpos[gp==2] <- start(gal1)[id1]
+    mcols(gal1)$mpos[id1] <- start(gal1)[id2]
+    gal1 <- gal1[!is.na(mcols(gal1)$mpos)] ## remove the single ends
+    if(length(gal1)<1){
+      message("Only single end reads")
+      return(gal1)
+    }
     ## till now, gal1 must have mrnm, mpos, names and flag
     stopifnot(length(mcols(gal1)$mrnm)>0)
     stopifnot(length(mcols(gal1)$mpos)>0)

@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.9.1
+
+* Fix the bug if the bam file contail mix of single ends and paired ends.
+
 # CHANGES IN VERSION 1.7.9
 
 * add maximalBindingWidth parameter to footprintsScanner
