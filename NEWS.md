@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.8.1
+
+* Fix the bug if the bam file contail mix of single ends and paired ends.
+
 # CHANGES IN VERSION 1.7.8
 
 * change the function of footprintsScanner.

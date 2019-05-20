@@ -113,7 +113,14 @@ footprinting.
 
 ```{r}
 ## bamfile tags to be read in
-tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
+possibleTag <- combn(LETTERS, 2)
+possibleTag <- c(paste0(possibleTag[1, ], possibleTag[2, ]),
+                 paste0(possibleTag[2, ], possibleTag[1, ]))
+library(Rsamtools)
+bamTop100 <- scanBam(BamFile(bamfile, yieldSize = 100),
+                     param = ScanBamParam(tag=possibleTag))[[1]]$tag
+tags <- names(bamTop100)[lengths(bamTop100)>0]
+tags
 ## files will be output into outPath
 outPath <- "splited"
 dir.create(outPath)
