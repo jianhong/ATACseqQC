@@ -39,7 +39,8 @@ readBamFile <- function(bamFile, which, tag=character(0),
                                "seq", "qual", "mrnm"),
                         flag=scanBamFlag(isSecondaryAlignment = FALSE,
                                          isUnmappedQuery=FALSE,
-                                         isNotPassingQualityControls = FALSE),
+                                         isNotPassingQualityControls = FALSE,
+                                         isSupplementaryAlignment = FALSE),
                         asMates=FALSE, bigFile=FALSE,
                         ...) {
   stopifnot(length(bamFile)==1)

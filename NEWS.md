@@ -1,6 +1,10 @@
+# CHANGES IN VERSION 1.9.2
+
+* Fix the bug if the bam file containsupplementary alignments.
+
 # CHANGES IN VERSION 1.9.1
 
-* Fix the bug if the bam file contail mix of single ends and paired ends.
+* Fix the bug if the bam file contain mix of single ends and paired ends.
 
 # CHANGES IN VERSION 1.7.9
 
