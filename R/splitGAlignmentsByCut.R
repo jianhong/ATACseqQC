@@ -267,7 +267,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   newdata <- unlist(newdata)
   seqlevels(newdata) <- seqlev
   seqinfo(newdata) <- seqinfo(TSS)
-  nd <- trim(newdata)
+  nd <- GenomicRanges::trim(newdata)
+  rm(newdata)
   nf.seq <- getSeq(genome, nf)
   nc.seq <- getSeq(genome, nc)
   nd.seq <- getSeq(genome, nd)

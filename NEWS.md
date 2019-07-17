@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.9.3
+
+* Try to decrease the memory cost for splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.9.2
 
 * Fix the bug if the bam file containsupplementary alignments.
