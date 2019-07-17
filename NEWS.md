@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.8.2
+
+* Try to reduce the memory cost of splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.8.1
 
 * Fix the bug if the bam file contail mix of single ends and paired ends.

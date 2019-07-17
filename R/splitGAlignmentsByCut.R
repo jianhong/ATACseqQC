@@ -223,6 +223,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
                                  output="nearestLocation")
   nc.anno <- annotatePeakInBatch(nc.cvg.view, AnnotationData=TSS,
                                  output="nearestLocation")
+  nf.anno$feature_strand[is.na(nf.anno$feature_strand)] <- "*"
+  nc.anno$feature_strand[is.na(nc.anno$feature_strand)] <- "*"
   strand(nf.anno) <- nf.anno$feature_strand
   strand(nc.anno) <- nc.anno$feature_strand
   mcols(nf.anno) <- DataFrame(score=1)
@@ -265,7 +267,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   newdata <- unlist(newdata)
   seqlevels(newdata) <- seqlev
   seqinfo(newdata) <- seqinfo(TSS)
-  nd <- trim(newdata)
+  nd <- GenomicRanges::trim(newdata)
+  rm(newdata)
   nf.seq <- getSeq(genome, nf)
   nc.seq <- getSeq(genome, nc)
   nd.seq <- getSeq(genome, nd)
@@ -273,6 +276,9 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nf.gc <- letterFrequency(nf.seq, letters="CG", as.prob = TRUE)
   nc.gc <- letterFrequency(nc.seq, letters="CG", as.prob = TRUE)
   nd.gc <- letterFrequency(nd.seq, letters="CG", as.prob = TRUE)
+  rm(nf.seq)
+  rm(nc.seq)
+  rm(nd.seq)
   # conservation
   getScoresFromCons <- function(cons, gr){
       gr.cons <- gscores(x=cons, ranges=gr)
@@ -291,6 +297,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nc.ol <- findOverlaps(nc, nc.old)
   nf.ol <- split(width(nf.old)[subjectHits(nf.ol)], queryHits(nf.ol))
   nc.ol <- split(width(nc.old)[subjectHits(nc.ol)], queryHits(nc.ol))
+  rm(nf.old)
+  rm(nc.old)
   stopifnot(length(nf.ol)==length(nf))
   stopifnot(length(nc.ol)==length(nc))
   nf.frag.len <- sapply(nf.ol, median)
