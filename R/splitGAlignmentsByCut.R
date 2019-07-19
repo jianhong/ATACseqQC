@@ -233,6 +233,12 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nx <- nx[width(nx)>=40]
   nf <- nx[nx$score>0]
   nc <- nx[nx$score<0]
+  if(length(nc)<1){
+    stop("not enough mononucleosome reads for training! Just try without conservation score.")
+  }
+  if(length(nf)<1){
+    stop("not enough nucleosome free reads for training! Just try without conservation score.")
+  }
   nf <- reCenterPeaks(nf, width=halfSizeOfNucleosome)
   nc <- reCenterPeaks(nc, width=halfSizeOfNucleosome)
   coverage.nf <-
@@ -280,7 +286,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   rm(nc.seq)
   rm(nd.seq)
   # conservation
-  getScoresFromCons <- function(cons, gr){
+  getScoresFromCons <- function(cons, gr){# this step too slow
       gr.cons <- gscores(x=cons, ranges=gr)
       stopifnot(identical(ranges(gr), ranges(gr.cons)))
       gr.cons <- gr.cons$scores

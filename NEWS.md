@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.9.4
+
+* Add the error handle if not enough mononucleosome reads for splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.9.3
 
 * Try to decrease the memory cost for splitGAlignmentsByCut.
