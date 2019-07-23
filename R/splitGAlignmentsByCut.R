@@ -185,6 +185,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   stopifnot(is(genome, "BSgenome"))
   nf.old <- objs[[labelsOfNucleosomeFree]]
   nc.old <- objs[[labelsOfMononucleosome]]
+  rm(objs)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
   nf.cvg <- coverage(nf.old)
   nc.cvg <- coverage(nc.old)
   nf.cvg <- nf.cvg[seqlev]
@@ -214,6 +216,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   TSS <- promoters(txs,
                    upstream = 0,
                    downstream = 1)
+  rm(txs)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
   TSS <- TSS[seqnames(TSS) %in% seqlev]
   seqlev <- seqlev[seqlev %in% unique(seqnames(TSS))]
   seqlevels(TSS) <- seqlev
@@ -285,6 +289,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   rm(nf.seq)
   rm(nc.seq)
   rm(nd.seq)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
   # conservation
   getScoresFromCons <- function(cons, gr){# this step too slow
       gr.cons <- gscores(x=cons, ranges=gr)
@@ -305,6 +310,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nc.ol <- split(width(nc.old)[subjectHits(nc.ol)], queryHits(nc.ol))
   rm(nf.old)
   rm(nc.old)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
   stopifnot(length(nf.ol)==length(nf))
   stopifnot(length(nc.ol)==length(nc))
   nf.frag.len <- sapply(nf.ol, median)
@@ -324,22 +330,34 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   pred <- predict(fit, newdata=testdata, type='prob')
   pred.free <- pred[, "f"]
   pred.bind <- pred[, "n"]
+  rm(nd.gc, nf.gc, nc.gc)
+  rm(pred)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
   nucleosome <- names(obj) %in% names(nd[pred.bind >= cutoff])
   nucleosomefree <- names(obj) %in%
     names(nd[pred.free>= cutoff & pred.bind < cutoff])
   NucleosomeFree <- obj[nucleosomefree]
   Nucleosome <- obj[nucleosome]
   left <- obj[!(nucleosome | nucleosomefree)]
+  rm(nd)
+  rm(obj)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
   objs <- split(left,
                 cut(abs(mcols(left)$isize),
                     breaks = breaks,
                     labels = labels))
+  rm(left)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
   Nucleosome <- split(Nucleosome,
                       cut(abs(mcols(Nucleosome)$isize),
                           breaks = breaks,
                           labels = labels))
   Nucleosome[[labelsOfNucleosomeFree]] <- NucleosomeFree
-  for(i in seq_along(objs)) objs[[i]] <- c(Nucleosome[[i]], objs[[i]])
+  rm(NucleosomeFree)
+  gc(verbose = FALSE, reset = TRUE, full = TRUE)
+  system.time(for(i in intersect(names(Nucleosome), names(objs))){
+    objs[[i]] <- c(Nucleosome[[i]], objs[[i]])
+  })
   if(!missing(outPath)){
     writeListOfGAlignments(objs, outPath = outPath)
   }
