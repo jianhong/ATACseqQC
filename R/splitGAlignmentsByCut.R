@@ -355,9 +355,9 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   Nucleosome[[labelsOfNucleosomeFree]] <- NucleosomeFree
   rm(NucleosomeFree)
   gc(verbose = FALSE, reset = TRUE, full = TRUE)
-  system.time(for(i in intersect(names(Nucleosome), names(objs))){
+  for(i in intersect(names(Nucleosome), names(objs))){
     objs[[i]] <- c(Nucleosome[[i]], objs[[i]])
-  })
+  }
   if(!missing(outPath)){
     writeListOfGAlignments(objs, outPath = outPath)
   }
