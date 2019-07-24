@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.9.6
+
+* Try to decrease the memory cost for splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.9.5
 
 * Try to decrease the memory cost for splitGAlignmentsByCut.
