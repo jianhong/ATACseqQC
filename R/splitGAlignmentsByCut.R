@@ -243,6 +243,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   if(length(nf)<1){
     stop("not enough nucleosome free reads for training! Just try without conservation score.")
   }
+  block <- 100000
   nf <- reCenterPeaks(nf, width=halfSizeOfNucleosome)
   nc <- reCenterPeaks(nc, width=halfSizeOfNucleosome)
   coverage.nf <-
@@ -257,7 +258,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nf$score <- unlist(lapply(coverage.nf, function(.ele)
     as.numeric(mcols(.ele)$coverage)))
   nf <- nf[order(nf$score, decreasing=TRUE)]
-  nf <- nf[seq_len(min(100000, length(nf)))]
+  nf <- nf[seq_len(min(block, length(nf)))]
   coverage.nc <-
     Views(nc.cvg[seqlev], split(ranges(nc),
                                 as.character(seqnames(nc)))[seqlev])
@@ -270,7 +271,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nc$score <- unlist(lapply(coverage.nc, function(.ele)
     as.numeric(mcols(.ele)$coverage)))
   nc <- nc[order(nc$score, decreasing=TRUE)]
-  nc <- nc[seq_len(min(100000, length(nc)))]
+  nc <- nc[seq_len(min(block, length(nc)))]
   obj <- obj[seqnames(obj) %in% seqlev]
   newdata <- split(as(obj, "GRanges"), names(obj))
   newdata <- range(newdata, ignore.strand=TRUE)
@@ -281,14 +282,19 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   rm(newdata)
   nf.seq <- getSeq(genome, nf)
   nc.seq <- getSeq(genome, nc)
-  nd.seq <- getSeq(genome, nd)
   # gc ratios
   nf.gc <- letterFrequency(nf.seq, letters="CG", as.prob = TRUE)
   nc.gc <- letterFrequency(nc.seq, letters="CG", as.prob = TRUE)
-  nd.gc <- letterFrequency(nd.seq, letters="CG", as.prob = TRUE)
+  
+  nd.gc <- lapply(split(nd, rep(as.character(seq.int(ceiling(length(nd)/block))),
+                                each=block)[seq_along(nd)]), 
+                   function(.ele){
+                     letterFrequency(getSeq(genome, .ele), letters="CG", as.prob = TRUE)
+                   })
+  nd.gc <- nd.gc[order(as.numeric(names(nd.gc)))]
+  nd.gc <- do.call(rbind, nd.gc)
   rm(nf.seq)
   rm(nc.seq)
-  rm(nd.seq)
   gc(verbose = FALSE, reset = TRUE, full = TRUE)
   # conservation
   getScoresFromCons <- function(cons, gr){# this step too slow
