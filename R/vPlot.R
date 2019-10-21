@@ -145,6 +145,9 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
   bamIn <- lapply(bamIn, as, Class = "GRanges")
   if(!is(bamIn, "GRangesList")) bamIn <- GRangesList(bamIn)
   bamIn <- unlist(bamIn, use.names = FALSE)
+  if(length(bamIn)<1){
+    stop("No paired reads. Please double check the inputs.")
+  }
   seqlevelsStyle(bamIn) <- seqlevelsStyle(genome)
   mt.ext <- promoters(reCenterPeaks(mt, width=1),
                       upstream=upstream+floor(wid/2),

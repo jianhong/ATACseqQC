@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.9.8
+
+* Add error message for vPlot when no paired reads in bam file.
+
 # CHANGES IN VERSION 1.9.7
 
 * Fix the bug that gscore changed the output for splitGAlignmentsByCut.
