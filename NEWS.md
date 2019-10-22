@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.9.9
+
+* export prepareBindingSitesList function.
+* Add rownames for footprintsScanner counts data.
+
 # CHANGES IN VERSION 1.9.8
 
 * Add error message for vPlot when no paired reads in bam file.

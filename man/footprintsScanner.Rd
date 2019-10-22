@@ -2,13 +2,17 @@
 % Please edit documentation in R/footprintsScanner.R
 \name{footprintsScanner}
 \alias{footprintsScanner}
+\alias{prepareBindingSitesList}
 \title{scan ATAC-seq footprints infer factor occupancy genome wide}
 \usage{
 footprintsScanner(bamExp, bamCtl, indexExp = bamExp, indexCtl = bamCtl,
   bindingSitesList, seqlev = paste0("chr", c(1:25, "X", "Y")),
   proximal = 40L, distal = proximal, gap = 10L,
   maximalBindingWidth = NA, cutoffLogFC = log2(1.5),
-  cutoffPValue = 0.05)
+  cutoffPValue = 0.05, correlatedFactorCutoff = 3/4)
+
+prepareBindingSitesList(pfms, genome, seqlev = paste0("chr", c(1:22, "X",
+  "Y")), expSiteNum = 5000)
 }
 \arguments{
 \item{bamExp}{A vector of characters indicates the file names of experiment bams. 
@@ -37,6 +41,18 @@ all the motifs. If setted, all motif binding sites will be
 re-sized to this value.}
 
 \item{cutoffLogFC, cutoffPValue}{numeric(1). Cutoff value for differential bindings.}
+
+\item{correlatedFactorCutoff}{numeric(1). Cutoff value for correlated factors. 
+If the overlapping binding site within 100bp is more than cutoff, the TFs will be treated as correlated factors.}
+
+\item{pfms}{A list of Position frequency Matrix represented as a numeric matrix
+with row names A, C, G and T.}
+
+\item{genome}{An object of \link[BSgenome:BSgenome-class]{BSgenome}.}
+
+\item{expSiteNum}{numeric(1). Expect number of predicted binding sites.
+if predicted binding sites is more than this number, top expSiteNum binding
+sites will be used.}
 }
 \value{
 a list.
@@ -58,6 +74,11 @@ bsl <- system.file("extdata", "jolma2013.motifs.bindingList.95.rds",
 bindingSitesList <- readRDS(bsl)
 footprintsScanner(bamfile, seqlev="chr1", bindingSitesList=bindingSitesList)
 
+library(MotifDb)
+motifs <- query(MotifDb, c("Hsapiens"))
+motifs <- as.list(motifs)
+library(BSgenome.Hsapiens.UCSC.hg19)
+#bindingSitesList <- prepareBindingSitesList(motifs, genome=Hsapiens)
 }
 \author{
 Jianhong Ou

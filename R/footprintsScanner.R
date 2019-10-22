@@ -19,6 +19,8 @@
 #'                            all the motifs. If setted, all motif binding sites will be 
 #'                            re-sized to this value. 
 #' @param cutoffLogFC,cutoffPValue numeric(1). Cutoff value for differential bindings.
+#' @param correlatedFactorCutoff numeric(1). Cutoff value for correlated factors. 
+#' If the overlapping binding site within 100bp is more than cutoff, the TFs will be treated as correlated factors.
 #' @importFrom stats p.adjust pnorm
 #' @importFrom ChIPpeakAnno estLibSize reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments summarizeOverlaps
@@ -50,7 +52,8 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
                               proximal=40L, distal=proximal, gap=10L, 
                               maximalBindingWidth=NA, 
                               cutoffLogFC=log2(1.5),
-                              cutoffPValue=0.05){
+                              cutoffPValue=0.05,
+                              correlatedFactorCutoff=3/4){
   ## compare signal vs. inputs, negative binomial test
   ## reads must be shifted. 5' end counts
   ## 2 steps: 
@@ -99,7 +102,7 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
                           width = nchar(as.character(length(mts.unlist))), 
                           flag = "0"))
   seqlev <- intersect(seqlevels(mts.unlist), seqlev)
-  seqlevels(mts.unlist) <- seqlev
+  seqlevels(mts.unlist) <- seqlevels(mts.unlist)[seqlevels(mts.unlist) %in% seqlev]
   seqinfo(mts.unlist) <- Seqinfo(seqlev, seqlengths = seqlengths(mts.unlist))
   ## set all binding sites width identical
   if(!is.na(maximalBindingWidth[1])){
@@ -165,6 +168,7 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
     counts$dis.gap <- NULL
     stopifnot(all(counts$dis>=0))
     stopifnot(all(counts$pro>=0))
+    rownames(counts) <- names(binding)
     counts
   }
   counts <- mapply(function(a, b) count5ends(bam=a, index=b, binding = mts.unlist, 
@@ -183,6 +187,7 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
   ## normalize counts by width of count region
   ## normalize by width
   wid <- width(mts.unlist)
+  names(wid) <- names(mts.unlist)
   norm.counts <- lapply(counts, function(.ele){
     round(.ele*max(c(wid, proximal, distal))/data.frame(bs=wid/2, pro=proximal, dis=distal))
   })
@@ -219,15 +224,45 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
   }
   ## split the reads counts by factor
   res <- lapply(res, split, f=mts.unlist$motif)
-  ## cutoff the values by logFC > log2(1.2) && FDR < 0.05
-  countTable <- function(x, fc=cutoffLogFC, pval=cutoffPValue, alternative=c("greater", "less")){
+  correlationScore <- function(mts.unlist){
+    #if the binding site overlaps within 100bp more than half of the binding sites
+    ol <- findOverlaps(mts.unlist, maxgap = 100, drop.self = TRUE, drop.redundant = TRUE)
+    qh <- mts.unlist[queryHits(ol)]$motif
+    sh <- mts.unlist[subjectHits(ol)]$motif
+    keep <- qh!=sh
+    qh <- qh[keep]
+    sh <- sh[keep]
+    tab <- table(data.frame(query=qh, subject=sh))
+    tab2 <- table(mts.unlist$motif)
+    per <- apply(tab, 2, function(.ele) .ele/tab2[rownames(tab)])
+    per <- per[match(colnames(per), rownames(per)), ]
+    rownames(per) <- colnames(per)
+    per[is.na(per)] <- 0
+    per
+  }
+  cs <- correlationScore(mts.unlist)
+  correlatedFactors <- function(cs, cutoff=3/4){
+    #hc <- hclust(as.dist(cs), method = "average")
+    w <- which(cs>cutoff)
+    i <- w - nrow(cs)*floor(w/nrow(cs))
+    j <- ceiling(w/nrow(cs))
+    g <- split(c(rownames(cs)[i], colnames(cs)[j]), c(colnames(cs)[j], rownames(cs)[i]))
+    g <- g[rownames(cs)]
+    names(g) <- rownames(cs)
+    g <- mapply(c, g, names(g))
+    g <- unname(g)
+    g <- lapply(g, sort)
+    unique(g)
+  }
+  cf <- correlatedFactors(cs, cutoff = correlatedFactorCutoff)
+  ## cutoff the values by logFC > log2(1.5) && FDR < 0.05
+  countTable <- function(x, fc=cutoffLogFC, pval=cutoffPValue, alternative=c("greater", "less", "both")){
     alternative <- match.arg(alternative)
     x <- do.call(rbind, lapply(x, function(.ele){
-      if(alternative=="greater"){
-        .ele <- table(.ele$logFC > fc & .ele$PValue < pval)[c("FALSE", "TRUE")]
-      }else{
-        .ele <- table(.ele$logFC < -1*fc & .ele$PValue < pval)[c("FALSE", "TRUE")]
-      }
+      .ele <- switch(alternative, 
+                     "greater"= table(.ele$logFC > fc & .ele$PValue < pval)[c("FALSE", "TRUE")],
+                     "less" = table(.ele$logFC < -1*fc & .ele$PValue < pval)[c("FALSE", "TRUE")],
+                     "both" = table(abs(.ele$logFC) > fc & .ele$PValue < pval)[c("FALSE", "TRUE")])
       .ele[is.na(.ele)] <- 0
       names(.ele) <- c("FALSE", "TRUE")
       .ele
@@ -235,26 +270,37 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
     ## get open or binding percentage and then Z-score
     percent <- 100*x[, "TRUE"]/rowSums(x)
     percent[is.infinite(percent)] <- 0
-    Z <- (percent - mean(percent))/sd(percent)
+    ## need to remove the correlated factors?
+    ## correlated factors, 
+    per.clean <- sapply(cf, function(.ele){
+      mean(percent[.ele])
+    })
+    Z <- (percent - mean(per.clean))/sd(per.clean)
     Z[is.na(Z)] <- -Inf
     ## get p-value
     pval <- pnorm(-Z) ## one side, over
-    #FDR <- p.adjust(pval, method = "BH")
     cbind(score=percent, pval)
   }
   enrich.counts <- lapply(res, countTable, alternative="greater")
   enrich.counts <- do.call(cbind, enrich.counts)
   reduce.counts <- lapply(res, countTable, alternative="less")
   reduce.counts <- do.call(cbind, reduce.counts)
+  alter.counts <- lapply(res, countTable, alternative="both")
+  alter.counts <- do.call(cbind, alter.counts)
   
-  colnames(enrich.counts) <- paste(rep(c("open", "enrichment"), 
+  colnames(enrich.counts) <- paste(rep(c("proximalSiteOpen", "bindingSiteEnrichment"), 
                                        each=ncol(enrich.counts)/2),
                                    colnames(enrich.counts), sep=".")
-  colnames(reduce.counts) <- paste(rep(c("close", "reduction"), 
+  colnames(reduce.counts) <- paste(rep(c("proximalSiteClose", "bindingSiteReduction"), 
                                        each=ncol(reduce.counts)/2),
                                    colnames(reduce.counts), sep=".")
+  colnames(alter.counts) <- paste(rep(c("proximalSiteAlter", "bindingSiteAlter"), 
+                                       each=ncol(alter.counts)/2),
+                                   colnames(alter.counts), sep=".")
+  
   stopifnot(identical(rownames(enrich.counts), rownames(reduce.counts)))
-  res.counts <- cbind(enrich.counts, reduce.counts)
+  stopifnot(identical(rownames(enrich.counts), rownames(alter.counts)))
+  res.counts <- cbind(enrich.counts, reduce.counts, alter.counts)
   return(list(bindingSites=mts.unlist,
               data=res,
               results=res.counts))
@@ -262,14 +308,15 @@ footprintsScanner <- function(bamExp, bamCtl, indexExp=bamExp, indexCtl=bamCtl,
 
 
 #' helper function for preparing the binding list
+#' @rdname footprintsScanner
 #' @param pfms A list of Position frequency Matrix represented as a numeric matrix
 #'        with row names A, C, G and T.
 #' @param genome An object of \link[BSgenome:BSgenome-class]{BSgenome}.
-#' @param seqlev A vector of characters indicates the sequence levels.
 #' @param expSiteNum numeric(1). Expect number of predicted binding sites.
 #'        if predicted binding sites is more than this number, top expSiteNum binding
 #'        sites will be used.
 #' @importFrom Biostrings matchPWM maxScore
+#' @export
 #' @examples
 #' library(MotifDb)
 #' motifs <- query(MotifDb, c("Hsapiens"))
