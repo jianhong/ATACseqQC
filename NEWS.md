@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.10.1
+
+* Fix a bug in splitBam by add scanBamFlag to filter out the unexpected reads.
+
 # CHANGES IN VERSION 1.9.9
 
 * export prepareBindingSitesList function.
