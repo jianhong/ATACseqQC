@@ -12,7 +12,7 @@
 #' @param what A character vector naming the fields to return. 
 #' Fields are described on the \link{Rsamtools}[scanBam] help page.
 #' @param flag An integer(2) vector used to filter reads based on their 
-#' 'flag' entry. This is most easily created with the 
+#' 'flag' entry. 
 #' @param bigFile If the file take too much memory, set it to true to avoid read the reads into memory.
 #' \link[Rsamtools:ScanBamParam-class]{scanBamFlag} helper function.
 #' @param asMates logical(1). Paired ends or not

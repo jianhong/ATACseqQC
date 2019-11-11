@@ -18,6 +18,8 @@
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param cutoff numeric(1). Cutoff value for prediction by
 #' \link[randomForest]{randomForest}.
+#' @param flag An integer(2) vector used to filter reads based on their 
+#' 'flag' entry. 
 #' @return an invisible list of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 #' @author Jianhong Ou
 #' @export
@@ -48,7 +50,11 @@ splitBam <- function(bamfile, tags, index=bamfile, outPath=NULL,
                                 "dinucleosome", "inter3",
                                 "trinucleosome", "others"),
                      seqlev=paste0("chr", c(1:22, "X", "Y")),
-                     cutoff = .8){
+                     cutoff = .8, 
+                     flag=scanBamFlag(isSecondaryAlignment = FALSE,
+                                      isUnmappedQuery=FALSE,
+                                      isNotPassingQualityControls = FALSE,
+                                      isSupplementaryAlignment = FALSE)){
   stopifnot(length(labels)+1==length(breaks))
   stopifnot(is(txs, "GRanges"))
   conservationFlag <- FALSE
@@ -86,7 +92,7 @@ splitBam <- function(bamfile, tags, index=bamfile, outPath=NULL,
   gal <- readBamFile(bamfile, index=index, tag=tags, which=which, 
                      what=c("qname", "flag", "mapq", "isize", 
                             "seq", "qual", "mrnm"),
-                     flag=scanBamFlag(),
+                     flag=flag,
                      asMates=TRUE, bigFile = TRUE)
   if(!is.null(outPath)){
     gal1 <- shiftGAlignmentsList(gal,

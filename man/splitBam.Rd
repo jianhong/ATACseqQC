@@ -8,7 +8,10 @@ splitBam(bamfile, tags, index = bamfile, outPath = NULL, txs, genome,
   conservation, positive = 4L, negative = 5L, breaks = c(0, 100, 180,
   247, 315, 473, 558, 615, Inf), labels = c("NucleosomeFree", "inter1",
   "mononucleosome", "inter2", "dinucleosome", "inter3", "trinucleosome",
-  "others"), seqlev = paste0("chr", c(1:22, "X", "Y")), cutoff = 0.8)
+  "others"), seqlev = paste0("chr", c(1:22, "X", "Y")), cutoff = 0.8,
+  flag = scanBamFlag(isSecondaryAlignment = FALSE, isUnmappedQuery =
+  FALSE, isNotPassingQualityControls = FALSE, isSupplementaryAlignment =
+  FALSE))
 }
 \arguments{
 \item{bamfile}{character(1). File name of bam.}
@@ -41,6 +44,9 @@ The length of labels = length of breaks - 1}
 
 \item{cutoff}{numeric(1). Cutoff value for prediction by
 \link[randomForest]{randomForest}.}
+
+\item{flag}{An integer(2) vector used to filter reads based on their 
+'flag' entry.}
 }
 \value{
 an invisible list of \link[GenomicAlignments:GAlignments-class]{GAlignments}

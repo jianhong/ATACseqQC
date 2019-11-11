@@ -25,7 +25,7 @@ See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.}
 Fields are described on the \link{Rsamtools}[scanBam] help page.}
 
 \item{flag}{An integer(2) vector used to filter reads based on their 
-'flag' entry. This is most easily created with the}
+'flag' entry.}
 
 \item{asMates}{logical(1). Paired ends or not}
 

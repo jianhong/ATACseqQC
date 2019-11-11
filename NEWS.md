@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.11.1
+
+* Add flag parameter for splitBam.
+
 # CHANGES IN VERSION 1.9.9
 
 * export prepareBindingSitesList function.
