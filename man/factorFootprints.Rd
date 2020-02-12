@@ -4,10 +4,21 @@
 \alias{factorFootprints}
 \title{plot ATAC-seq footprints infer factor occupancy genome wide}
 \usage{
-factorFootprints(bamfiles, index = bamfiles, pfm, genome,
-  min.score = "95\%", bindingSites, seqlev = paste0("chr", c(1:22, "X",
-  "Y")), upstream = 100, downstream = 100, maxSiteNum = 1e+06,
-  anchor = "cut site", group = "strand", ...)
+factorFootprints(
+  bamfiles,
+  index = bamfiles,
+  pfm,
+  genome,
+  min.score = "95\%",
+  bindingSites,
+  seqlev = paste0("chr", c(1:22, "X", "Y")),
+  upstream = 100,
+  downstream = 100,
+  maxSiteNum = 1e+06,
+  anchor = "cut site",
+  group = "strand",
+  ...
+)
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.

@@ -4,8 +4,13 @@
 \alias{fragSizeDist}
 \title{fragment size distribution}
 \usage{
-fragSizeDist(bamFiles, bamFiles.labels, index = bamFiles, ylim = NULL,
-  logYlim = NULL)
+fragSizeDist(
+  bamFiles,
+  bamFiles.labels,
+  index = bamFiles,
+  ylim = NULL,
+  logYlim = NULL
+)
 }
 \arguments{
 \item{bamFiles}{A vector of characters indicates the file names of bams.}

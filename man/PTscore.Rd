@@ -4,8 +4,13 @@
 \alias{PTscore}
 \title{Promoter/Transcript body (PT) score}
 \usage{
-PTscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
-  upstream = 2000, downstream = 500)
+PTscore(
+  obj,
+  txs,
+  seqlev = intersect(seqlevels(obj), seqlevels(txs)),
+  upstream = 2000,
+  downstream = 500
+)
 }
 \arguments{
 \item{obj}{an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}}

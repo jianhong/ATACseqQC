@@ -4,11 +4,17 @@
 \alias{readBamFile}
 \title{read in bam files}
 \usage{
-readBamFile(bamFile, which, tag = character(0), what = c("qname",
-  "flag", "mapq", "isize", "seq", "qual", "mrnm"),
-  flag = scanBamFlag(isSecondaryAlignment = FALSE, isUnmappedQuery =
-  FALSE, isNotPassingQualityControls = FALSE, isSupplementaryAlignment =
-  FALSE), asMates = FALSE, bigFile = FALSE, ...)
+readBamFile(
+  bamFile,
+  which,
+  tag = character(0),
+  what = c("qname", "flag", "mapq", "isize", "seq", "qual", "mrnm"),
+  flag = scanBamFlag(isSecondaryAlignment = FALSE, isUnmappedQuery = FALSE,
+    isNotPassingQualityControls = FALSE, isSupplementaryAlignment = FALSE),
+  asMates = FALSE,
+  bigFile = FALSE,
+  ...
+)
 }
 \arguments{
 \item{bamFile}{character(1). Bam file name.}

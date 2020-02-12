@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.10.2
+
+* Fix a issue of "[E::sam_parse1] unrecognized type N" in writeListOfGAlignments.
+
 # CHANGES IN VERSION 1.10.1
 
 * Fix a bug in splitBam by add scanBamFlag to filter out the unexpected reads.

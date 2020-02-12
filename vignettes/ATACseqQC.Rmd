@@ -119,7 +119,7 @@ possibleTag <- c(paste0(possibleTag[1, ], possibleTag[2, ]),
 library(Rsamtools)
 bamTop100 <- scanBam(BamFile(bamfile, yieldSize = 100),
                      param = ScanBamParam(tag=possibleTag))[[1]]$tag
-tags <- names(bamTop100)[lengths(bamTop100)>0]
+tags <- names(bamTop100)[lengths(bamTop100) == 100]
 tags
 ## files will be output into outPath
 outPath <- "splited"
