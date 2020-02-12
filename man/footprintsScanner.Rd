@@ -5,14 +5,28 @@
 \alias{prepareBindingSitesList}
 \title{scan ATAC-seq footprints infer factor occupancy genome wide}
 \usage{
-footprintsScanner(bamExp, bamCtl, indexExp = bamExp, indexCtl = bamCtl,
-  bindingSitesList, seqlev = paste0("chr", c(1:25, "X", "Y")),
-  proximal = 40L, distal = proximal, gap = 10L,
-  maximalBindingWidth = NA, cutoffLogFC = log2(1.5),
-  cutoffPValue = 0.05, correlatedFactorCutoff = 3/4)
+footprintsScanner(
+  bamExp,
+  bamCtl,
+  indexExp = bamExp,
+  indexCtl = bamCtl,
+  bindingSitesList,
+  seqlev = paste0("chr", c(1:25, "X", "Y")),
+  proximal = 40L,
+  distal = proximal,
+  gap = 10L,
+  maximalBindingWidth = NA,
+  cutoffLogFC = log2(1.5),
+  cutoffPValue = 0.05,
+  correlatedFactorCutoff = 3/4
+)
 
-prepareBindingSitesList(pfms, genome, seqlev = paste0("chr", c(1:22, "X",
-  "Y")), expSiteNum = 5000)
+prepareBindingSitesList(
+  pfms,
+  genome,
+  seqlev = paste0("chr", c(1:22, "X", "Y")),
+  expSiteNum = 5000
+)
 }
 \arguments{
 \item{bamExp}{A vector of characters indicates the file names of experiment bams. 

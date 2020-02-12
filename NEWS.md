@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.11.2
+
+* Fix the issue of "[E::sam_parse1] unrecognized type N".
+
 # CHANGES IN VERSION 1.11.1
 
 * Add flag parameter for splitBam.

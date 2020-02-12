@@ -4,10 +4,19 @@
 \alias{plotFootprints}
 \title{Plots a footprint estimated by Centipede}
 \usage{
-plotFootprints(Profile, Mlen = 0, xlab = "Dist. to motif (bp)",
-  ylab = "Cut-site probability", legLabels = c("For. strand",
-  "Rev. strand"), legTitle, xlim, ylim, newpage = TRUE, motif,
-  segmentation)
+plotFootprints(
+  Profile,
+  Mlen = 0,
+  xlab = "Dist. to motif (bp)",
+  ylab = "Cut-site probability",
+  legLabels = c("For. strand", "Rev. strand"),
+  legTitle,
+  xlim,
+  ylim,
+  newpage = TRUE,
+  motif,
+  segmentation
+)
 }
 \arguments{
 \item{Profile}{A vector with the profile estimated by CENTIPEDE}

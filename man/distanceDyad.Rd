@@ -4,8 +4,7 @@
 \alias{distanceDyad}
 \title{Distance of potential nucleosome dyad}
 \usage{
-distanceDyad(vPlotOut, fragLenRanges = c(60, 180, 250), draw = TRUE,
-  ...)
+distanceDyad(vPlotOut, fragLenRanges = c(60, 180, 250), draw = TRUE, ...)
 }
 \arguments{
 \item{vPlotOut}{The output of \link{vPlot}.}

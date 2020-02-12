@@ -4,9 +4,13 @@
 \alias{bamQC}
 \title{Mapping quality control}
 \usage{
-bamQC(bamfile, index = bamfile, mitochondria = "chrM",
+bamQC(
+  bamfile,
+  index = bamfile,
+  mitochondria = "chrM",
   outPath = sub(".bam", ".clean.bam", basename(bamfile)),
-  doubleCheckDup = FALSE)
+  doubleCheckDup = FALSE
+)
 }
 \arguments{
 \item{bamfile}{character(1). File name of bam.}

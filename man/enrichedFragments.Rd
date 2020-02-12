@@ -4,10 +4,20 @@
 \alias{enrichedFragments}
 \title{enrichment for nucleosome-free fragments and nucleosome signals}
 \usage{
-enrichedFragments(bamfiles, index = bamfiles, gal, TSS, librarySize,
-  upstream = 1010L, downstream = 1010L, n.tile = 101L,
-  normal.method = "quantile", adjustFragmentLength = 80L,
-  TSS.filter = 0.5, seqlev = paste0("chr", c(1:22, "X", "Y")))
+enrichedFragments(
+  bamfiles,
+  index = bamfiles,
+  gal,
+  TSS,
+  librarySize,
+  upstream = 1010L,
+  downstream = 1010L,
+  n.tile = 101L,
+  normal.method = "quantile",
+  adjustFragmentLength = 80L,
+  TSS.filter = 0.5,
+  seqlev = paste0("chr", c(1:22, "X", "Y"))
+)
 }
 \arguments{
 \item{bamfiles}{A vector of characters indicates the file names of bams.}

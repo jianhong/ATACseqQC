@@ -4,9 +4,12 @@
 \alias{estimateLibComplexity}
 \title{Library complexity estimation}
 \usage{
-estimateLibComplexity(histFile, times = 100,
+estimateLibComplexity(
+  histFile,
+  times = 100,
   interpolate.sample.sizes = seq(0.1, 1, by = 0.1),
-  extrapolate.sample.sizes = seq(5, 20, by = 5))
+  extrapolate.sample.sizes = seq(5, 20, by = 5)
+)
 }
 \arguments{
 \item{histFile}{A two-column matrix of integers. The 1st column is the frequency 

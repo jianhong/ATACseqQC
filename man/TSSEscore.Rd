@@ -4,8 +4,14 @@
 \alias{TSSEscore}
 \title{Transcription Start Site (TSS) Enrichment Score}
 \usage{
-TSSEscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
-  upstream = 1000, downstream = 1000, endSize = 100)
+TSSEscore(
+  obj,
+  txs,
+  seqlev = intersect(seqlevels(obj), seqlevels(txs)),
+  upstream = 1000,
+  downstream = 1000,
+  endSize = 100
+)
 }
 \arguments{
 \item{obj}{an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}}

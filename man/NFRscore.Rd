@@ -4,8 +4,13 @@
 \alias{NFRscore}
 \title{Nucleosome Free Regions (NFR) score}
 \usage{
-NFRscore(obj, txs, seqlev = intersect(seqlevels(obj), seqlevels(txs)),
-  nucleosomeSize = 150, nucleosomeFreeSize = 100)
+NFRscore(
+  obj,
+  txs,
+  seqlev = intersect(seqlevels(obj), seqlevels(txs)),
+  nucleosomeSize = 150,
+  nucleosomeFreeSize = 100
+)
 }
 \arguments{
 \item{obj}{an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}}
