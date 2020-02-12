@@ -30,6 +30,15 @@ writeListOfGAlignments <- function(objs, outPath="."){
     }
     mapply(function(data, n){
         if(length(data)>0){
+          ## remove the NA values
+          mc <- mcols(data)
+          checkpoint <- sapply(mc, function(.ele){
+            any(is.na(.ele))
+          })
+          if(any(checkpoint)){
+            mc <- mc[, !checkpoint, drop=FALSE]
+            mcols(data) <- mc
+          }
           try({
             export(data, file.path(outPath, paste0(n, ".bam")))
           })
