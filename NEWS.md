@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.10.3
+
+* Fix a issue if there is no reads can be read in for shiftGAlignmentsList.
+
 # CHANGES IN VERSION 1.10.2
 
 * Fix a issue of "[E::sam_parse1] unrecognized type N" in writeListOfGAlignments.
