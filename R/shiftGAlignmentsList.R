@@ -61,7 +61,11 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
         unlink(outfile)
         unlink(paste0(outfile, ".bai"))
       }else{
-        mergedfile <- outfile
+        if(length(outfile)==1){
+          mergedfile <- outfile
+        }else{
+          stop("Can not get any proper mapped reads from  your inputs.")
+        }
       }
       if(!missing(outbam)){
         file.copy(from=mergedfile, to=outbam)

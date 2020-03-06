@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.11.4
+
+* Fix the issue of if there is no reads in bam file for shiftGAlignmentsList.
+
 # CHANGES IN VERSION 1.11.2
 
 * Fix the issue of "[E::sam_parse1] unrecognized type N".
