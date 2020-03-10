@@ -1,5 +1,9 @@
 # CHANGES IN VERSION 1.11.4
 
+* add function shiftGAlignments for single end reads.
+
+# CHANGES IN VERSION 1.11.4
+
 * Fix the issue of if there is no reads in bam file for shiftGAlignmentsList.
 
 # CHANGES IN VERSION 1.11.2
