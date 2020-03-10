@@ -23,6 +23,7 @@
 #' library(BSgenome.Hsapiens.UCSC.hg19)
 #' which <- as(seqinfo(Hsapiens)["chr1"], "GRanges")
 #' gal <- readBamFile(bamfile, tag=tags, 
+#'                    what=c("qname", "flag", "mapq", "isize", "seq", "qual"),
 #'                    which=which, asMates=FALSE, bigFile=TRUE)
 #' objs <- shiftGAlignments(gal)
 #' export(objs, "shift.bam")
