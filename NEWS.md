@@ -1,4 +1,8 @@
-# CHANGES IN VERSION 1.11.4
+# CHANGES IN VERSION 1.11.6
+
+* fix the sample for shiftGAlignments.
+
+# CHANGES IN VERSION 1.11.5
 
 * add function shiftGAlignments for single end reads.
 

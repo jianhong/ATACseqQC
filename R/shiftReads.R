@@ -27,8 +27,10 @@ shiftReads <- function(x, positive=4L, negative=5L){
   x@start <- x@start + attributes(cigars)$rshift
   
   width.x <- qwidth(x)
-  mcols(x)$isize <- sign(mcols(x)$isize) * 
-    (abs(mcols(x)$isize) - positive - negative)
+  if(length(mcols(x)$isize)==length(x)){
+    mcols(x)$isize <- sign(mcols(x)$isize) * 
+      (abs(mcols(x)$isize) - positive - negative)
+  }
   ##x end will auto matic change if the cigar changed.
   mcols(x)$seq[strds] <- DNAStringSet(substr(mcols(x)$seq[strds], 1,
                                              width.x[strds]))
