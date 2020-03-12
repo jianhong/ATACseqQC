@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.11.7
+
+* fix a typo in doc for readBamFile.
+
 # CHANGES IN VERSION 1.11.6
 
 * fix the sample for shiftGAlignments.

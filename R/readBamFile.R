@@ -23,7 +23,7 @@
 #' @importFrom GenomicAlignments readGAlignmentsList readGAlignments GAlignmentsList GAlignments
 #' @importFrom Rsamtools scanBamFlag ScanBamParam scanBamHeader
 #' @export
-#' @return A GAlignmentsList object when asMats=TRUE,
+#' @return A GAlignmentsList object when asMates=TRUE,
 #' otherwise A GAlignments object.
 #' If bigFile is set to TRUE, no reads will be read into memory at this step and 
 #' empty GAlignments/GAlignmentsList will be returned.
