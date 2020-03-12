@@ -42,7 +42,7 @@ Fields are described on the \link{Rsamtools}[scanBam] help page.}
 or \link[GenomicAlignments]{readGAlignments}}
 }
 \value{
-A GAlignmentsList object when asMats=TRUE,
+A GAlignmentsList object when asMates=TRUE,
 otherwise A GAlignments object.
 If bigFile is set to TRUE, no reads will be read into memory at this step and 
 empty GAlignments/GAlignmentsList will be returned.
