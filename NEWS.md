@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.10.4
+
+* Fix a issue 'mergeBam' 'destination' exists, 'overwrite' is FALSE for splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.10.3
 
 * Fix a issue if there is no reads can be read in for shiftGAlignmentsList.

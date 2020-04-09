@@ -116,7 +116,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
         mcols(chunk0)$mpos <- mpos[paste(mcols(chunk0)$qname, start(chunk0))]
       }
       gal1 <- splitGAlignmentsByCut(chunk0, txs=txs, genome = genome,
-                                    outPath = outPath, breaks = breaks,
+                                    breaks = breaks,
                                     labels = labels, labelsOfNucleosomeFree = labelsOfNucleosomeFree,
                                     labelsOfMononucleosome = labelsOfMononucleosome,
                                     trainningSetPercentage = trainningSetPercentage,
