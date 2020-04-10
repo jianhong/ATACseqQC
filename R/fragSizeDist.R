@@ -8,7 +8,7 @@
 #' @param logYlim numeric(2). ylim of log-transformed histogram for the insert.
 #' @return Invisible fragment length distribution list.
 #' @importFrom Rsamtools ScanBamParam scanBamFlag scanBam idxstatsBam
-#' @importFrom graphics axis par plot
+#' @importFrom graphics axis par
 #' @import GenomicRanges
 #' @export
 #' @author Jianhong Ou

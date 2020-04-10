@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.11.8
+
+* Fix a issue 'mergeBam' 'destination' exists, 'overwrite' is FALSE for splitGAlignmentsByCut.
+
 # CHANGES IN VERSION 1.11.7
 
 * fix a typo in doc for readBamFile.
