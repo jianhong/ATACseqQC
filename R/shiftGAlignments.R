@@ -56,7 +56,8 @@ shiftGAlignments <- function(gal, positive=4L, negative=5L, outbam){
     if(length(outfile)>1){
       mergedfile <- mergeBam(outfile, 
                              destination=tempfile(fileext = ".bam"), 
-                             indexDestination=TRUE)
+                             indexDestination=TRUE,
+                             header=meta$file)
       unlink(outfile)
       unlink(paste0(outfile, ".bai"))
     }else{

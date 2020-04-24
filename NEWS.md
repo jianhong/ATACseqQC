@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.11.9
+
+* Fix a issue for splitGAlignmentsList, splitGAlignments by supply the header info to mergeBam.
+
 # CHANGES IN VERSION 1.11.8
 
 * Fix a issue 'mergeBam' 'destination' exists, 'overwrite' is FALSE for splitGAlignmentsByCut.
