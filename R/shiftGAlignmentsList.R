@@ -49,7 +49,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
           stop("Can not get mpos info from the reads.")
         }
         names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
-        saveRDS(c(mpos, this.mpos), file=mpos)
+        saveRDS(c(readRDS(file = mpos), this.mpos), file=mpos)
         export(gal1, outfile[1], format="BAM")
         rm(gal1)
       }
