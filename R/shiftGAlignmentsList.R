@@ -39,7 +39,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       index <- ifelse(length(meta$index)>0, meta$index, meta$file)
       bamfile <- BamFile(meta$file, index=index, yieldSize=chunk, asMates = meta$asMates)
       outfile <- NULL
-      mpos <- tempfile(fileext = ".rds")
+      mpos <- NULL
       open(bamfile)
       while (length(chunk0 <- readGAlignmentsList(bamfile, param=meta$param))) {
         gal1 <- shiftGAlignmentsList(chunk0, positive = positive, negative = negative)
@@ -49,7 +49,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
           stop("Can not get mpos info from the reads.")
         }
         names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
-        saveRDS(c(readRDS(file = mpos), this.mpos), file=mpos)
+        mpos <- c(mpos, this.mpos)
         export(gal1, outfile[1], format="BAM")
         rm(gal1)
       }
@@ -68,7 +68,6 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
           stop("Can not get any proper mapped reads from  your inputs.")
         }
       }
-      mpos <- readRDS(file = mpos)
       if(!missing(outbam)){
         file.copy(from=mergedfile, to=outbam)
         file.copy(from=paste0(mergedfile, ".bai"), 
