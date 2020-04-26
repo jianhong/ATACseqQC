@@ -131,8 +131,8 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
           any(is.na(.ele))
         })
         if(any(checkpoint)){
-          for(i in which(checkpoint&nchar(colnames(mc))==2)){
-            mc[, i] <- NULL
+          for(j in which(checkpoint&nchar(colnames(mc))==2)){
+            mc[, j] <- NULL
           }
           mcols(gal1[[i]]) <- mc
         }
