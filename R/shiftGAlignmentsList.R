@@ -43,13 +43,13 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       open(bamfile)
       while (length(chunk0 <- readGAlignmentsList(bamfile, param=meta$param))) {
         gal1 <- shiftGAlignmentsList(chunk0, positive = positive, negative = negative)
-        outfile <- c(tempfile(fileext = ".bam"), outfile)
         this.mpos <- mcols(gal1)$mpos
         if(length(this.mpos)!=length(gal1)){
           stop("Can not get mpos info from the reads.")
         }
         names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
         mpos <- c(mpos, this.mpos)
+        outfile <- c(tempfile(fileext = ".bam"), outfile)
         export(gal1, outfile[1], format="BAM")
         rm(gal1)
       }
