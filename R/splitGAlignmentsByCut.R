@@ -126,17 +126,18 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
       for(i in seq_along(gal1)){
         outfile[[names(gal1)[i]]] <- c(tempfile(fileext = ".bam"), outfile[[names(gal1)[i]]])
         ## remove the NA values
-        mc <- mcols(gal1[[i]])
+        gal1_data <- gal1[[i]]
+        mc <- mcols(gal1_data)
         checkpoint <- sapply(mc, function(.ele){
           any(is.na(.ele))
         })
         if(any(checkpoint)){
-          for(j in which(checkpoint&nchar(colnames(mc))==2)){
+          for(j in rev(which(checkpoint&nchar(colnames(mc))==2))){
             mc[, j] <- NULL
           }
-          mcols(gal1[[i]]) <- mc
+          mcols(gal1_data) <- mc
         }
-        export(gal1[[i]], outfile[[names(gal1)[i]]][1], format="BAM")
+        export(gal1_data, outfile[[names(gal1)[i]]][1], format="BAM")
       }
       rm(gal1)
     }

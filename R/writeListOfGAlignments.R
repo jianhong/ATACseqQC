@@ -36,7 +36,7 @@ writeListOfGAlignments <- function(objs, outPath="."){
             any(is.na(.ele))
           })
           if(any(checkpoint)){
-            for(i in which(checkpoint&nchar(colnames(mc))==2)){
+            for(i in rev(which(checkpoint&nchar(colnames(mc))==2))){
               mc[, i] <- NULL
             }
             mcols(data) <- mc
