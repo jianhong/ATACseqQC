@@ -14,7 +14,8 @@
 #'                  score or as a single number.
 #'                  See \link[Biostrings]{matchPWM}.
 #' @param bindingSites A object of \link[GenomicRanges:GRanges-class]{GRanges} indicates
-#' candidate binding sites (eg. the output of fimo).
+#' candidate binding sites (eg. the output of fimo). The GRanges object must have
+#' score column in the metadata column.
 #' @param seqlev A vector of characters indicates the sequence levels.
 #' @param upstream,downstream numeric(1) or integer(1).
 #'        Upstream and downstream of the binding region for
@@ -75,6 +76,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   stopifnot(all(round(colSums(pfm), digits=4)==1))
   stopifnot(upstream>10 && downstream>10)
   stopifnot(is.numeric(maxSiteNum))
+  stopifnot(all(seqlev %in% seqlevels(genome)))
   maxSiteNum <- ceiling(maxSiteNum[1])
   stopifnot(maxSiteNum>1)
   anchor <- match.arg(anchor, choices = c("cut site", "fragment center"))
