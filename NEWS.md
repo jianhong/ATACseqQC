@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.13.1
+
+* Add documentation to decribe the format of bindingSites for factorFootprints.
+
 # CHANGES IN VERSION 1.11.9
 
 * Fix a issue for splitGAlignmentsList, splitGAlignments by supply the header info to mergeBam.
