@@ -1,5 +1,9 @@
 # CHANGES IN VERSION 1.12.1
 
+* change the normalization method by library size for factorFootprints for user defined group samples.
+
+# CHANGES IN VERSION 1.12.1
+
 * add documentation for factorFootprints:bindingSites parameter.
 
 # CHANGES IN VERSION 1.11.9
