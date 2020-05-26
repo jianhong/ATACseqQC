@@ -192,10 +192,15 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
     }
   })
   libSize <- lengths(bamIn)
-  libFactor <- mapply(bamIn, libSize, FUN=function(.ele, .libSize){
-    coverageSize <- sum(as.numeric(width(reduce(.ele, ignore.strand=TRUE))))
-    .libSize / coverageSize
-  })
+  if(groupFlag){
+    libFactor <- mapply(bamIn, libSize, FUN=function(.ele, .libSize){
+      coverageSize <- sum(as.numeric(width(reduce(.ele, ignore.strand=TRUE))))
+      .libSize / coverageSize
+    })
+  }else{
+    libFactor <- libSize/mean(libSize)
+  }
+  
   
   if(groupFlag){
     ## split into positive strand and negative strand
