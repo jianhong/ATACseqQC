@@ -74,6 +74,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
                   to=paste0(outbam, ".bai"))
         gal1 <- GAlignments()
         meta$file <- outbam
+        meta$index <- outbam
         meta$asMates <- FALSE
         meta$mpos <- mpos
         metadata(gal1) <- meta
