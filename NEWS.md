@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.13.3
+
+* fix a bug the after shift, the index is not changed.
+
 # CHANGES IN VERSION 1.13.2
 
 * change the normalization method by library size for factorFootprints for user defined group samples.
