@@ -10,7 +10,10 @@ TSSEscore(
   seqlev = intersect(seqlevels(obj), seqlevels(txs)),
   upstream = 1000,
   downstream = 1000,
-  endSize = 100
+  endSize = 100,
+  width = 100,
+  step = width,
+  pseudocount = 0
 )
 }
 \arguments{
@@ -23,13 +26,22 @@ TSSEscore(
 \item{upstream, downstream}{numeric(1) or integer(1). upstream and downstream of TSS. Default is 1000}
 
 \item{endSize}{numeric(1) or integer(1). the size of the end flanks. Default is 100}
+
+\item{width}{numeric(1) or integer(1). the window size for TSS score. Default is 100.}
+
+\item{step}{numeric(1) or integer(1). The distance between the start position of the sliding windows.}
+
+\item{pseudocount}{numeric(1) or integer(1). Pseudocount. Default is 0. 
+If pseudocount is no greater than 0, the features with ZERO or less than ZERO 
+counts in flank region will be removed in calculation.}
 }
 \value{
 A object of \link[GenomicRanges:GRanges-class]{GRanges} with TSS scores
 }
 \description{
 TSS score is a raio between aggregate distribution of reads centered on TSSs and that flanking 
-the corresponding TSSs. TSS score = the depth of TSS (1000 bp each side) / the depth of end flanks (100bp each end).
+the corresponding TSSs. TSS score = the depth of TSS (each step within 1000 bp each side) / the depth of end flanks (100bp each end).
+TSSE score = max(mean(TSS score in each window)).
 }
 \examples{
  

@@ -1,7 +1,7 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.13.3
+Version: 1.13.4
 Author: Jianhong Ou, Haibo Liu, Feng Yan, Jun Yu, Michelle Kelliher,
         Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jianhong.ou@duke.com>
@@ -31,7 +31,7 @@ Suggests: BiocStyle, knitr, BSgenome.Hsapiens.UCSC.hg19,
 License: GPL (>= 2)
 LazyData: TRUE
 VignetteBuilder: knitr
-RoxygenNote: 7.1.0
+RoxygenNote: 7.1.1
 biocViews: Sequencing, DNASeq, ATACSeq, GeneRegulation, QualityControl,
         Coverage, NucleosomePositioning, ImmunoOncology
 Encoding: UTF-8

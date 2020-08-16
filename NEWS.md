@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.13.4
+
+* fix a formular for TSSE score.
+
 # CHANGES IN VERSION 1.13.3
 
 * fix a bug the after shift, the index is not changed.

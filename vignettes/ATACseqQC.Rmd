@@ -170,12 +170,16 @@ plot(nfr$log2meanCoverage, nfr$NFR_score,
 ### Transcription Start Site (TSS) Enrichment Score
 
 TSS enrichment score is a raio between aggregate distribution of reads centered on TSSs and that flanking 
-the corresponding TSSs. TSS score = the depth of TSS (1000 bp each side) / the depth of end flanks (100bp each end).
+the corresponding TSSs. TSS score = the depth of TSS (each 100bp window within 1000 bp each side) / the depth of end flanks (100bp each end).
+TSSE score = max(mean(TSS score in each window)).
 TSS enrichment score is calculated according to the definition at [https://www.encodeproject.org/data-standards/terms/#enrichment](https://www.encodeproject.org/data-standards/terms/#enrichment). Transcription start site (TSS) enrichment values are dependent on the reference files used; cutoff values for high quality data are listed in the following table from [https://www.encodeproject.org/atac-seq/](https://www.encodeproject.org/atac-seq/).
 
 ```{r}
 tsse <- TSSEscore(gal1, txs)
-summary(tsse$TSS.enrichment.score)
+tsse$TSSEscore
+plot(100*(-9:10-.5), tsse$values, type="b", 
+     xlab="distance to TSS",
+     ylab="aggregate TSS score")
 ```
 
 
