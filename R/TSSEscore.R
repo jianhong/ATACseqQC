@@ -93,7 +93,7 @@ TSSEscore <- function(obj, txs,
     vr[is.na(vr)] <- pseudocount
     blk <- vl+vr
     names(blk) <- id
-    keep <- blk>0 ## incase pseudocount is less than 1
+    keep <- blk>0 ## in case pseudocount is less than 1
     blk <- blk[keep]
     blk <- blk/2
     keep <- names(v) %in% names(blk)
@@ -101,7 +101,7 @@ TSSEscore <- function(obj, txs,
     i <- i[keep]
     v <- v*endSize/blk[names(v)]/width
     tt <- table(i)
-    rs <- rowsum(v, i)
+    rs <- rowsum(v, i) ## possible error for MAX_FLOAT
     if(length(rs)!=length(tt)) return(NULL)
     tt <- tt[rownames(rs)]
     tt[is.na(tt)] <- max(tt, na.rm = TRUE)
@@ -111,8 +111,7 @@ TSSEscore <- function(obj, txs,
   
   tt <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 2]))
   vms.m <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 1]))
-  vms.m <- vms.m/tt
-  vms.m <- colMeans(vms.m)
+  vms.m <- colSums(vms.m)/colSums(tt)
   
   TSSE <- max(vms.m, na.rm = TRUE)
   return(list(values=vms.m, TSSEscore=TSSE))
