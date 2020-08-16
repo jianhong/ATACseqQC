@@ -80,7 +80,7 @@ TSSEscore <- function(obj, txs,
   vms.left <- viewMeans(vws.left)
   vws.right <- Views(cvg, sel.right.flank)
   vms.right <- viewMeans(vws.right)
-
+  
   vms.m <- mapply(vms.center, sel.center.s, vms.left, vms.right, 
                   FUN = function(v, i, vl, vr){
     i <- i$idx
@@ -103,10 +103,15 @@ TSSEscore <- function(obj, txs,
     tt <- table(i)
     rs <- rowsum(v, i)
     if(length(rs)!=length(tt)) return(NULL)
-    rs <- rs[, 1]/tt[rownames(rs)]
+    tt <- tt[rownames(rs)]
+    tt[is.na(tt)] <- max(tt, na.rm = TRUE)
+    names(tt) <- rownames(rs)
+    rs <- cbind(rs, tt)
   }, SIMPLIFY = FALSE)
   
-  vms.m <- do.call(rbind, vms.m)
+  tt <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 2]))
+  vms.m <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 1]))
+  vms.m <- vms.m/tt
   vms.m <- colMeans(vms.m)
   
   TSSE <- max(vms.m, na.rm = TRUE)
