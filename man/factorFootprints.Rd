@@ -39,7 +39,8 @@ score or as a single number.
 See \link[Biostrings]{matchPWM}.}
 
 \item{bindingSites}{A object of \link[GenomicRanges:GRanges-class]{GRanges} indicates
-candidate binding sites (eg. the output of fimo).}
+candidate binding sites (eg. the output of fimo). The GRanges object must have
+score column in the metadata column.}
 
 \item{seqlev}{A vector of characters indicates the sequence levels.}
 

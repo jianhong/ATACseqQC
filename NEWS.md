@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.12.4
+
+* update the formula of TSSEscore.
+
 # CHANGES IN VERSION 1.12.3
 
 * fix a bug the after shift, the index is not changed.

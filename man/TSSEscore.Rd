@@ -29,7 +29,8 @@ A object of \link[GenomicRanges:GRanges-class]{GRanges} with TSS scores
 }
 \description{
 TSS score is a raio between aggregate distribution of reads centered on TSSs and that flanking 
-the corresponding TSSs. TSS score = the depth of TSS (1000 bp each side) / the depth of end flanks (100bp each end).
+the corresponding TSSs. TSS score = the depth of TSS (each step within 1000 bp each side) / the depth of end flanks (100bp each end).
+TSSE score = max(mean(TSS score in each window)).
 }
 \examples{
  
