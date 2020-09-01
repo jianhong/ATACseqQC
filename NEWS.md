@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.13.6
+
+* update documentation of plotFootprints.
+
 # CHANGES IN VERSION 1.13.4
 
 * fix a formular for TSSE score.
