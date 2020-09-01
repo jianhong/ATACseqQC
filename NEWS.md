@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.12.5
+
+* update documentation for factorFootprints.
+
 # CHANGES IN VERSION 1.12.4
 
 * update the formula of TSSEscore.
