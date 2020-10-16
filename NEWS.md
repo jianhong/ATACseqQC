@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.13.7
+
+* fix a bug introduced by matchPWM by paste ^ and $ into exclude sequence name.
+
 # CHANGES IN VERSION 1.13.6
 
 * update documentation of plotFootprints.

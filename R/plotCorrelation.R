@@ -18,6 +18,9 @@
 #' @export
 #' @return A invisible object of \link[GenomicRanges:GRanges-class]{GRanges} with counts
 #' @author Jianhong Ou
+#' @details The correlation will be calculated by the correlation of insertion
+#' sites within promoter regions. Even the sequencing is paired-end, 
+#' please treat it as single ends.
 #' @examples
 #' library(GenomicRanges)
 #' library(GenomicAlignments)

@@ -36,6 +36,11 @@ A invisible object of \link[GenomicRanges:GRanges-class]{GRanges} with counts
 plot PCA or heatmap for multiple bamfiles. The correlation is 
 calculated by the counts in promoter regions.
 }
+\details{
+The correlation will be calculated by the correlation of insertion
+sites within promoter regions. Even the sequencing is paired-end, 
+please treat it as single ends.
+}
 \examples{
 library(GenomicRanges)
 library(GenomicAlignments)

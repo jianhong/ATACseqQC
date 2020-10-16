@@ -10,7 +10,11 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 output:
-  BiocStyle::html_document
+  html_document:
+    theme: simplex
+    toc: true
+    toc_float: true
+    toc_depth: 4
 ---
 
 ```{r, echo=FALSE, results="hide", warning=FALSE, message=FALSE}

@@ -133,9 +133,13 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       }
       predefined.score <- maxS * as.double(0.85)
       suppressWarnings({
-        mt <- matchPWM(pwm, genome, min.score = min(predefined.score, min.score), 
-                     with.score=TRUE,
-                     exclude=names(genome)[!names(genome) %in% seqlev])
+        mt <- tryCatch(matchPWM(pwm, genome, min.score = min(predefined.score, min.score), 
+                                with.score=TRUE,
+                                exclude=paste0("^", names(genome)[!names(genome) %in% seqlev], "$")),
+                       error=function(e){
+                         message(e)
+                         stop("No predicted binding sites available by giving seqlev. ")
+                       })
       })
       if (min.score <= predefined.score){
         mt$userdefined <- TRUE
