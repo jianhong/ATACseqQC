@@ -205,15 +205,19 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nc.cvg <- nc.cvg[seqlev]
   nf.cvg.quantile <- sapply(nf.cvg, function(.ele) {
     .ele <- table(.ele)
-    .ele <- .ele[-1]
+    .ele <- .ele[names(.ele)!="0"] ## remove 0
     .x <- cumsum(.ele)/sum(.ele)
-    as.numeric(names(.x[which(.x>=1-trainningSetPercentage)[1]]))
+    w <- which(.x>=1-trainningSetPercentage)
+    if(length(w)==0) return(0)
+    as.numeric(names(.x[w[1]]))
   })
   nc.cvg.quantile <- sapply(nc.cvg, function(.ele) {
       .ele <- table(.ele)
-      .ele <- .ele[-1]
+      .ele <- .ele[names(.ele)!="0"] ## remove 0
       .x <- cumsum(.ele)/sum(.ele)
-      as.numeric(names(.x[which(.x>=1-trainningSetPercentage)[1]]))
+      w <- which(.x>=1-trainningSetPercentage)
+      if(length(w)==0) return(0)
+      as.numeric(names(.x[w[1]]))
   })
   cvg.quantile <- ifelse(nf.cvg.quantile < nc.cvg.quantile,
                          nf.cvg.quantile, nc.cvg.quantile)
@@ -224,6 +228,12 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nc.cvg.view <-
     as(IRangesList(mapply(function(x, y) as(Views(x, x>y), "IRanges"),
                           nc.cvg, cvg.quantile)), "GRanges")
+  if(length(nc.cvg.view)<1){
+    stop("not enough mononucleosome reads for training! Just try without conservation score.")
+  }
+  if(length(nf.cvg.view)<1){
+    stop("not enough nucleosome free reads for training! Just try without conservation score.")
+  }
   #annotation the GRanges to get the strand info
   TSS <- promoters(txs,
                    upstream = 0,

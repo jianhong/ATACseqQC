@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.13.8
+
+* throw an error if not enought nucleosome free read nor mononucleosome reads for training.
+
 # CHANGES IN VERSION 1.13.7
 
 * fix a bug introduced by matchPWM by paste ^ and $ into exclude sequence name.
