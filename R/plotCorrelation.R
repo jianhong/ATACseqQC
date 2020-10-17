@@ -87,7 +87,7 @@ plotCorrelation <- function(objs, txs,
            if(all(vms.cor==1)){
              message("all samples are identical in given regions.")
            }else{
-             heatmap(vms.cor, ...)
+             heatmap(vms.cor, scale = "none", ...)
            }
          })
   return(invisible(sel.gr))

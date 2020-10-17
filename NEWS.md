@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.13.9
+
+* fix the issue that plotCorrelation heatmap is scaled by row.
+
 # CHANGES IN VERSION 1.13.8
 
 * throw an error if not enought nucleosome free read nor mononucleosome reads for training.
