@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.1
+
+* write exportBamFile function to replace rtracklayer::export.bam.
+
 # CHANGES IN VERSION 1.13.9
 
 * fix the issue that plotCorrelation heatmap is scaled by row.

@@ -137,7 +137,7 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
           }
           mcols(gal1_data) <- mc
         }
-        export(gal1_data, outfile[[names(gal1)[i]]][1], format="BAM")
+        exportBamFile(gal1_data, outfile[[names(gal1)[i]]][1])
       }
       rm(gal1)
     }

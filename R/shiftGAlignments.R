@@ -49,7 +49,7 @@ shiftGAlignments <- function(gal, positive=4L, negative=5L, outbam){
     while (length(chunk0 <- readGAlignments(bamfile, param=meta$param))) {
       gal1 <- shiftGAlignments(chunk0, positive = positive, negative = negative)
       outfile <- c(tempfile(fileext = ".bam"), outfile)
-      export(gal1, outfile[1], format="BAM")
+      exportBamFile(gal1, outfile[1])
       rm(gal1)
     }
     close(bamfile)
@@ -101,7 +101,7 @@ shiftGAlignments <- function(gal, positive=4L, negative=5L, outbam){
   mcols(gal)$mrnm <- NULL
   mcols(gal)$mpos <- NULL
   if(!(missing(outbam))){
-    tryCatch(export(gal, outbam),
+    tryCatch(exportBamFile(gal, outbam),
              error=function(e){
                message(e)
              })

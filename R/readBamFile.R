@@ -63,9 +63,9 @@ readBamFile <- function(bamFile, which, tag=character(0),
                      flag=flag)
     }
     if(asMates) {
-      readGAlignmentsList(bamFile, ..., param=param)
+      gal <- readGAlignmentsList(bamFile, ..., param=param)
     }else{
-      readGAlignments(bamFile, ..., param=param)
+      gal <- readGAlignments(bamFile, ..., param=param)
     }
   }else{
     if(!missing(which)){
@@ -86,12 +86,18 @@ readBamFile <- function(bamFile, which, tag=character(0),
       gal <- GAlignments()
     }
     metadata(gal) <- list(file=bamFile, param=param, asMates=asMates, which=which, ...)
-    gal
   }
+  header <- scanBamHeader(bamFile, what="text")[[1]]$text
+  header <- lapply(header, paste, collapse="\t")
+  header <- paste(names(header), unlist(header), sep="\t")
+  metadata(gal)$header <- header
+  gal
 }
 
 loadBamFile <- function(gal, which=NULL, minimal=FALSE){
   meta <- metadata(gal)
+  header <- meta$header
+  meta$header <- NULL 
   if(!all(c("file", "param") %in% names(meta))){
     stop("length of gal could not be 0.")
   }
@@ -104,7 +110,7 @@ loadBamFile <- function(gal, which=NULL, minimal=FALSE){
   }
   if(asMates){
     meta$mpos <- NULL
-    do.call(readGAlignmentsList, meta)
+    gal1 <- do.call(readGAlignmentsList, meta)
   }else{
     if(length(meta$mpos)>0){
       mpos <- meta$mpos
@@ -114,9 +120,10 @@ loadBamFile <- function(gal, which=NULL, minimal=FALSE){
       names(gal1) <- mcols(gal1)$qname
       gal1 <- gal1[order(names(gal1))]
       mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
-      gal1
     }else{
-      do.call(readGAlignments, meta)
+      gal1 <- do.call(readGAlignments, meta)
     }
   }
+  if(length(header)) metadata(gal1) <- list(header=header)
+  gal1
 }
