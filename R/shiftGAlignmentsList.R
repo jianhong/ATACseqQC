@@ -50,7 +50,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
         names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
         mpos <- c(mpos, this.mpos)
         outfile <- c(tempfile(fileext = ".bam"), outfile)
-        export(gal1, outfile[1], format="BAM")
+        exportBamFile(gal1, outfile[1])
         rm(gal1)
       }
       close(bamfile)
@@ -123,7 +123,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
     stopifnot(length(mcols(gal1)$flag)>0)
     stopifnot(length(names(gal1))>0)
     if(!(missing(outbam))){
-      tryCatch(export(gal1, outbam),
+      tryCatch(exportBamFile(gal1, outbam),
                error=function(e){
                  message(e)
                })
