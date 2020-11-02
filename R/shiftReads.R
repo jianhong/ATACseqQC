@@ -30,6 +30,10 @@ shiftReads <- function(x, positive=4L, negative=5L){
       substr(mcols(x)$seq[withInsertionsAt5Ends], 
              start= (seq_width+1-cigar_width)[withInsertionsAt5Ends],
              stop = seq_width[withInsertionsAt5Ends])
+    mcols(x)$qual[withInsertionsAt5Ends] <- 
+      substr(mcols(x)$qual[withInsertionsAt5Ends], 
+             start= (seq_width+1-cigar_width)[withInsertionsAt5Ends],
+             stop = seq_width[withInsertionsAt5Ends])
   }
   cigars <- cigarQNarrow(cigars, 
                          start=ifelse(strds, 1, positive+1), 
