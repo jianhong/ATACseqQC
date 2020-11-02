@@ -19,7 +19,17 @@ shiftReads <- function(x, positive=4L, negative=5L){
   mcols(x)$qual <- sequenceLayer(mcols(x)$qual, cigars, 
                                  from="query", 
                                  to="query-after-soft-clipping")
-  cigars <- as.character(cigarQNarrow(cigars))
+  cigars <- as.character(cigarNarrow(cigars))
+  cigar_width <- cigarWidthAlongQuerySpace(cigars)
+  seq_width <- width(mcols(x)$seq)
+  withInsertionsAt5Ends <- which(cigar_width!=seq_width)
+  if(length(withInsertionsAt5Ends)>0){
+    ## clip from 3'end
+    mcols(x)$seq[withInsertionsAt5Ends] <- 
+      substr(mcols(x)$seq[withInsertionsAt5Ends], 
+             start= (seq_width+1-cigar_width)[withInsertionsAt5Ends],
+             stop = seq_width[withInsertionsAt5Ends])
+  }
   cigars <- cigarQNarrow(cigars, 
                          start=ifelse(strds, 1, positive+1), 
                          end=ifelse(strds, -negative-1, -1))
