@@ -50,6 +50,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
         names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
         mpos <- c(mpos, this.mpos)
         outfile <- c(tempfile(fileext = ".bam"), outfile)
+        if(length(meta$header)>0) metadata(gal1)$header <- meta$header
         exportBamFile(gal1, outfile[1])
         rm(gal1)
       }
@@ -112,6 +113,10 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
     id1 <- id2-1
     mcols(gal1)$mpos[gp==2] <- start(gal1)[id1]
     mcols(gal1)$mpos[id1] <- start(gal1)[id2]
+    if(length(mcols(gal1)$MC)>0){
+      mcols(gal1)$MC[gp==2] <- cigar(gal1[id1])
+      mcols(gal1)$MC[id1] <- cigar(gal1[id2])
+    }
     gal1 <- gal1[!is.na(mcols(gal1)$mpos)] ## remove the single ends
     if(length(gal1)<1){
       message("Only single end reads")

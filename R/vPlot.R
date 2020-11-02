@@ -134,21 +134,22 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
   seqinfo(mt) <- Seqinfo(seqlev, seqlengths = seqlengths(mt))
   ## read in bam file with input seqlev specified by users
   which <- as(seqinfo(mt), "GRanges")
-  param <- ScanBamParam(which=which, 
-                        flag = scanBamFlag(isProperPair=TRUE, 
-                                           isSecondaryAlignment=FALSE, 
-                                           isNotPassingQualityControls=FALSE, 
-                                           isDuplicate=FALSE))
-  
-  bamIn <- mapply(function(.b, .i) readGAlignmentPairs(.b, .i, param = param), 
-                  bamfiles, index, SIMPLIFY = FALSE)
+  bamIn <- mapply(function(.b, .i) {
+    seqlevelsStyle(which) <- checkBamSeqStyle(.b, .i)[1]
+    param <- ScanBamParam(which=which, 
+                          flag = scanBamFlag(isProperPair=TRUE, 
+                                             isSecondaryAlignment=FALSE, 
+                                             isNotPassingQualityControls=FALSE, 
+                                             isDuplicate=FALSE))
+    readGAlignmentPairs(.b, .i, param = param)
+    }, bamfiles, index, SIMPLIFY = FALSE)
   bamIn <- lapply(bamIn, as, Class = "GRanges")
   if(!is(bamIn, "GRangesList")) bamIn <- GRangesList(bamIn)
   bamIn <- unlist(bamIn, use.names = FALSE)
   if(length(bamIn)<1){
     stop("No paired reads. Please double check the inputs.")
   }
-  seqlevelsStyle(bamIn) <- seqlevelsStyle(genome)
+  seqlevelsStyle(bamIn) <- seqlevelsStyle(genome)[1]
   mt.ext <- promoters(reCenterPeaks(mt, width=1),
                       upstream=upstream+floor(wid/2),
                       downstream=downstream+ceiling(wid/2))

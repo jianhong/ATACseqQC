@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.2
+
+* Fix the tag MC in exportBamFile function.
+
 # CHANGES IN VERSION 1.15.1
 
 * write exportBamFile function to replace rtracklayer::export.bam.
