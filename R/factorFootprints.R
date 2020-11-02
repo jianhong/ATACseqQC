@@ -33,7 +33,7 @@
 #' @importFrom ChIPpeakAnno featureAlignedSignal reCenterPeaks
 #' @importFrom GenomicAlignments readGAlignments
 #' @importFrom Biostrings matchPWM maxScore
-#' @importFrom Rsamtools ScanBamParam testPairedEndBam
+#' @importFrom Rsamtools ScanBamParam testPairedEndBam scanBamHeader
 #' @import GenomeInfoDb
 #' @import GenomicRanges
 #' @import IRanges
@@ -184,20 +184,26 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   seqinfo(mt) <- Seqinfo(seqlev, seqlengths = seqlengths(mt))
   ## read in bam file with input seqlev specified by users
   which <- as(seqinfo(mt), "GRanges")
-  param <- ScanBamParam(which=which)
+  #param <- ScanBamParam(which=which)
   if(anchor=="cut site"){
-    bamIn <- mapply(function(.b, .i) readGAlignments(.b, .i, param = param), 
-                    bamfiles, index, SIMPLIFY = FALSE)
+    bamIn <- mapply(function(.b, .i) {
+      seqlevelsStyle(which) <- checkBamSeqStyle(.b, .i)[1]
+      param <- ScanBamParam(which=which)
+      readGAlignments(.b, .i, param = param)
+      }, bamfiles, index, SIMPLIFY = FALSE)
   }else{
-    bamIn <- mapply(function(.b, .i) readGAlignmentPairs(.b, .i, param = param), 
-                    bamfiles, index, SIMPLIFY = FALSE)
+    bamIn <- mapply(function(.b, .i) {
+      seqlevelsStyle(which) <- checkBamSeqStyle(.b, .i)[1]
+      param <- ScanBamParam(which=which)
+      readGAlignmentPairs(.b, .i, param = param)
+      }, bamfiles, index, SIMPLIFY = FALSE)
   }
   bamIn <- lapply(bamIn, as, Class = "GRanges")
   bamIn <- split(bamIn, group)
   bamIn <- lapply(bamIn, function(.ele){
     if(!is(.ele, "GRangesList")) .ele <- GRangesList(.ele)
     .ele <- unlist(.ele)
-    seqlevelsStyle(.ele) <- seqlevelsStyle(genome)
+    seqlevelsStyle(.ele) <- seqlevelsStyle(genome)[1]
     if(anchor=="cut site"){
       ## keep 5'end as cutting sites
       promoters(.ele, upstream=0, downstream=1)
@@ -365,4 +371,11 @@ pwm2pfm <- function(pfm, name="motif"){
     return(NULL)
   }
   new("pfm", mat=as.matrix(pfm), name=name)
+}
+
+
+checkBamSeqStyle <- function(bamfile, index){
+  header <- scanBamHeader(bamfile, index=index)
+  which <- header[[1]]$targets
+  seqlevelsStyle(names(which))
 }
