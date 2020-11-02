@@ -19,7 +19,7 @@ shiftReads <- function(x, positive=4L, negative=5L){
   mcols(x)$qual <- sequenceLayer(mcols(x)$qual, cigars, 
                                  from="query", 
                                  to="query-after-soft-clipping")
-  cigars <- as.character(cigarNarrow(cigars))
+  cigars <- as.character(cigarQNarrow(cigars))
   cigars <- cigarQNarrow(cigars, 
                          start=ifelse(strds, 1, positive+1), 
                          end=ifelse(strds, -negative-1, -1))
