@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.14.4
+
+* Fix the issue when empty object input into exportBamFile.
+
 # CHANGES IN VERSION 1.14.3
 
 * Reuse header when exportBamFile in splitGAlignmentsByCut function.

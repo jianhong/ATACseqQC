@@ -61,6 +61,7 @@ fillColumn <- function(x, filler) {
         ifelse(is.na(x), filler, x)
     else x
 }
+
 exportBamFile <- function(object, con){
     stopifnot(is(object, "GAlignments"))
     sam_path <- sub("bam$", "sam", con, ignore.case = TRUE)
@@ -96,7 +97,7 @@ exportBamFile <- function(object, con){
                  fillColumn(emd[["qual"]], "*"),
                  sep = "\t")
     custom <- emd[nchar(names(emd)) == 2L]
-    if (length(custom) > 0L) {
+    if (length(custom) > 0L && nrow(custom)>0) {
         type.map <- c(integer = "i", numeric = "f", character = "Z",
                       factor = "Z")
         custom.class <- vapply(custom, function(.ele) class(.ele)[1], 
