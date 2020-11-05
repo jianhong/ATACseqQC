@@ -1,4 +1,8 @@
-# CHANGES IN VERSION 1.14.1
+# CHANGES IN VERSION 1.14.3
+
+* Reuse header when exportBamFile in splitGAlignmentsByCut function.
+
+# CHANGES IN VERSION 1.14.2
 
 * Fix the tag MC in exportBamFile function.
 
