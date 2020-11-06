@@ -117,8 +117,8 @@ exportBamFile <- function(object, con){
         tags <- do.call(paste, c(tags, sep = "\t"))
         ## remove the NA values
         tags <- sub("\\t$", "", 
-                    sub("\\t..:[ifZ]:NA$", "\t", 
-                        gsub("\\t..:[ifZ]:NA\\t", "\t", tags)))
+                    sub("..:[ifZ]:NA$", "", 
+                        gsub("..:[ifZ]:NA\\t", "", tags)))
         aln <- paste(aln, tags, sep = "\t")
         custom <- custom[names(custom) %in% possibleTag$Metadata]
         if(length(custom)){
