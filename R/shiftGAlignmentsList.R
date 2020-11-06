@@ -7,13 +7,15 @@
 #' @param negative integer(1). the size to be shift for negative strand
 #' @param outbam file path to save shift reads. If missing, no file will be write.
 #' @return An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 
-#' shifted reads.
+#' shifted reads. The PCR duplicated will be removed unless there is metadata
+#' keepDuplicates set to TRUE.
 #' @author Jianhong Ou
 #' @export
 #' @import S4Vectors
 #' @import GenomicRanges
 #' @importFrom Rsamtools mergeBam
 #' @importFrom rtracklayer export
+#' @importFrom utils read.csv write.csv
 #' @examples
 #' bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
 #' tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
@@ -41,20 +43,28 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       outfile <- NULL
       mpos <- NULL
       open(bamfile)
+      on.exit(close(bamfile))
+      df4Duplicates <- NULL
       while (length(chunk0 <- readGAlignmentsList(bamfile, param=meta$param))) {
-        gal1 <- shiftGAlignmentsList(chunk0, positive = positive, negative = negative)
+        metadata(chunk0)$df4Duplicates <- df4Duplicates
+        gal1 <- shiftGAlignmentsList(chunk0, positive = positive, 
+                                     negative = negative)
         this.mpos <- mcols(gal1)$mpos
         if(length(this.mpos)!=length(gal1)){
           stop("Can not get mpos info from the reads.")
         }
         names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
         mpos <- c(mpos, this.mpos)
+        if(length(metadata(gal1)$df4Duplicates)){
+          df4Duplicates <- read.csv(metadata(gal1)$df4Duplicates)
+        }
         outfile <- c(tempfile(fileext = ".bam"), outfile)
         if(length(meta$header)>0) metadata(gal1)$header <- meta$header
         exportBamFile(gal1, outfile[1])
         rm(gal1)
       }
       close(bamfile)
+      on.exit()
       if(length(outfile)>1){
         mergedfile <- mergeBam(outfile, 
                                destination=tempfile(fileext = ".bam"), 
@@ -70,9 +80,9 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
         }
       }
       if(!missing(outbam)){
-        file.copy(from=mergedfile, to=outbam)
-        file.copy(from=paste0(mergedfile, ".bai"), 
-                  to=paste0(outbam, ".bai"))
+        file.rename(from=mergedfile, to=outbam)
+        file.rename(from=paste0(mergedfile, ".bai"), 
+                    to=paste0(outbam, ".bai"))
         gal1 <- GAlignments()
         meta$file <- outbam
         meta$index <- outbam
@@ -105,12 +115,49 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
     gp1 <- rep(seq_along(gal), elementNROWS(gal))
     gp[duplicated(gp1)] <- 2
     mcols(gal1)$MD <- NULL
+    id2 <- which(gp==2)
+    id1 <- id2-1
+    checkDup <- FALSE
+    if(length(metadata(gal)$keepDuplicates)){
+      if(length(mcols(gal1)$isize)>0 && !metadata(gal)$keepDuplicates){
+        checkDup <- TRUE
+      }
+    }else{
+      checkDup <- TRUE
+    }
+    if(checkDup){
+      if(length(metadata(gal)$df4Duplicates)){
+        df0 <- metadata(gal)$df4Duplicates
+      }else{
+        df0 <- NULL
+      }
+      df <- DataFrame(seqnames=seqnames(gal1), 
+                      cigar=cigar(gal1), 
+                      start=start(gal1), 
+                      isize=mcols(gal1)$isize)
+      df <- rbind(df0, df)
+      dupids <- duplicated(df)
+      df2 <- dupids[id2+nrow(df0)]
+      df1 <- dupids[id1+nrow(df0)]
+      if(any(df1 & df2)){
+        tobeRemoved <- sort(c(id2[df1 & df2], id1[df1 & df2]))
+        gal1 <- gal1[-tobeRemoved]
+        gp <- gp[-tobeRemoved]
+        id2 <- which(gp==2)
+        id1 <- id2-1
+        df <- df[-(tobeRemoved+nrow(df0)), , drop=FALSE]
+        if(nrow(df)){
+          df4Duplicates <- tempfile()
+          write.csv(df, df4Duplicates, row.names = FALSE)
+          rm(df)
+          metadata(gal1)$df4Duplicates <- df4Duplicates
+        }
+      }
+    }
     gal1 <- shiftReads(gal1, 
                        positive=positive,
                        negative=negative)
     names(gal1) <- mcols(gal1)$qname
-    id2 <- which(gp==2)
-    id1 <- id2-1
     mcols(gal1)$mpos[gp==2] <- start(gal1)[id1]
     mcols(gal1)$mpos[id1] <- start(gal1)[id2]
     if(length(mcols(gal1)$MC)>0){

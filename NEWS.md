@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.5
+
+* remove duplicates when shift reads.
+
 # CHANGES IN VERSION 1.15.4
 
 * Fix the issue when empty object input into exportBamFile.

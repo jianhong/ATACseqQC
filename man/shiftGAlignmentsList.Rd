@@ -17,7 +17,8 @@ shiftGAlignmentsList(gal, positive = 4L, negative = 5L, outbam)
 }
 \value{
 An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 
-shifted reads.
+shifted reads. The PCR duplicated will be removed unless there is metadata
+keepDuplicates set to TRUE.
 }
 \description{
 shift the GAlignmentsLists by 5' ends. 

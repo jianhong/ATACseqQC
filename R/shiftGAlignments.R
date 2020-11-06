@@ -46,13 +46,20 @@ shiftGAlignments <- function(gal, positive=4L, negative=5L, outbam){
                        yieldSize=chunk, asMates = meta$asMates)
     outfile <- NULL
     open(bamfile)
+    on.exit(close(bamfile))
+    df4Duplicates <- NULL
     while (length(chunk0 <- readGAlignments(bamfile, param=meta$param))) {
+      metadata(chunk0)$df4Duplicates <- df4Duplicates
       gal1 <- shiftGAlignments(chunk0, positive = positive, negative = negative)
+      if(length(metadata(gal1)$df4Duplicates)){
+        df4Duplicates <- read.csv(metadata(gal1)$df4Duplicates)
+      }
       outfile <- c(tempfile(fileext = ".bam"), outfile)
       exportBamFile(gal1, outfile[1])
       rm(gal1)
     }
     close(bamfile)
+    on.exit()
     if(length(outfile)>1){
       mergedfile <- mergeBam(outfile, 
                              destination=tempfile(fileext = ".bam"), 
@@ -68,9 +75,9 @@ shiftGAlignments <- function(gal, positive=4L, negative=5L, outbam){
       }
     }
     if(!missing(outbam)){
-      file.copy(from=mergedfile, to=outbam)
-      file.copy(from=paste0(mergedfile, ".bai"), 
-                to=paste0(outbam, ".bai"))
+      file.rename(from=mergedfile, to=outbam)
+      file.rename(from=paste0(mergedfile, ".bai"), 
+                  to=paste0(outbam, ".bai"))
       gal1 <- GAlignments()
       meta$file <- outbam
       meta$asMates <- FALSE
@@ -88,6 +95,43 @@ shiftGAlignments <- function(gal, positive=4L, negative=5L, outbam){
   stopifnot(length(gal)>0)
   mcols(gal)$mrnm <- NULL
   mcols(gal)$mpos <- NULL
+  mcols(gal)$MC <- NULL
+  checkDup <- FALSE
+  if(length(metadata(gal)$keepDuplicates)){
+    if(!metadata(gal)$keepDuplicates){
+      checkDup <- TRUE
+    }
+  }else{
+    checkDup <- TRUE
+  }
+  if(checkDup){
+    if(length(metadata(gal)$df4Duplicates)){
+      df0 <- metadata(gal)$df4Duplicates
+    }else{
+      df0 <- NULL
+    }
+    df <- DataFrame(seqnames=seqnames(gal), 
+                    cigar=cigar(gal), 
+                    start=start(gal))
+    df <- rbind(df0, df)
+    dupids <- duplicated(df)
+    if(length(df0)) {
+      df1 <- dupids[-seq.int(nrow(df0))]
+    }else{
+      df1 <- dupids
+    }
+    if(any(df1)){
+      tobeRemoved <- which(df1)
+      gal <- gal[-tobeRemoved]
+      df <- df[-(tobeRemoved+nrow(df0)), , drop=FALSE]
+      if(nrow(df)){
+        df4Duplicates <- tempfile()
+        write.csv(df, df4Duplicates, row.names = FALSE)
+        rm(df)
+        metadata(gal)$df4Duplicates <- df4Duplicates
+      }
+    }
+  }
   gal <- shiftReads(gal, 
                     positive=positive,
                     negative=negative)
@@ -100,6 +144,7 @@ shiftGAlignments <- function(gal, positive=4L, negative=5L, outbam){
   stopifnot(length(names(gal))>0)
   mcols(gal)$mrnm <- NULL
   mcols(gal)$mpos <- NULL
+  mcols(gal)$MC <- NULL
   if(!(missing(outbam))){
     tryCatch(exportBamFile(gal, outbam),
              error=function(e){
