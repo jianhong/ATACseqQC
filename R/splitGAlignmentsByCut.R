@@ -142,9 +142,9 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
         unlink(outfile[[i]])
         unlink(paste0(outfile[[i]], ".bai"))
       }else{
-        file.rename(outfile[[i]], 
+        file.copy(outfile[[i]], 
                   file.path(outPath, paste0(names(outfile)[i], ".bam")))
-        file.rename(paste0(outfile[[i]], ".bai"), 
+        file.copy(paste0(outfile[[i]], ".bai"), 
                   file.path(outPath, paste0(names(outfile)[i], ".bam.bai")))
         mergedfile[[names(outfile)[i]]] <- 
           file.path(outPath, paste0(names(outfile)[i], ".bam"))

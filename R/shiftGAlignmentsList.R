@@ -80,8 +80,8 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
         }
       }
       if(!missing(outbam)){
-        file.rename(from=mergedfile, to=outbam)
-        file.rename(from=paste0(mergedfile, ".bai"), 
+        file.copy(from=mergedfile, to=outbam)
+        file.copy(from=paste0(mergedfile, ".bai"), 
                     to=paste0(outbam, ".bai"))
         gal1 <- GAlignments()
         meta$file <- outbam
