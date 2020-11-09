@@ -43,7 +43,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       outfile <- NULL
       mpos <- NULL
       open(bamfile)
-      on.exit(close(bamfile))
+      on.exit({options(warn = ow);close(bamfile)})
       df4Duplicates <- NULL
       while (length(chunk0 <- readGAlignmentsList(bamfile, param=meta$param))) {
         metadata(chunk0)$df4Duplicates <- df4Duplicates
