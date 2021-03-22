@@ -1,5 +1,5 @@
 #' export list of GAlignments into bam files
-#' @description wraper for \link[rtracklayer]{export} to export list of 
+#' @description wraper for \link[BiocIO:export]{export} to export list of 
 #' GAlignment into bam files.
 #' @param objs A list of \link[GenomicAlignments:GAlignments-class]{GAlignments}.
 #' @param outPath character(1). Output file path.

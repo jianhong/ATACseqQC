@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.6
+
+* fix the missing link of documentation for rtracklyaer:import.
+    
 # CHANGES IN VERSION 1.15.5
 
 * remove duplicates when shift reads.

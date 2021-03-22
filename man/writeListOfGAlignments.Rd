@@ -15,7 +15,7 @@ writeListOfGAlignments(objs, outPath = ".")
 status of export.
 }
 \description{
-wraper for \link[rtracklayer]{export} to export list of 
+wraper for \link[BiocIO:export]{export} to export list of 
 GAlignment into bam files.
 }
 \examples{
