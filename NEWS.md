@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.7
+
+* fix the NA values for TSSEscore when infinite value is in the data.
+
 # CHANGES IN VERSION 1.15.6
 
 * fix the missing link of documentation for rtracklyaer:import.

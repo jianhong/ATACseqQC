@@ -104,7 +104,7 @@ TSSEscore <- function(obj, txs,
     rs <- rowsum(v, i) ## possible error for MAX_FLOAT
     if(length(rs)!=length(tt)) return(NULL)
     tt <- tt[rownames(rs)]
-    tt[is.na(tt)] <- max(tt, na.rm = TRUE)
+    tt[is.na(tt)] <- max(tt[!is.infinite(tt)], na.rm = TRUE)
     names(tt) <- rownames(rs)
     rs <- cbind(rs, tt)
   }, SIMPLIFY = FALSE)
@@ -113,6 +113,6 @@ TSSEscore <- function(obj, txs,
   vms.m <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 1]))
   vms.m <- colSums(vms.m)/colSums(tt)
   
-  TSSE <- max(vms.m, na.rm = TRUE)
+  TSSE <- max(vms.m[!is.infinite(vms.m)], na.rm = TRUE)
   return(list(values=vms.m, TSSEscore=TSSE))
 }
