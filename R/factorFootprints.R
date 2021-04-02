@@ -68,11 +68,9 @@
 #'                           package="ATACseqQC"))
 #'bindingSites <- bds[["Hsapiens-jolma2013-CTCF"]]
 #'seqlev <- "chr1" #seqlevels(bindingSites)
-#'bindingSites <- bindingSites[seqnames(bindingSites) %in% seqlev]
-#'seqlevels(bindingSites) <- seqlev
-#'seqinfo(bindingSites) <- seqinfo(Hsapiens)[seqlev]
 #'factorFootprints(bamfile, pfm=CTCF[[1]],
-#'                 genome=Hsapiens, seqlev=seqlev,
+#'                 bindingSites=bindingSites,
+#'                 seqlev=seqlev,
 #'                 upstream=100, downstream=100)
 #'
 factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome, 
@@ -83,11 +81,11 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
                              group="strand",
                              ...){
   #stopifnot(length(bamfiles)==4)
-  stopifnot(is(genome, "BSgenome"))
+  if(!missing(genome)) stopifnot(is(genome, "BSgenome"))
   stopifnot(all(round(colSums(pfm), digits=4)==1))
   stopifnot(upstream>10 && downstream>10)
   stopifnot(is.numeric(maxSiteNum))
-  stopifnot(all(seqlev %in% seqlevels(genome)))
+  stopifnot(all(seqlev %in% names(getBamTargets(bamfiles[1], index[1]))))
   maxSiteNum <- ceiling(maxSiteNum[1])
   stopifnot(maxSiteNum>1)
   anchor <- match.arg(anchor, choices = c("cut site", "fragment center"))
@@ -178,6 +176,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   if(sum(mt$userdefined)<2){
     stop("less than 2 binding sites by input min.score")
   }
+  seqlevelsStyle(mt) <- checkBamSeqStyle(bamfiles[1], index[1])[1]
   wid <- ncol(pfm)
   #mt <- mt[seqnames(mt) %in% seqlev]
   seqlevels(mt) <- seqlev
@@ -203,7 +202,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   bamIn <- lapply(bamIn, function(.ele){
     if(!is(.ele, "GRangesList")) .ele <- GRangesList(.ele)
     .ele <- unlist(.ele)
-    seqlevelsStyle(.ele) <- seqlevelsStyle(genome)[1]
+    #seqlevelsStyle(.ele) <- seqlevelsStyle(genome)[1]
     if(anchor=="cut site"){
       ## keep 5'end as cutting sites
       promoters(.ele, upstream=0, downstream=1)
@@ -373,9 +372,11 @@ pwm2pfm <- function(pfm, name="motif"){
   new("pfm", mat=as.matrix(pfm), name=name)
 }
 
-
-checkBamSeqStyle <- function(bamfile, index){
+getBamTargets <- function(bamfile, index){
   header <- scanBamHeader(bamfile, index=index)
-  which <- header[[1]]$targets
+  header[[1]]$targets
+}
+checkBamSeqStyle <- function(bamfile, index){
+  which <- getBamTargets(bamfile, index)
   seqlevelsStyle(names(which))
 }

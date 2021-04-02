@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.8
+
+* update documentation for the case when no BSgenome object is available.
+
 # CHANGES IN VERSION 1.15.7
 
 * fix the NA values for TSSEscore when infinite value is in the data.

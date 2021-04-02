@@ -134,9 +134,12 @@ tags
 outPath <- "splited"
 dir.create(outPath)
 ## shift the coordinates of 5'ends of alignments in the bam file
-library(BSgenome.Hsapiens.UCSC.hg19)
+library(TxDb.Hsapiens.UCSC.hg19.knownGene)
+## if you don't have an available TxDb, please refer
+## GenomicFeatures::makeTxDbFromGFF to create one from gff3 or gtf file.
 seqlev <- "chr1" ## subsample data for quick run
-which <- as(seqinfo(Hsapiens)[seqlev], "GRanges")
+seqinformation <- seqinfo(TxDb.Hsapiens.UCSC.hg19.knownGene)
+which <- as(seqinformation[seqlev], "GRanges")
 gal <- readBamFile(bamfile, tag=tags, which=which, asMates=TRUE, bigFile=TRUE)
 shiftedBamfile <- file.path(outPath, "shifted.bam")
 gal1 <- shiftGAlignmentsList(gal, outbam=shiftedBamfile)
@@ -210,6 +213,7 @@ using random forest. The number of the tree will be set to 2 times
 of square root of the length of the training set.
 
 ```{r}
+library(BSgenome.Hsapiens.UCSC.hg19)
 library(phastCons100way.UCSC.hg19)
 ## run program for chromosome 1 only
 txs <- txs[seqnames(txs) %in% "chr1"]
@@ -236,6 +240,12 @@ you would like to simply split the bam files using the fragment length,
 then you will just need to run the command without providing the conservation argument. 
 Without setting the conservation parameter, it will run much faster.
 
+```{r eval=FALSE}
+## split reads by fragment length
+## NOT RUN IN THIS example
+objs <- splitGAlignmentsByCut(gal1, txs=txs, outPath = outPath)
+```
+
 ### Heatmap and coverage curve for nucleosome positions
 
 By averaging the signal across all active TSSs, we should observe that 
@@ -255,7 +265,7 @@ bamfiles <- file.path(outPath,
                      "trinucleosome.bam"))
 ## Plot the cumulative percentage of tag allocation in nucleosome-free 
 ## and mononucleosome bam files.
-cumulativePercentage(bamfiles[1:2], as(seqinfo(Hsapiens)["chr1"], "GRanges"))
+cumulativePercentage(bamfiles[1:2], as(seqinformation["chr1"], "GRanges"))
 ```
 ```{r fig.height=8, fig.width=4}
 TSS <- promoters(txs, upstream=0, downstream=1)
@@ -320,7 +330,7 @@ CTCF <- query(MotifDb, c("CTCF"))
 CTCF <- as.list(CTCF)
 print(CTCF[[1]], digits=2)
 sigs <- factorFootprints(shiftedBamfile, pfm=CTCF[[1]], 
-                         genome=genome,
+                         genome=genome, ## Don't have a genome? ask ?factorFootprints for help
                          min.score="90%", seqlev=seqlev,
                          upstream=100, downstream=100)
 ```

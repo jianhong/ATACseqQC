@@ -91,11 +91,9 @@ bds <- readRDS(system.file("extdata", "jolma2013.motifs.bindingList.95.rds",
                           package="ATACseqQC"))
 bindingSites <- bds[["Hsapiens-jolma2013-CTCF"]]
 seqlev <- "chr1" #seqlevels(bindingSites)
-bindingSites <- bindingSites[seqnames(bindingSites) \%in\% seqlev]
-seqlevels(bindingSites) <- seqlev
-seqinfo(bindingSites) <- seqinfo(Hsapiens)[seqlev]
 factorFootprints(bamfile, pfm=CTCF[[1]],
-                genome=Hsapiens, seqlev=seqlev,
+                bindingSites=bindingSites,
+                seqlev=seqlev,
                 upstream=100, downstream=100)
 
 }
