@@ -69,7 +69,7 @@
       <h1 data-toc-skip>ATACseqQC Guide</h1>
                         <h4 class="author">Jianhong Ou, Haibo Liu, Jun Yu, Michelle Kelliher, Lucio Castilla, Nathan Lawson, Lihua Julie Zhu</h4>
             
-            <h4 class="date">2 April 2021</h4>
+            <h4 class="date">6 April 2021</h4>
       
       
       <div class="hidden name"><code>ATACseqQC.Rmd</code></div>
@@ -262,9 +262,9 @@
 <span class="co">## estimate the library size for normalization</span>
 <span class="op">(</span><span class="va">librarySize</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ChIPpeakAnno/man/estLibSize.html">estLibSize</a></span><span class="op">(</span><span class="va">bamfiles</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <pre><code>## splited/NucleosomeFree.bam splited/mononucleosome.bam 
-##                      34078                       2010 
+##                      34296                       1960 
 ##   splited/dinucleosome.bam  splited/trinucleosome.bam 
-##                       1925                        419</code></pre>
+##                       1864                        397</code></pre>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## calculate the signals around TSSs.</span>
 <span class="va">NTILE</span> <span class="op">&lt;-</span> <span class="fl">101</span>
@@ -429,7 +429,7 @@
 ## other attached packages:
 ##  [1] GenomicAlignments_1.27.2               
 ##  [2] Rsamtools_2.7.1                        
-##  [3] SummarizedExperiment_1.21.1            
+##  [3] SummarizedExperiment_1.21.2            
 ##  [4] MatrixGenerics_1.3.1                   
 ##  [5] matrixStats_0.58.0                     
 ##  [6] MotifDb_1.33.0                         
@@ -445,15 +445,15 @@
 ## [16] Biostrings_2.59.2                      
 ## [17] XVector_0.31.1                         
 ## [18] ChIPpeakAnno_3.25.4                    
-## [19] GenomicRanges_1.43.3                   
+## [19] GenomicRanges_1.43.4                   
 ## [20] GenomeInfoDb_1.27.8                    
 ## [21] IRanges_2.25.6                         
 ## [22] ATACseqQC_1.15.8                       
-## [23] S4Vectors_0.29.9                       
+## [23] S4Vectors_0.29.12                      
 ## [24] BiocGenerics_0.37.1                    
 ## 
 ## loaded via a namespace (and not attached):
-##   [1] AnnotationHub_2.23.2          BiocFileCache_1.15.1         
+##   [1] AnnotationHub_2.23.3          BiocFileCache_1.15.1         
 ##   [3] systemfonts_1.0.1             lazyeval_0.2.2               
 ##   [5] splines_4.1.0                 BiocParallel_1.25.5          
 ##   [7] ggplot2_3.3.3                 digest_0.6.27                
@@ -478,7 +478,7 @@
 ##  [45] htmlwidgets_1.5.3             httr_1.4.2                   
 ##  [47] ellipsis_0.3.1                pkgconfig_2.0.3              
 ##  [49] XML_3.99-0.6                  sass_0.3.1                   
-##  [51] dbplyr_2.1.0                  locfit_1.5-9.4               
+##  [51] dbplyr_2.1.1                  locfit_1.5-9.4               
 ##  [53] utf8_1.2.1                    polynom_1.4-0                
 ##  [55] tidyselect_1.1.0              rlang_0.4.10                 
 ##  [57] later_1.1.0.1                 munsell_0.5.0                
