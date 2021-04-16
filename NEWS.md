@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.9
+
+* Add rmarkdown as suggest package.
+
 # CHANGES IN VERSION 1.15.8
 
 * update documentation for the case when no BSgenome object is available.

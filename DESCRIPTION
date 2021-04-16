@@ -1,7 +1,7 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.15.8
+Version: 1.15.9
 Author: Jianhong Ou, Haibo Liu, Feng Yan, Jun Yu, Michelle Kelliher,
         Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jianhong.ou@duke.com>
@@ -27,7 +27,7 @@ Imports: BSgenome, Biostrings, ChIPpeakAnno, IRanges, GenomicRanges,
         motifStack, preseqR, utils, KernSmooth, edgeR
 Suggests: BiocStyle, knitr, BSgenome.Hsapiens.UCSC.hg19,
         TxDb.Hsapiens.UCSC.hg19.knownGene, phastCons100way.UCSC.hg19,
-        MotifDb, trackViewer, testthat
+        MotifDb, trackViewer, testthat, rmarkdown
 License: GPL (>= 2)
 LazyData: TRUE
 VignetteBuilder: knitr
