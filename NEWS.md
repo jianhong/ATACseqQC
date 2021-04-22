@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.10
+
+* fix the issue that idxstatsBam return values with "*"
+
 # CHANGES IN VERSION 1.15.9
 
 * Add rmarkdown as suggest package.

@@ -38,10 +38,15 @@ fragSizeDist <- function(bamFiles, bamFiles.labels, index=bamFiles, ylim=NULL,
   }
 
   idxstats <- unique(do.call(rbind, mapply(function(.ele, .ind)
-    idxstatsBam(.ele, index = .ind)[, c("seqnames", "seqlength")], bamFiles, index, SIMPLIFY=FALSE)))
+    idxstatsBam(.ele, index = .ind)[, c("seqnames", "seqlength")],
+    bamFiles, index, SIMPLIFY=FALSE)))
+  ## fix the issue that idxstatsBam return values with "*"
+  idxstats <- idxstats[idxstats[, "seqnames"]!="*", , drop=FALSE]
   seqnames <- as.character(idxstats[, "seqnames"])
   seqlen <- as.numeric(idxstats[, "seqlength"])
-  fragment.len <- mapply(function(bamFile, ind) summaryFunction(seqname=seqnames, seqlength=seqlen, bamFile, ind), 
+  fragment.len <-
+    mapply(function(bamFile, ind)
+      summaryFunction(seqname=seqnames, seqlength=seqlen, bamFile, ind), 
                          bamFiles, index, SIMPLIFY=FALSE)
 
   names(fragment.len) <- bamFiles.labels
