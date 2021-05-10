@@ -44,6 +44,7 @@ fragSizeDist <- function(bamFiles, bamFiles.labels, index=bamFiles, ylim=NULL,
   idxstats <- idxstats[idxstats[, "seqnames"]!="*", , drop=FALSE]
   seqnames <- as.character(idxstats[, "seqnames"])
   seqlen <- as.numeric(idxstats[, "seqlength"])
+  seqlen <- checkMaxChrLength(seqlen)
   fragment.len <-
     mapply(function(bamFile, ind)
       summaryFunction(seqname=seqnames, seqlength=seqlen, bamFile, ind), 

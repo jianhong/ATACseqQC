@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.15.11
+
+* Break the limitation of sequence length must have ends less than or equal to 536870912.
+
 # CHANGES IN VERSION 1.15.10
 
 * fix the issue that idxstatsBam return values with "*"

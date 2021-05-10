@@ -73,7 +73,18 @@ readBamFile <- function(bamFile, which, tag=character(0),
     }else{
       which <- scanBamHeader(bamFile, what=c("targets"))
       which <- which[[1]]$targets
+      if(length(which)<1) stop("No available targets in the given file")
       which <- GRanges(seqnames = names(which), IRanges(1, which))
+    }
+    if(any(width(which)>2^29)){
+      warning("The input contain ranges greater than 536870912.",
+              "The range filter will be removed.")
+      args <- list(...)
+      if(!"index" %in% names(args)){
+        stop("index file is required for this bam file.",
+             "Please provide the CSI or CRAI index file")
+      }
+      which <- GRanges()
     }
     param <-
       ScanBamParam(what=what,
@@ -93,6 +104,12 @@ readBamFile <- function(bamFile, which, tag=character(0),
   metadata(gal)$header <- header
   gal
 }
+
+checkMaxChrLength <- function(len){
+  stopifnot(is.numeric(len))
+  len[len>2^29] <- 2^29
+  len
+} 
 
 loadBamFile <- function(gal, which=NULL, minimal=FALSE){
   meta <- metadata(gal)

@@ -66,12 +66,13 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       close(bamfile)
       on.exit()
       if(length(outfile)>1){
+        BAI <- paste0(outfile[1], ".bai")
         mergedfile <- mergeBam(outfile, 
                                destination=tempfile(fileext = ".bam"), 
-                               indexDestination=TRUE,
+                               indexDestination=file.exists(BAI),
                                header=meta$file)
         unlink(outfile)
-        unlink(paste0(outfile, ".bai"))
+        if(file.exists(BAI)) unlink(paste0(outfile, ".bai"))
       }else{
         if(length(outfile)==1){
           mergedfile <- outfile
@@ -81,11 +82,15 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       }
       if(!missing(outbam)){
         file.copy(from=mergedfile, to=outbam)
-        file.copy(from=paste0(mergedfile, ".bai"), 
-                    to=paste0(outbam, ".bai"))
         gal1 <- GAlignments()
         meta$file <- outbam
-        meta$index <- outbam
+        if(file.exists(paste0(mergedfile[1], ".bai"))){
+          file.copy(from=paste0(mergedfile, ".bai"), 
+                    to=paste0(outbam, ".bai"))
+          meta$index <- outbam
+        }else{
+          meta$index <- NULL
+        }
         meta$asMates <- FALSE
         meta$mpos <- mpos
         metadata(gal1) <- meta
@@ -96,7 +101,9 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
         gal1 <- gal1[order(names(gal1))]
         mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
         unlink(mergedfile)
-        unlink(paste0(mergedfile, ".bai"))
+        if(file.exists(paste0(mergedfile, ".bai"))){
+          unlink(paste0(mergedfile, ".bai"))
+        }
       }
       return(gal1)
     }

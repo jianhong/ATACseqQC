@@ -26,6 +26,7 @@ bamQC <- function(bamfile, index=bamfile, mitochondria="chrM",
   file <- BamFile(file = bamfile, index = index)
   file.targets <- scanBamHeader(files = file, what="targets")$targets
   if(length(file.targets)<1) return(NA)
+  file.targets <- checkMaxChrLength(file.targets)
   file.targets <- GRanges(names(file.targets), IRanges(rep(1, length(file.targets)), file.targets))
   qname <- NULL
   M1 <- NULL

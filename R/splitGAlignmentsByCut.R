@@ -100,7 +100,12 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
     options(warn=-1)
     chunk <- 100000
     index <- ifelse(length(meta$index)>0, meta$index, meta$file)
-    bamfile <- BamFile(meta$file, index=index, yieldSize=chunk, asMates = meta$asMates)
+    if((file.exists(index)&&index!=meta$file) ||
+       (index==meta$file && file.exists(paste0(index, ".bai")))){
+      bamfile <- BamFile(meta$file, index=index, yieldSize=chunk, asMates = meta$asMates)
+    }else{
+      bamfile <- BamFile(meta$file, index=NULL, yieldSize=chunk, asMates = meta$asMates)
+    }
     outfile <- list()
     mergedfile <- list()
     mpos <- NULL

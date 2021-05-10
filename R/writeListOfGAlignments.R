@@ -134,8 +134,13 @@ exportBamFile <- function(object, con){
     writeLines(aln, sam_con)
     close(sam_con)
     on.exit() ## redefine on.exit
-    bam <- asBam(sam_path, sub(".bam$", "", con, ignore.case = TRUE),
-                 overwrite = TRUE, indexDestination = TRUE)
+    if(any(seqlengths(si)>536870912)){
+        bam <- asBam(sam_path, sub(".bam$", "", con, ignore.case = TRUE),
+                     overwrite = TRUE, indexDestination = FALSE)
+    }else{
+        bam <- asBam(sam_path, sub(".bam$", "", con, ignore.case = TRUE),
+                     overwrite = TRUE, indexDestination = TRUE)
+    }
     unlink(sam_path)
     invisible(bam)
 }
