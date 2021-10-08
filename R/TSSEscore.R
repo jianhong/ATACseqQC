@@ -46,7 +46,7 @@ TSSEscore <- function(obj, txs,
   cvg <- cvg[names(cvg) %in% seqlev]
   seqlev <- seqlev[seqlev %in% names(cvg)]
   cvg <- cvg[seqlev]
-  cvg <- cvg + pseudocount
+  if(pseudocount!=0) cvg <- cvg + pseudocount
   txs <- txs[seqnames(txs) %in% seqlev]
   txs <- unique(txs)
   sel.center <- promoters(txs, upstream = upstream, downstream = downstream)
@@ -91,6 +91,7 @@ TSSEscore <- function(obj, txs,
     vr[is.na(vr)] <- vl[is.na(vr)]
     vl[is.na(vl)] <- pseudocount
     vr[is.na(vr)] <- pseudocount
+    v[is.na(v)] <- pseudocount
     blk <- vl+vr
     names(blk) <- id
     keep <- blk>0 ## in case pseudocount is less than 1
@@ -111,7 +112,7 @@ TSSEscore <- function(obj, txs,
   
   tt <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 2]))
   vms.m <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 1]))
-  vms.m <- colSums(vms.m)/colSums(tt)
+  vms.m <- colSums(vms.m, na.rm = TRUE)/colSums(tt, na.rm = TRUE)
   
   TSSE <- max(vms.m[!is.infinite(vms.m)], na.rm = TRUE)
   return(list(values=vms.m, TSSEscore=TSSE))

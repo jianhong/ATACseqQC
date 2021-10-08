@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.17.1
+
+* Fix the issue that NA is generated when no data available for TSSEscore.
+
 # CHANGES IN VERSION 1.15.11
 
 * Break the limitation of sequence length must have ends less than or equal to 536870912.
