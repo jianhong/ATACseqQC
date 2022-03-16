@@ -84,6 +84,8 @@ enrichedFragments <- function(bamfiles, index=bamfiles, gal, TSS, librarySize,
     galInput <- FALSE
   }
   stopifnot(is(TSS, "GRanges"))
+  stopifnot(is.numeric(librarySize))
+  librarySize[librarySize==0] <- 1
   #fragmentLength <- estFragmentLength(bamfiles)
   fragmentLength <- 200 #here we suppose all the fragment of nucleosome is 200.
   TSS <- TSS[seqnames(TSS) %in% seqlev]

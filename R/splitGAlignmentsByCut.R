@@ -37,7 +37,7 @@
 #' @importFrom GenomicAlignments coverage 
 #' @importFrom randomForest randomForest
 #' @importFrom stats predict
-#' @importFrom GenomicScores gscores
+#' @importFrom GenomicScores gscores populations
 #' @export
 #' @references Buenrostro, J.D., Giresi, P.G., Zaba, L.C., Chang, H.Y. and 
 #' Greenleaf, W.J., 2013. Transposition of native chromatin for fast and 
@@ -315,11 +315,17 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   rm(nc.seq)
   gc(verbose = FALSE, reset = TRUE, full = TRUE)
   # conservation
+  score.colnames <- populations(conservation)[1]
   getScoresFromCons <- function(cons, gr){# this step too slow, and why gscores change their output again and again?
       gr.cons <- lapply(split(gr, rep(as.character(seq.int(ceiling(length(gr)/block))), 
                                       each=block)[seq_along(gr)]),
                         function(.ele){
-                          gscores(x=cons, ranges = .ele)
+                          sFun <- function(x){
+                            mean(x, na.rm=TRUE)
+                          }
+                          gscores(x=cons, ranges = .ele,
+                                  pop=score.colnames,
+                                  summaryFun=sFun)
                         })
       gr.cons <- gr.cons[order(as.numeric(names(gr.cons)))]
       gr.cons <- unlist(GRangesList(gr.cons), use.names = FALSE)
@@ -330,12 +336,6 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
   nc.conservation <- getScoresFromCons(conservation, nc)
   nd.conservation <- getScoresFromCons(conservation, nd)
   ## determine the columns to be used for conservation
-  score.colnames <- c(nf.conservation, nc.conservation, nd.conservation)
-  score.colnames <- sapply(colnames(mcols(score.colnames)),
-                           function(.ele){
-                             sum(is.na(mcols(score.colnames)[, .ele]))
-                           })
-  score.colnames <- names(score.colnames[order(score.colnames)])[1]
   nf.conservation <- mcols(nf.conservation)[, score.colnames]
   nc.conservation <- mcols(nc.conservation)[, score.colnames]
   nd.conservation <- mcols(nd.conservation)[, score.colnames]

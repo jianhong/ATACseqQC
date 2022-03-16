@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.19.1
+
+* Fix the issue that NA is generated for conservation scores when call gscores.
+
 # CHANGES IN VERSION 1.17.1
 
 * Fix the issue that NA is generated when no data available for TSSEscore.
