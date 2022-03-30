@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.19.2
+
+* Change the method to fix the issue that NA is generated
+for conservation scores when call gscores.
+
 # CHANGES IN VERSION 1.19.1
 
 * Fix the issue that NA is generated for conservation scores when call gscores.

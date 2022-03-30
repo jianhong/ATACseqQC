@@ -24,6 +24,8 @@
 #' @param halfSizeOfNucleosome numeric(1) or integer(1). Thre read length will
 #' be adjusted to half of the nucleosome size to enhance the signal-to-noise
 #' ratio.
+#' @param summaryFun Function to summarize genomic scores when more than one
+#' position is retrieved. This will greatly affect the CPU time.
 #' @return a list of GAlignments
 #' @author Jianhong Ou
 #' @import BiocGenerics
@@ -73,12 +75,14 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
                           labelsOfNucleosomeFree="NucleosomeFree",
                           labelsOfMononucleosome="mononucleosome",
                           trainningSetPercentage=.15,
-                          cutoff = .8, halfSizeOfNucleosome=80L){
+                          cutoff = .8, halfSizeOfNucleosome=80L,
+                          summaryFun=mean){
   stopifnot(length(labels)+1==length(breaks))
   stopifnot(length(labelsOfMononucleosome)==1)
   stopifnot(length(labelsOfNucleosomeFree)==1)
   stopifnot(labelsOfMononucleosome %in% labels)
   stopifnot(labelsOfNucleosomeFree %in% labels)
+  stopifnot(is.function(summaryFun))
   conservationFlag <- FALSE
   if(!missing(conservation)){
     if(length(conservation)){
@@ -320,16 +324,16 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
       gr.cons <- lapply(split(gr, rep(as.character(seq.int(ceiling(length(gr)/block))), 
                                       each=block)[seq_along(gr)]),
                         function(.ele){
-                          sFun <- function(x){
-                            mean(x, na.rm=TRUE)
-                          }
                           gscores(x=cons, ranges = .ele,
                                   pop=score.colnames,
-                                  summaryFun=sFun)
+                                  summaryFun=summaryFun)
                         })
       gr.cons <- gr.cons[order(as.numeric(names(gr.cons)))]
       gr.cons <- unlist(GRangesList(gr.cons), use.names = FALSE)
-      stopifnot(identical(ranges(gr), ranges(gr.cons)))
+      A <- unname(ranges(gr))
+      B <- unname(ranges(gr.cons))
+      stopifnot("gscores does not work as expected."=identical(A, B))
+      names(gr.cons) <- names(gr)
       gr.cons
   }
   nf.conservation <- getScoresFromCons(conservation, nf)

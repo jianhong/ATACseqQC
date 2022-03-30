@@ -18,7 +18,8 @@ splitGAlignmentsByCut(
   labelsOfMononucleosome = "mononucleosome",
   trainningSetPercentage = 0.15,
   cutoff = 0.8,
-  halfSizeOfNucleosome = 80L
+  halfSizeOfNucleosome = 80L,
+  summaryFun = mean
 )
 }
 \arguments{
@@ -51,6 +52,9 @@ trainning set from top coverage.}
 \item{halfSizeOfNucleosome}{numeric(1) or integer(1). Thre read length will
 be adjusted to half of the nucleosome size to enhance the signal-to-noise
 ratio.}
+
+\item{summaryFun}{Function to summarize genomic scores when more than one
+position is retrieved. This will greatly affect the CPU time.}
 }
 \value{
 a list of GAlignments
