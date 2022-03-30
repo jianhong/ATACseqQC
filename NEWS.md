@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.18.1
+
+* Fix the un-identical names of gscores.
+
 # CHANGES IN VERSION 1.17.1
 
 * Fix the issue that NA is generated when no data available for TSSEscore.
