@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.19.3
+
+* fix the email typo.
+
 # CHANGES IN VERSION 1.19.2
 
 * Change the method to fix the issue that NA is generated
