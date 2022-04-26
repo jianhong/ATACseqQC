@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.20.1
+
+* fix the error of outputting bam file when the integer is printed to scientific notation.
+
 # CHANGES IN VERSION 1.19.3
 
 * fix the email typo.

@@ -30,16 +30,16 @@ writeListOfGAlignments <- function(objs, outPath="."){
     }
     mapply(function(data, n){
         if(length(data)>0){
-          try({
-             exportBamFile(data, file.path(outPath, paste0(n, ".bam")))
-          })
+            try({
+                exportBamFile(data, file.path(outPath, paste0(n, ".bam")))
+            })
         }else{
-          meta <- metadata(data)
-          if("file" %in% names(meta)){
-            file.copy(from = meta$file, to = file.path(outPath, paste0(n, ".bam")))
-            file.copy(from = paste0(meta$file, ".bai"), 
-                      to = file.path(outPath, paste0(n, ".bam.bai")))
-          }
+            meta <- metadata(data)
+            if("file" %in% names(meta)){
+                file.copy(from = meta$file, to = file.path(outPath, paste0(n, ".bam")))
+                file.copy(from = paste0(meta$file, ".bai"), 
+                          to = file.path(outPath, paste0(n, ".bam.bai")))
+            }
         }
     }, objs, names(objs))
 }
@@ -60,6 +60,9 @@ fillColumn <- function(x, filler) {
     else if (anyNA(x))
         ifelse(is.na(x), filler, x)
     else x
+}
+formatInt <- function(x){
+    formatC(x, format = 'd')
 }
 
 exportBamFile <- function(object, con){
@@ -83,18 +86,20 @@ exportBamFile <- function(object, con){
                                       genome(si)[has_genome])
     }
     emd <- mcols(object)
-    aln <- paste(fillColumn(names(object), "*"),
-                 fillColumn(emd[["flag"]],
-                            ifelse(strand(object) == "-", "16", "0")),
-                 seqnames(object), start(object),
-                 fillColumn(emd[["mapq"]], "255"),
-                 cigar(object),
-                 fillColumn(emd[["mrnm"]], "*"),
-                 fillColumn(emd[["mpos"]], "0"),
-                 fillColumn(emd[["isize"]], "0"),
+    aln <- paste(fillColumn(names(object), "*"),# QNAME String
+                 formatInt(fillColumn(emd[["flag"]],
+                                      ifelse(strand(object) == "-",
+                                             "16", "0"))), # FLAG Int
+                 seqnames(object),# RNAME String
+                 formatInt(start(object)),# POS Int
+                 formatInt(fillColumn(emd[["mapq"]], "255")),# MAPQ Int
+                 cigar(object), # CIGAR String
+                 fillColumn(emd[["mrnm"]], "*"), # RNEXT String
+                 formatInt(fillColumn(emd[["mpos"]], "0")), # PNEXT Int
+                 formatInt(fillColumn(emd[["isize"]], "0")), # TLEN Int
                  if (is(object, "GappedReads")) object@qseq
-                 else fillColumn(emd[["seq"]], "*"),
-                 fillColumn(emd[["qual"]], "*"),
+                 else fillColumn(emd[["seq"]], "*"), # SEQ String
+                 fillColumn(emd[["qual"]], "*"), # QUAL String
                  sep = "\t")
     custom <- emd[nchar(names(emd)) == 2L]
     if (length(custom) > 0L && nrow(custom)>0) {
