@@ -202,7 +202,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   bamIn <- lapply(bamIn, function(.ele){
     if(!is(.ele, "GRangesList")) .ele <- GRangesList(.ele)
     .ele <- unlist(.ele)
-    #seqlevelsStyle(.ele) <- seqlevelsStyle(genome)[1]
+    seqlevelsStyle(.ele) <- seqlevelsStyle(mt)[1]
     if(anchor=="cut site"){
       ## keep 5'end as cutting sites
       promoters(.ele, upstream=0, downstream=1)

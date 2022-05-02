@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.21.1
+
+* remove the limits of BSgenome object for vPlot 
+
 # CHANGES IN VERSION 1.19.3
 
 * fix the email typo.

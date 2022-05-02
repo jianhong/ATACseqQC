@@ -59,7 +59,7 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
                   seqlev=paste0("chr", c(1:22, "X", "Y")),
                   upstream=200, downstream=200,
                   maxSiteNum=1e6, draw=TRUE, ...){
-  stopifnot(is(genome, "BSgenome"))
+  if(!missing(genome)) stopifnot(is(genome, "BSgenome"))
   stopifnot(upstream>10 && downstream>10)
   stopifnot(is.numeric(maxSiteNum))
   maxSiteNum <- ceiling(maxSiteNum[1])
@@ -149,7 +149,7 @@ vPlot <- function(bamfiles, index=bamfiles, pfm, genome,
   if(length(bamIn)<1){
     stop("No paired reads. Please double check the inputs.")
   }
-  seqlevelsStyle(bamIn) <- seqlevelsStyle(genome)[1]
+  seqlevelsStyle(bamIn) <- seqlevelsStyle(mt)[1]
   mt.ext <- promoters(reCenterPeaks(mt, width=1),
                       upstream=upstream+floor(wid/2),
                       downstream=downstream+ceiling(wid/2))
