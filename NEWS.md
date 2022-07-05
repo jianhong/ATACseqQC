@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.21.2
+
+* Add error message for NA seqlengths for factorFootprints.R 
+
 # CHANGES IN VERSION 1.21.1
 
 * remove the limits of BSgenome object for vPlot 

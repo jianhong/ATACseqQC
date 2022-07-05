@@ -13,6 +13,7 @@
 #' @param newpage Plot the figure in a new page?
 #' @param motif a pfm object.
 #' @param segmentation the segmentation position and abundance
+#' @param ... Not used.
 #' @importFrom grid grid.newpage viewport plotViewport pushViewport upViewport
 #' gpar grid.xaxis grid.yaxis convertX convertY 
 #' unit grid.legend grid.text grid.lines grid.segments
@@ -33,7 +34,8 @@ plotFootprints <- function (Profile, Mlen = 0,
                             ylab = "Cut-site probability",
                             legLabels = c("For. strand", "Rev. strand"),
                             legTitle, xlim, ylim,
-                            newpage = TRUE, motif, segmentation)
+                            newpage = TRUE, motif, segmentation,
+                            ...)
 {
   stopifnot(is(motif, "pfm"))
   if(newpage) grid.newpage()

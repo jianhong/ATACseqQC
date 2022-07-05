@@ -15,7 +15,8 @@ plotFootprints(
   ylim,
   newpage = TRUE,
   motif,
-  segmentation
+  segmentation,
+  ...
 )
 }
 \arguments{
@@ -40,6 +41,8 @@ plotFootprints(
 \item{motif}{a pfm object.}
 
 \item{segmentation}{the segmentation position and abundance}
+
+\item{...}{Not used.}
 }
 \value{
 Null.

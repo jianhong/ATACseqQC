@@ -180,6 +180,14 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   wid <- ncol(pfm)
   #mt <- mt[seqnames(mt) %in% seqlev]
   seqlevels(mt) <- seqlev
+  if(any(is.na(seqlengths(mt)))){
+    error_msg <- seqlengths(mt)[is.na(seqlengths(mt))]
+    error_msg <- paste(names(error_msg), collapse=", ")
+    stop("There is NA values in seqlengths for the given seqlev. ",
+         "The lines of the NA values are: ",
+         error_msg,
+         ". Please remove those seq levels from the input and try again.")
+  }
   seqinfo(mt) <- Seqinfo(seqlev, seqlengths = seqlengths(mt))
   ## read in bam file with input seqlev specified by users
   which <- as(seqinfo(mt), "GRanges")
@@ -202,7 +210,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   bamIn <- lapply(bamIn, function(.ele){
     if(!is(.ele, "GRangesList")) .ele <- GRangesList(.ele)
     .ele <- unlist(.ele)
-    seqlevelsStyle(.ele) <- seqlevelsStyle(mt)[1]
+    #seqlevelsStyle(.ele) <- seqlevelsStyle(genome)[1]
     if(anchor=="cut site"){
       ## keep 5'end as cutting sites
       promoters(.ele, upstream=0, downstream=1)
@@ -340,7 +348,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
   Profile.seg <- colMeans(do.call(rbind, Profile.seg))
   Profile.seg[3] <- Profile.seg[2]+Profile.seg[3]
   names(Profile.seg)[2:3] <- c("distal_abun", "proximal_abun")
-  tryCatch({ ## try to avoid the error when ploting.
+  tryCatch({ ## try to avoid the error when plotting.
     args <- list(...)
     if(groupFlag){
       args$Profile <- c(Profile[["+"]], Profile[["-"]])
