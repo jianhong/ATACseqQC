@@ -13,7 +13,8 @@ TSSEscore(
   endSize = 100,
   width = 100,
   step = width,
-  pseudocount = 0
+  pseudocount = 0,
+  ...
 )
 }
 \arguments{
@@ -34,9 +35,11 @@ TSSEscore(
 \item{pseudocount}{numeric(1) or integer(1). Pseudocount. Default is 0. 
 If pseudocount is no greater than 0, the features with ZERO or less than ZERO 
 counts in flank region will be removed in calculation.}
+
+\item{...}{parameter can be passed to loess.smooth other than 'x', 'y', 'family' and 'evaluation'.}
 }
 \value{
-A object of \link[GenomicRanges:GRanges-class]{GRanges} with TSS scores
+A object of list with TSS scores
 }
 \description{
 TSS score is a raio between aggregate distribution of reads centered on TSSs and that flanking 

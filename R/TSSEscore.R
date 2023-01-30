@@ -12,12 +12,13 @@
 #' @param pseudocount numeric(1) or integer(1). Pseudocount. Default is 0. 
 #' If pseudocount is no greater than 0, the features with ZERO or less than ZERO 
 #' counts in flank region will be removed in calculation. 
+#' @param ... parameter can be passed to loess.smooth other than 'x', 'y', 'family' and 'evaluation'.
 #' @importClassesFrom GenomicAlignments GAlignments
 #' @importClassesFrom GenomicRanges GRanges
 #' @importFrom GenomicRanges promoters coverage shift
 #' @importFrom IRanges viewMeans Views
 #' @export
-#' @return A object of \link[GenomicRanges:GRanges-class]{GRanges} with TSS scores
+#' @return A object of list with TSS scores
 #' @author Jianhong Ou
 #' @references https://www.encodeproject.org/data-standards/terms/#enrichment
 #' @examples  
@@ -33,7 +34,8 @@
 TSSEscore <- function(obj, txs,
                       seqlev=intersect(seqlevels(obj), seqlevels(txs)),
                       upstream=1000, downstream=1000, endSize=100, 
-                      width=100, step = width, pseudocount=0){
+                      width=100, step = width, pseudocount=0, 
+                      ...){
   stopifnot(is(obj, "GAlignments"))
   if(length(obj)==0){
     obj <- loadBamFile(obj, minimal=TRUE)
@@ -101,19 +103,23 @@ TSSEscore <- function(obj, txs,
     v <- v[keep]
     i <- i[keep]
     v <- v*endSize/blk[names(v)]/width
-    tt <- table(i)
-    rs <- rowsum(v, i) ## possible error for MAX_FLOAT
-    if(length(rs)!=length(tt)) return(NULL)
-    tt <- tt[rownames(rs)]
-    tt[is.na(tt)] <- max(tt[!is.infinite(tt)], na.rm = TRUE)
-    names(tt) <- rownames(rs)
-    rs <- cbind(rs, tt)
+    ## names(v) is index number of sel.center
+    ## i is the index number of bins
+    tr <- unique(names(v))
+    rs <- matrix(v,
+                 nrow = length(tr),
+                 byrow = TRUE)
+    rownames(rs) <- tr
+    rs
   }, SIMPLIFY = FALSE)
   
-  tt <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 2]))
-  vms.m <- do.call(rbind, lapply(vms.m, function(.ele) .ele[, 1]))
-  vms.m <- colSums(vms.m, na.rm = TRUE)/colSums(tt, na.rm = TRUE)
+  tt <- do.call(rbind, vms.m)
+  vms.m <- colMeans(tt, na.rm = TRUE)
+  TSSE <- loess.smooth(
+    x=seq_along(vms.m), y=vms.m,
+    family = "gaussian", evaluation=length(vms.m),
+    ...)
   
-  TSSE <- max(vms.m[!is.infinite(vms.m)], na.rm = TRUE)
+  TSSE <- max(TSSE$y[!is.infinite(TSSE$y)], na.rm = TRUE)
   return(list(values=vms.m, TSSEscore=TSSE))
 }

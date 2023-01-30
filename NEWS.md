@@ -1,3 +1,8 @@
+# CHANGES IN VERSION 1.23.1
+
+* Add smooth function to TSSEscore.
+* Add pseudoPausingIndex function.
+
 # CHANGES IN VERSION 1.21.2
 
 * Add error message for NA seqlengths for factorFootprints.R 
