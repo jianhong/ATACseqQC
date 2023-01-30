@@ -100,6 +100,7 @@ pseudoPausingIndex <- function(obj, txs,
   pausedRegionVWS <- getCvg(pausedRegionGR)
   elongationRegionVWS <- getCvg(elongationRegionGR)
   ppi <- getCvg(txs)
+  ppi$score <- NULL
   ppi$nascentRegion <- nascentRegionVWS$score
   ppi$pausedRegion <- pausedRegionVWS$score
   ppi$elongationRegion <- elongationRegionVWS$score
