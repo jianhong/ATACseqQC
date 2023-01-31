@@ -8,9 +8,9 @@ pseudoPausingIndex(
   obj,
   txs,
   seqlev = intersect(seqlevels(obj), seqlevels(txs)),
-  nascentRegion = c(-20, 20),
-  pausedRegion = c(21, 60),
-  elongationRegion = c(61, 100),
+  nascentRegion = c(-200, -1),
+  pausedRegion = c(1, 200),
+  elongationRegion = c(401, 600),
   pseudocount = 1L
 )
 }
@@ -37,7 +37,7 @@ the 5' end of the gene to that in the gene body. This function will simulate
 the pausing index by open chromatin coverage instead of PolII signaling.
 The pausing index is a raio between aggregate distribution of reads in TSS
 and that elongating gene bodys. The default PI = average coverage of TSS
-(+20 to +60bp) / the average coverage of in transcripts (+60bp to 100bp).
+(+1 to +200bp) / the average coverage of in transcripts (+401bp to 600bp).
 }
 \examples{
  
@@ -52,7 +52,8 @@ txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
 ppi <- pseudoPausingIndex(gal1, txs)
 }
 \references{
-https://doi.org/10.1098%2Frsob.210220
+https://doi.org/10.1098%2Frsob.210220; 
+https://www.nature.com/articles/nmeth.2688/figures/3
 }
 \author{
 Jianhong Ou

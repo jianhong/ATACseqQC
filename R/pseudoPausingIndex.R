@@ -4,7 +4,7 @@
 #' the pausing index by open chromatin coverage instead of PolII signaling.
 #' The pausing index is a raio between aggregate distribution of reads in TSS
 #' and that elongating gene bodys. The default PI = average coverage of TSS
-#' (+20 to +60bp) / the average coverage of in transcripts (+60bp to 100bp).
+#' (+1 to +200bp) / the average coverage of in transcripts (+401bp to 600bp).
 #' @param obj an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 #' @param txs GRanges of transcripts
 #' @param seqlev A vector of characters indicates the sequence levels.
@@ -20,7 +20,8 @@
 #' @return A object of \link[GenomicRanges:GRanges-class]{GRanges} with pseudo
 #' pausing index.
 #' @author Jianhong Ou
-#' @references https://doi.org/10.1098%2Frsob.210220
+#' @references https://doi.org/10.1098%2Frsob.210220; 
+#' https://www.nature.com/articles/nmeth.2688/figures/3
 #' @examples  
 #' library(GenomicRanges)
 #' bamfile <- system.file("extdata", "GL1.bam", 
@@ -33,9 +34,9 @@
 #' ppi <- pseudoPausingIndex(gal1, txs)
 pseudoPausingIndex <- function(obj, txs,
                       seqlev=intersect(seqlevels(obj), seqlevels(txs)),
-                      nascentRegion=c(-20, 20),
-                      pausedRegion=c(21, 60),
-                      elongationRegion=c(61, 100),
+                      nascentRegion=c(-200, -1),
+                      pausedRegion=c(1, 200),
+                      elongationRegion=c(401, 600),
                       pseudocount=1L){
   stopifnot(is(obj, "GAlignments"))
   if(length(obj)==0){
@@ -57,6 +58,7 @@ pseudoPausingIndex <- function(obj, txs,
   cvg <- cvg[seqlev]
   if(pseudocount!=0) cvg <- cvg + pseudocount
   txs <- txs[seqnames(txs) %in% seqlev]
+  txs <- txs[width(txs)>=max(elongationRegion)[1]]
   txs <- unique(txs)
   TSS <- promoters(txs, upstream = 0L, downstream = 1L)
   str_neg <- as.character(strand(TSS))=="-"
