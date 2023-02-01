@@ -10,6 +10,7 @@ pseudoPausingIndex(
   seqlev = intersect(seqlevels(obj), seqlevels(txs)),
   nascentRegion = c(-200, -1),
   pausedRegion = c(1, 200),
+  avoidanceRegion = c(21, 60),
   elongationRegion = c(401, 600),
   pseudocount = 1L
 )
@@ -21,9 +22,10 @@ pseudoPausingIndex(
 
 \item{seqlev}{A vector of characters indicates the sequence levels.}
 
-\item{nascentRegion, pausedRegion, elongationRegion}{numeric(2) or integer(2).
-The start and end position of the pre-initiation complex, paused complex and
-productive elongation.}
+\item{nascentRegion, pausedRegion, avoidanceRegion, elongationRegion}{numeric(2)
+ or integer(2).
+The start and end position of the pre-initiation complex, paused complex, 
+paused complex avoidance region and productive elongation.}
 
 \item{pseudocount}{numeric(1) or integer(1). Pseudocount. Default is 1.}
 }
@@ -36,8 +38,9 @@ The polII pausing index is the ratio of the reads density at
 the 5' end of the gene to that in the gene body. This function will simulate
 the pausing index by open chromatin coverage instead of PolII signaling.
 The pausing index is a raio between aggregate distribution of reads in TSS
-and that elongating gene bodys. The default PI = average coverage of TSS
-(+1 to +200bp) / the average coverage of in transcripts (+401bp to 600bp).
+and that elongating gene bodys. The default PI = [average coverage of TSS
+(+1 to +200bp) - average coverage of avoidance region (+21 to +60bp)] /
+the average coverage of in transcripts (+401bp to 600bp).
 }
 \examples{
  

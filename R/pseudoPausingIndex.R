@@ -3,14 +3,16 @@
 #' the 5' end of the gene to that in the gene body. This function will simulate
 #' the pausing index by open chromatin coverage instead of PolII signaling.
 #' The pausing index is a raio between aggregate distribution of reads in TSS
-#' and that elongating gene bodys. The default PI = average coverage of TSS
-#' (+1 to +200bp) / the average coverage of in transcripts (+401bp to 600bp).
+#' and that elongating gene bodys. The default PI = [average coverage of TSS
+#' (+1 to +200bp) - average coverage of avoidance region (+21 to +60bp)] /
+#' the average coverage of in transcripts (+401bp to 600bp).
 #' @param obj an object of \link[GenomicAlignments:GAlignments-class]{GAlignments}
 #' @param txs GRanges of transcripts
 #' @param seqlev A vector of characters indicates the sequence levels.
-#' @param nascentRegion,pausedRegion,elongationRegion numeric(2) or integer(2).
-#' The start and end position of the pre-initiation complex, paused complex and
-#' productive elongation.
+#' @param nascentRegion,pausedRegion,avoidanceRegion,elongationRegion numeric(2)
+#'  or integer(2).
+#' The start and end position of the pre-initiation complex, paused complex, 
+#' paused complex avoidance region and productive elongation.
 #' @param pseudocount numeric(1) or integer(1). Pseudocount. Default is 1.
 #' @importClassesFrom GenomicAlignments GAlignments
 #' @importClassesFrom GenomicRanges GRanges
@@ -36,6 +38,7 @@ pseudoPausingIndex <- function(obj, txs,
                       seqlev=intersect(seqlevels(obj), seqlevels(txs)),
                       nascentRegion=c(-200, -1),
                       pausedRegion=c(1, 200),
+                      avoidanceRegion=c(21, 60),
                       elongationRegion=c(401, 600),
                       pseudocount=1L){
   stopifnot(is(obj, "GAlignments"))
@@ -83,6 +86,7 @@ pseudoPausingIndex <- function(obj, txs,
   }
   nascentRegionGR <- getRegion(TSS, nascentRegion)
   pausedRegionGR <- getRegion(TSS, pausedRegion)
+  avoidanceRegionGR <- getRegion(TSS, avoidanceRegion)
   elongationRegionGR <- getRegion(TSS, elongationRegion)
   getCvg <- function(x){
     x <- split(x, seqnames(x))
@@ -100,15 +104,16 @@ pseudoPausingIndex <- function(obj, txs,
   }
   nascentRegionVWS <- getCvg(nascentRegionGR)
   pausedRegionVWS <- getCvg(pausedRegionGR)
+  avoidanceRegionVWS <- getCvg(avoidanceRegionGR)
   elongationRegionVWS <- getCvg(elongationRegionGR)
   ppi <- getCvg(txs)
   ppi$score <- NULL
   ppi$nascentRegion <- nascentRegionVWS$score
   ppi$pausedRegion <- pausedRegionVWS$score
+  ppi$avoidanceRegion <- avoidanceRegionVWS$score
   ppi$elongationRegion <- elongationRegionVWS$score
-  ppi$pseudoPI <- (pausedRegionVWS$score+pseudocount)/
+  ppi$pseudoPI <- (pausedRegionVWS$score-avoidanceRegionVWS$score+pseudocount)/
     (elongationRegionVWS$score+pseudocount)
-  
   return(ppi)
 }
 
