@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.25.1
+
+* Fix the error 'number of columns of matrices must match' for TSSEscore.
+
 # CHANGES IN VERSION 1.23.1
 
 * Add smooth function to TSSEscore.

@@ -113,7 +113,11 @@ TSSEscore <- function(obj, txs,
     rs
   }, SIMPLIFY = FALSE)
   
-  tt <- do.call(rbind, vms.m)
+  vms.m.nrow <- vapply(vms.m, nrow, FUN.VALUE = numeric(1L))
+  if(all(vms.m.nrow==0)){
+    stop("Can not get any signals.")
+  }
+  tt <- do.call(rbind, vms.m[vms.m.nrow>0])
   vms.m <- colMeans(tt, na.rm = TRUE)
   TSSE <- loess.smooth(
     x=seq_along(vms.m), y=vms.m,
