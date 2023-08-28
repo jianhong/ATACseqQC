@@ -13,6 +13,7 @@
 #' @param newpage Plot the figure in a new page?
 #' @param motif a pfm object.
 #' @param segmentation the segmentation position and abundance
+#' @param reNormalizeByDistalSig Re-normalized the curver by distal signals.
 #' @param ... Not used.
 #' @importFrom grid grid.newpage viewport plotViewport pushViewport upViewport
 #' gpar grid.xaxis grid.yaxis convertX convertY 
@@ -35,6 +36,7 @@ plotFootprints <- function (Profile, Mlen = 0,
                             legLabels = c("For. strand", "Rev. strand"),
                             legTitle, xlim, ylim,
                             newpage = TRUE, motif, segmentation,
+                            reNormalizeByDistalSig = FALSE,
                             ...)
 {
   stopifnot(is(motif, "pfm"))
@@ -42,6 +44,32 @@ plotFootprints <- function (Profile, Mlen = 0,
 
   S <- length(Profile)
   W <- ((S/2) - Mlen)/2
+  if(reNormalizeByDistalSig && !missing(segmentation)){
+    if(length(segmentation)==4){
+      Prof <- list()
+      Prof[[1]] <- Profile[1:(S/2)]
+      Prof[[2]] <- Profile[(S/2 + 1):S]
+      P_id <- floor(segmentation[1])
+      from <- c(1, P_id+1, W+1, W+Mlen+1, S/2-P_id+1)
+      to <- c(from[-1]-1, S/2)
+      sig_level <- lapply(Prof, function(.ele){
+        .ele <- mapply(from, to, FUN=function(f, t){
+          .ele[seq(f, t)]
+        }, SIMPLIFY = FALSE)
+        return(c(
+          "distal_abun" = mean(c(.ele[[1]], .ele[[5]]), na.rm=TRUE),
+          "proximal_abun" = mean(c(.ele[[2]], .ele[[4]]), na.rm=TRUE),
+          "binding" = mean(.ele[[3]], na.rm=TRUE)))
+      })
+      norm_factor <- vapply(sig_level, FUN = function(.ele) .ele["distal_abun"],
+                            FUN.VALUE = numeric(1L))
+      norm_factor <- mean(norm_factor)/norm_factor
+      Prof <- mapply(Prof, norm_factor, FUN=function(p, f) p*f,
+                        SIMPLIFY=FALSE)
+      Profile <- c(Prof[[1]], Prof[[2]])
+      segmentation[-1] <- apply(do.call(rbind, sig_level), 2, mean, na.rm=TRUE)
+    }
+  }
   vp <- plotViewport(margins=c(5.1, 5.1, 4.1, 2.1), name="plotRegion")
   pushViewport(vp)
   if(missing(xlim)){

@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.25.2
+
+* Add reNormalizeByDistalSig parameter to plotFootprints function.
+
 # CHANGES IN VERSION 1.25.1
 
 * Fix the error 'number of columns of matrices must match' for TSSEscore.

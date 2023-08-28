@@ -91,10 +91,19 @@ bds <- readRDS(system.file("extdata", "jolma2013.motifs.bindingList.95.rds",
                           package="ATACseqQC"))
 bindingSites <- bds[["Hsapiens-jolma2013-CTCF"]]
 seqlev <- "chr1" #seqlevels(bindingSites)
-factorFootprints(bamfile, pfm=CTCF[[1]],
+ff <- factorFootprints(bamfile, pfm=CTCF[[1]],
                 bindingSites=bindingSites,
                 seqlev=seqlev,
                 upstream=100, downstream=100)
+##### normalize the plot by distal signals #####
+library(motifStack)
+Profile <- lapply(ff$signal, function(.ele) colMeans(.ele, na.rm = TRUE))
+pfm <- new('pfm', mat=as.matrix(CTCF[[1]]), name='CTCF')
+plotFootprints(Profile=c(Profile[["+"]], Profile[["-"]]),
+              Mlen=ff$Mlen,
+              motif=pfm,
+              segmentation=ff$Profile.segmentation,
+              reNormalizeByDistalSig=TRUE)
 
 }
 \references{

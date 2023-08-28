@@ -16,6 +16,7 @@ plotFootprints(
   newpage = TRUE,
   motif,
   segmentation,
+  reNormalizeByDistalSig = FALSE,
   ...
 )
 }
@@ -41,6 +42,8 @@ plotFootprints(
 \item{motif}{a pfm object.}
 
 \item{segmentation}{the segmentation position and abundance}
+
+\item{reNormalizeByDistalSig}{Re-normalized the curver by distal signals.}
 
 \item{...}{Not used.}
 }
