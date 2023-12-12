@@ -85,23 +85,7 @@ exportBamFile <- function(object, con){
         header[has_genome] <-  paste0(header[has_genome], "\tAS:",
                                       genome(si)[has_genome])
     }
-    emd <- mcols(object)
-    aln <- paste(fillColumn(names(object), "*"),# QNAME String
-                 formatInt(fillColumn(emd[["flag"]],
-                                      ifelse(strand(object) == "-",
-                                             "16", "0"))), # FLAG Int
-                 seqnames(object),# RNAME String
-                 formatInt(start(object)),# POS Int
-                 formatInt(fillColumn(emd[["mapq"]], "255")),# MAPQ Int
-                 cigar(object), # CIGAR String
-                 fillColumn(emd[["mrnm"]], "*"), # RNEXT String
-                 formatInt(fillColumn(emd[["mpos"]], "0")), # PNEXT Int
-                 formatInt(fillColumn(emd[["isize"]], "0")), # TLEN Int
-                 if (is(object, "GappedReads")) object@qseq
-                 else fillColumn(emd[["seq"]], "*"), # SEQ String
-                 fillColumn(emd[["qual"]], "*"), # QUAL String
-                 sep = "\t")
-    custom <- emd[nchar(names(emd)) == 2L]
+    custom <- mcols(object)[nchar(names(mcols(object))) == 2L]
     if (length(custom) > 0L && nrow(custom)>0) {
         type.map <- c(integer = "i", numeric = "f", character = "Z",
                       factor = "Z")
@@ -117,17 +101,9 @@ exportBamFile <- function(object, con){
             custom <- custom[!is.na(custom.type)]
             custom.type <- custom.type[!is.na(custom.type)]
         }
-        tags <- mapply(paste0, names(custom), ":", custom.type, ":",
-                       as.list(custom), SIMPLIFY=FALSE)
-        tags <- do.call(paste, c(tags, sep = "\t"))
-        ## remove the NA values
-        tags <- sub("\\t$", "", 
-                    sub("..:[ifZ]:NA$", "", 
-                        gsub("..:[ifZ]:NA\\t", "", tags)))
-        aln <- paste(aln, tags, sep = "\t")
-        custom <- custom[names(custom) %in% possibleTag$Metadata]
-        if(length(custom)){
-            tag_ids <- lapply(custom, unique)
+        customMD <- custom[names(custom) %in% possibleTag$Metadata]
+        if(length(customMD)){
+            tag_ids <- lapply(customMD, unique)
             tag_ids <- lapply(tag_ids, function(.ele) .ele[!is.na(.ele)])
             tag_ids <- paste0("@", rep(names(tag_ids), lengths(tag_ids)),
                               "\tID:", unlist(tag_ids))
@@ -136,7 +112,42 @@ exportBamFile <- function(object, con){
     }
     if(length(metadata(object)$header)) header <- metadata(object)$header
     writeLines(header, sam_con)
-    writeLines(aln, sam_con)
+    chunk <- 100000
+    for(i in seq.int(ceiling(length(object)/chunk))){
+      idx <- seq.int(chunk)+(i-1)*chunk
+      thisObj <- object[idx[idx<=length(object)]]
+      thisCustom <- custom[idx[idx<=length(object)], , drop=FALSE]
+      emd <- mcols(thisObj)
+      aln <- paste(fillColumn(names(thisObj), "*"),# QNAME String
+                   formatInt(fillColumn(emd[["flag"]],
+                                        ifelse(strand(thisObj) == "-",
+                                               "16", "0"))), # FLAG Int
+                   seqnames(thisObj),# RNAME String
+                   formatInt(start(thisObj)),# POS Int
+                   formatInt(fillColumn(emd[["mapq"]], "255")),# MAPQ Int
+                   cigar(thisObj), # CIGAR String
+                   fillColumn(emd[["mrnm"]], "*"), # RNEXT String
+                   formatInt(fillColumn(emd[["mpos"]], "0")), # PNEXT Int
+                   formatInt(fillColumn(emd[["isize"]], "0")), # TLEN Int
+                   if (is(thisObj, "GappedReads")) thisObj@qseq
+                   else fillColumn(emd[["seq"]], "*"), # SEQ String
+                   fillColumn(emd[["qual"]], "*"), # QUAL String
+                   sep = "\t")
+      if (length(thisCustom) > 0L && nrow(thisCustom)>0) {
+        tags <- mapply(paste0, names(thisCustom), ":", custom.type, ":",
+                       as.list(thisCustom), SIMPLIFY=FALSE)
+        tags <- do.call(paste, c(tags, sep = "\t"))
+        ## remove the NA values
+        tags <- sub("\\t$", "", 
+                    sub("..:[ifZ]:NA$", "", 
+                        gsub("..:[ifZ]:NA\\t", "", tags)))
+        aln <- paste(aln, tags, sep = "\t")
+      }
+      writeLines(aln, sam_con)
+      rm(aln, tags, thisObj, thisCustom)
+      gc(verbose = FALSE)
+    }
+    
     close(sam_con)
     on.exit() ## redefine on.exit
     if(any(seqlengths(si)>536870912)){

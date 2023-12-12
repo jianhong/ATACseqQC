@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.27.1
+
+* Fix the issue caused by `readGAlignmentsList` does not support read by chunk 
+
 # CHANGES IN VERSION 1.25.2
 
 * Add reNormalizeByDistalSig parameter to plotFootprints function.

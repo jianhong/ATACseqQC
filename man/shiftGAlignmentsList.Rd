@@ -4,7 +4,14 @@
 \alias{shiftGAlignmentsList}
 \title{shift 5' ends}
 \usage{
-shiftGAlignmentsList(gal, positive = 4L, negative = 5L, outbam)
+shiftGAlignmentsList(
+  gal,
+  positive = 4L,
+  negative = 5L,
+  outbam,
+  BPPARAM = NULL,
+  slidingWindowSize = 5e+07
+)
 }
 \arguments{
 \item{gal}{An object of \link[GenomicAlignments:GAlignmentsList-class]{GAlignmentsList}.}
@@ -14,6 +21,12 @@ shiftGAlignmentsList(gal, positive = 4L, negative = 5L, outbam)
 \item{negative}{integer(1). the size to be shift for negative strand}
 
 \item{outbam}{file path to save shift reads. If missing, no file will be write.}
+
+\item{BPPARAM}{The parallel parameters used by BiocParrallel.}
+
+\item{slidingWindowSize}{The width of each tile when the input is big file.
+By default 50e6, the memory cost will be about 6GB for each thread for a 5GB bam file.
+Increase the value will increase the memory cost but may speed up the process.}
 }
 \value{
 An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 
@@ -33,6 +46,17 @@ which <- as(seqinfo(Hsapiens)["chr1"], "GRanges")
 gal <- readBamFile(bamfile, tag=tags, which=which, asMates=TRUE)
 objs <- shiftGAlignmentsList(gal)
 export(objs, "shift.bam")
+\dontrun{
+  bamfile <- 'a.big.file.bam'
+  tags <- c("NM", "MD")
+  which <- GRanges(c('chr1:1-249250621:*', 'chr2:1-243199373:*'))
+  gal <- readBamFile(bamfile, tag=tags, which=which, 
+  asMates=TRUE, bigFile=TRUE)
+  library(BiocParallel)
+  BPPARAM <- MulticoreParam(workers = 2, progress=TRUE)
+  objs <- shiftGAlignmentsList(gal, BPPARAM = BPPARAM,
+   outbam="shift.bam")
+}
 }
 \author{
 Jianhong Ou

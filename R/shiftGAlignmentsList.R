@@ -6,6 +6,10 @@
 #' @param positive integer(1). the size to be shift for positive strand
 #' @param negative integer(1). the size to be shift for negative strand
 #' @param outbam file path to save shift reads. If missing, no file will be write.
+#' @param slidingWindowSize The width of each tile when the input is big file.
+#' By default 50e6, the memory cost will be about 6GB for each thread for a 5GB bam file.
+#' Increase the value will increase the memory cost but may speed up the process.
+#' @param BPPARAM The parallel parameters used by BiocParrallel.
 #' @return An object of \link[GenomicAlignments:GAlignments-class]{GAlignments} with 5' end 
 #' shifted reads. The PCR duplicated will be removed unless there is metadata
 #' keepDuplicates set to TRUE.
@@ -13,9 +17,11 @@
 #' @export
 #' @import S4Vectors
 #' @import GenomicRanges
-#' @importFrom Rsamtools mergeBam
+#' @importFrom Rsamtools mergeBam bamWhich `bamWhich<-` filterBam bamTag
+#' `bamTag<-`
 #' @importFrom rtracklayer export
-#' @importFrom utils read.csv write.csv
+#' @importFrom utils read.csv write.csv combn txtProgressBar setTxtProgressBar
+#' @importFrom BiocParallel bptry bplapply
 #' @examples
 #' bamfile <- system.file("extdata", "GL1.bam", package="ATACseqQC")
 #' tags <- c("AS", "XN", "XM", "XO", "XG", "NM", "MD", "YS", "YT")
@@ -24,7 +30,20 @@
 #' gal <- readBamFile(bamfile, tag=tags, which=which, asMates=TRUE)
 #' objs <- shiftGAlignmentsList(gal)
 #' export(objs, "shift.bam")
-shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
+#' \dontrun{
+#'   bamfile <- 'a.big.file.bam'
+#'   tags <- c("NM", "MD")
+#'   which <- GRanges(c('chr1:1-249250621:*', 'chr2:1-243199373:*'))
+#'   gal <- readBamFile(bamfile, tag=tags, which=which, 
+#'   asMates=TRUE, bigFile=TRUE)
+#'   library(BiocParallel)
+#'   BPPARAM <- MulticoreParam(workers = 2, progress=TRUE)
+#'   objs <- shiftGAlignmentsList(gal, BPPARAM = BPPARAM,
+#'    outbam="shift.bam")
+#' }
+shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam,
+                                 BPPARAM = NULL,
+                                 slidingWindowSize = 50e6){
     stopifnot(is.integer(positive))
     stopifnot(is.integer(negative))
     stopifnot(is(gal, "GAlignmentsList"))
@@ -37,42 +56,197 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
       ow <- getOption("warn")
       on.exit(options(warn = ow))
       options(warn=-1)
-      chunk <- 100000
       index <- ifelse(length(meta$index)>0, meta$index, meta$file)
-      bamfile <- BamFile(meta$file, index=index, yieldSize=chunk, asMates = meta$asMates)
-      outfile <- NULL
-      mpos <- NULL
-      open(bamfile)
-      on.exit({options(warn = ow);close(bamfile)})
-      df4Duplicates <- NULL
-      while (length(chunk0 <- readGAlignmentsList(bamfile, param=meta$param))) {
-        metadata(chunk0)$df4Duplicates <- df4Duplicates
-        gal1 <- shiftGAlignmentsList(chunk0, positive = positive, 
-                                     negative = negative)
-        this.mpos <- mcols(gal1)$mpos
-        if(length(this.mpos)!=length(gal1)){
-          stop("Can not get mpos info from the reads.")
-        }
-        names(this.mpos) <- paste(mcols(gal1)$qname, start(gal1))
-        mpos <- c(mpos, this.mpos)
-        if(length(metadata(gal1)$df4Duplicates)){
-          df4Duplicates <- read.csv(metadata(gal1)$df4Duplicates)
-        }
-        outfile <- c(tempfile(fileext = ".bam"), outfile)
-        if(length(meta$header)>0) metadata(gal1)$header <- meta$header
-        exportBamFile(gal1, outfile[1])
-        rm(gal1)
+      bamW <- bamWhich(meta$param)
+      bamW <- as(bamW, "GRanges")
+      bamW <- slidingWindows(bamW,
+                             width=slidingWindowSize,
+                             step=slidingWindowSize)
+      bamW <- unlist(bamW)
+      rmBam <- function(bam, bai=paste0(bam, ".bai")){
+        unlink(bam)
+        if(file.exists(bai[1])) unlink(bai)
       }
-      close(bamfile)
+      mposTag <- vapply(combn(LETTERS, 2, simplify = FALSE), function(.ele){
+        paste(.ele, collapse = '')
+      }, FUN.VALUE = character(1L))
+      if(any(!mposTag %in% bamTag(meta$param))){
+        mposTag <- mposTag[!mposTag %in% bamTag(meta$param)][1]
+      }else{
+        stop('Can not find a proper tag to save mpos! Please remove some tags.')
+      }
+      processBamByTile <- function(meta, i, bamW, rmBam, mposTag){
+        sbp <- meta$param
+        bamWhich(sbp) <- bamW[i]
+        destination <- tempfile(fileext = ".bam")
+        null <- filterBam(file=meta$file, index = index,
+                          destination=destination,
+                          indexDestination=TRUE,
+                          param=sbp)
+        chunk <- 1000000
+        bamfile <- BamFile(destination,
+                           index=destination,
+                           yieldSize=chunk,
+                           asMates = meta$asMates)
+        open(bamfile)
+        on.exit({
+          close(bamfile)
+          rmBam(destination)
+          })
+        outfile <- NULL
+        SE <- GAlignments()
+        df4Duplicates <- NULL
+        while (length(chunk0 <-
+                      readGAlignmentsList(bamfile, param=meta$param))) {
+          isSE <- lengths(chunk0)==1
+          if(sum(isSE)){
+            SE <- c(SE, unlist(chunk0[isSE]))
+            chunk0 <- chunk0[!isSE]
+            ## pair SE
+            SE <- split(SE, mcols(SE)$qname)
+            isSE <- lengths(SE)==1
+            chunk0 <- c(chunk0, SE[!isSE])
+            SE <- SE[isSE]
+            SE <- unlist(SE)
+            if(length(chunk0)==0){
+              next
+            }
+          }
+          startpos <- vapply(start(chunk0), min,
+                             FUN.VALUE = integer(1L))
+          chunk0 <- chunk0[order(startpos)]
+          metadata(chunk0)$df4Duplicates <- df4Duplicates
+          gal1 <- shiftGAlignmentsList(chunk0, positive = positive, 
+                                       negative = negative)
+          rm(chunk0)
+          gc(verbose=FALSE)
+          if(length(metadata(gal1)$df4Duplicates)){
+            df4Duplicates <- read.csv(metadata(gal1)$df4Duplicates)
+          }
+          if(length(mcols(gal1)$mpos)!=length(gal1)){
+            stop("Can not get mpos info from the reads.")
+          }
+          mcols(gal1)[, mposTag] <- mcols(gal1)$mpos
+          outfile <- c(tempfile(fileext = ".bam"), outfile)
+          if(length(meta$header)>0) metadata(gal1)$header <- meta$header
+          exportBamFile(gal1, outfile[1])
+          rm(gal1)
+          gc(verbose=FALSE)
+        }
+        close(bamfile)
+        rmBam(destination)
+        on.exit()
+        if(length(SE)>0){
+          singleEnds <- 
+            tempfile(fileext = paste0('.',
+                                      as.character(seqnames(SE[1])),
+                                      '.bam'))
+          SE <- renameMcol(SE, "mrnm", tagNewName=mposTag)
+          exportBamFile(SE, singleEnds)
+          rm(SE)
+          gc(verbose=FALSE)
+        }else{
+          singleEnds <- NULL
+        }
+        return(list(outfile=outfile,
+                    singleEnds = singleEnds))
+      }
+      if(is.null(BPPARAM)){
+        pb <- txtProgressBar(max = length(bamW), style = 3)
+        res <- lapply(
+          seq_along(bamW),
+          function(i){
+            .res <- processBamByTile(meta=meta,
+                                     i=i,
+                                     bamW=bamW,
+                                     rmBam=rmBam,
+                                     mposTag=mposTag)
+            setTxtProgressBar(pb, i)
+            .res
+            })
+        close(pb)
+      }else{
+        retryBatch <- 3
+        retry <- TRUE
+        res <- list()
+        while(retryBatch>0){
+          retryBatch <- retryBatch - 1
+          if(any(retry)){
+            res <- bptry(bplapply(seq_along(bamW),
+                                  processBamByTile,
+                                  meta=meta, bamW=bamW,
+                                  rmBam=rmBam, mposTag=mposTag,
+                                  BPREDO = res,
+                                  BPPARAM = BPPARAM))
+            retry <- vapply(res, FUN = function(.ele){
+              is(.ele, 'bperror')
+            }, FUN.VALUE = logical(1L))
+          }else{
+            retryBatch <- -1
+          }
+        }
+      }
+      options(warn = ow)
       on.exit()
+      getRes <- function(res, key){
+        unlist(lapply(res, function(.ele) .ele[[key]]))
+      }
+      outfile <- getRes(res, 'outfile')
+      SE <- getRes(res, 'singleEnds')
+      SE <- SE[lengths(SE)>0]
+      SE_chr <- vapply(
+        strsplit(SE, split = '.', fixed = TRUE),
+        FUN = function(.ele){
+          .ele[length(.ele)-1]
+        },
+        FUN.VALUE = character(1L)
+      )
+      SE <- split(SE, SE_chr)
+      param <- meta$param
+      bamTag(param) <- c(bamTag(param), mposTag)
+      SE_outfile <- lapply(SE, function(se){
+        chr_SE <- lapply(se, readGAlignments, param=param)
+        chr_SE <- unlist(GAlignmentsList(chr_SE))
+        chr_SE <- renameMcol(chr_SE, mposTag, tagNewName="mrnm")
+        rmBam(se)
+        this_outfile <- NULL
+        if(length(chr_SE)){
+          chr_SE <- split(chr_SE, mcols(chr_SE)$qname)
+          isSE <- lengths(chr_SE)==1
+          chunk0 <- chr_SE[!isSE]
+          rm(chr_SE)
+          if(length(chunk0)){
+            startpos <- vapply(start(chunk0), min,
+                               FUN.VALUE = integer(1L))
+            chunk0 <- chunk0[order(startpos)]
+            gal1 <- shiftGAlignmentsList(chunk0, positive = positive,
+                                         negative = negative)
+            rm(chunk0)
+            gc(verbose=FALSE)
+            if(length(gal1)){
+              if(length(mcols(gal1)$mpos)!=length(gal1)){
+                stop("Can not get mpos info from the reads.")
+              }
+              mcols(gal1)[, mposTag] <- mcols(gal1)$mpos
+              this_outfile <- tempfile(fileext = ".bam")
+              if(length(meta$header)>0) metadata(gal1)$header <- meta$header
+              exportBamFile(gal1, this_outfile)
+            }
+            rm(gal1)
+            gc(verbose=FALSE)
+          }
+        }
+        return(this_outfile)
+      })
+      outfile <- c(outfile, unlist(SE_outfile))
+      
       if(length(outfile)>1){
         BAI <- paste0(outfile[1], ".bai")
         mergedfile <- mergeBam(outfile, 
                                destination=tempfile(fileext = ".bam"), 
                                indexDestination=file.exists(BAI),
                                header=meta$file)
-        unlink(outfile)
-        if(file.exists(BAI)) unlink(paste0(outfile, ".bai"))
+        rmBam(outfile)
       }else{
         if(length(outfile)==1){
           mergedfile <- outfile
@@ -92,18 +266,19 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam){
           meta$index <- NULL
         }
         meta$asMates <- FALSE
-        meta$mpos <- mpos
+        ## add mpos tag to the bamTag to let the readBamFile known
+        meta$mposTag <- mposTag
+        bamTag(meta$param) <- c(bamTag(meta$param), mposTag)
         metadata(gal1) <- meta
       }else{
-        gal1 <- readGAlignments(mergedfile, param = meta$param)
+        param <- meta$param
+        bamTag(param) <- c(bamTag(param), mposTag)
+        gal1 <- readGAlignments(mergedfile, param = param)
         mcols(gal1)$MD <- NULL
         names(gal1) <- mcols(gal1)$qname
         gal1 <- gal1[order(names(gal1))]
-        mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
-        unlink(mergedfile)
-        if(file.exists(paste0(mergedfile, ".bai"))){
-          unlink(paste0(mergedfile, ".bai"))
-        }
+        gal1 <- renameMcol(gal1, mposTag, tagNewName="mpos")
+        rmBam(mergedfile)
       }
       return(gal1)
     }

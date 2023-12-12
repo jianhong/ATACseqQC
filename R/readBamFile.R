@@ -111,6 +111,20 @@ checkMaxChrLength <- function(len){
   len
 } 
 
+renameMcol <- function(gal, tagOldName, tagNewName = "mpos"){
+  cn <- colnames(mcols(gal))
+  stopifnot('Can not find proper tag!'=tagOldName %in% cn)
+  colnames(mcols(gal))[cn==tagOldName] <- tagNewName
+  gal
+}
+#' @importFrom Rsamtools bamTag
+checkMposTag <- function(meta){
+  return(length(meta$mposTag)==1 && meta$mposTag %in% bamTag(meta$param))
+}
+readGAlignmentsFromMeta <- function(FUN, meta){
+  meta <- meta[names(meta) %in% names(formals(FUN))]
+  do.call(FUN, meta)
+}
 loadBamFile <- function(gal, which=NULL, minimal=FALSE){
   meta <- metadata(gal)
   header <- meta$header
@@ -124,20 +138,16 @@ loadBamFile <- function(gal, which=NULL, minimal=FALSE){
     meta$param <- ScanBamParam(flag=meta$param@flag, what=("qname"))
   }
   if(asMates){
-    meta <- meta[names(meta) %in% names(formals(readGAlignmentsList))]
-    gal1 <- do.call(readGAlignmentsList, meta)
+    gal1 <- readGAlignmentsFromMeta(readGAlignmentsList, meta)
   }else{
-    if(length(meta$mpos)>0){
-      mpos <- meta$mpos
-      meta <- meta[names(meta) %in% names(formals(readGAlignments))]
-      gal1 <- do.call(readGAlignments, meta)
+    if(checkMposTag(meta)){
+      gal1 <- readGAlignmentsFromMeta(readGAlignments, meta)
       mcols(gal1)$MD <- NULL
       names(gal1) <- mcols(gal1)$qname
       gal1 <- gal1[order(names(gal1))]
-      mcols(gal1)$mpos <- mpos[paste(mcols(gal1)$qname, start(gal1))]
+      gal1 <- renameMcol(gal1, meta$mposTag)
     }else{
-      meta <- meta[names(meta) %in% names(formals(readGAlignments))]
-      gal1 <- do.call(readGAlignments, meta)
+      gal1 <- readGAlignmentsFromMeta(readGAlignments, meta)
     }
   }
   if(length(header)) metadata(gal1) <- list(header=header)

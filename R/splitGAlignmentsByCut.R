@@ -112,17 +112,13 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
     }
     outfile <- list()
     mergedfile <- list()
-    mpos <- NULL
     open(bamfile)
-    if(length(meta$mpos)>0){
-      mpos <- meta$mpos
-    }
     while (length(chunk0 <- readGAlignments(bamfile, param=meta$param))) {
-      if(length(mpos)){
+      if(checkMposTag(meta)){
         mcols(chunk0)$MD <- NULL
         names(chunk0) <- mcols(chunk0)$qname
         chunk0 <- chunk0[order(names(chunk0))]
-        mcols(chunk0)$mpos <- mpos[paste(mcols(chunk0)$qname, start(chunk0))]
+        chunk0 <- renameMcol(chunk0, meta$mposTag, tagNewName="mpos")
       }
       gal1 <- splitGAlignmentsByCut(chunk0, txs=txs, genome = genome,
                                     breaks = breaks,
@@ -161,13 +157,20 @@ splitGAlignmentsByCut <- function(obj, txs, genome, conservation,
         unlink(paste0(outfile[[i]], ".bai"))
       }
     }
-    meta$param <- ScanBamParam(flag=meta$param@flag, what=c("qname", "flag", "mapq", "isize"))
+    mposTag <- if(checkMposTag(meta)){
+      meta$mposTag
+    }else{
+      character(0)
+    }
+    meta$param <- ScanBamParam(flag=meta$param@flag, what=c("qname", "flag", "mapq", "isize"), tag = mposTag)
     objs <- lapply(mergedfile, function(.ele){
       ## read the bam files
       chunk0 <- readGAlignments(.ele, param=meta$param)
       names(chunk0) <- mcols(chunk0)$qname
       chunk0 <- chunk0[order(names(chunk0))]
-      mcols(chunk0)$mpos <- mpos[paste(mcols(chunk0)$qname, start(chunk0))]
+      if(length(mposTag)>0){
+        chunk0 <- renameMcol(chunk0, mposTag, tagNewName="mpos")
+      }
       chunk0
     })
     return(objs)
