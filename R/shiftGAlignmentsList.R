@@ -195,52 +195,54 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam,
       outfile <- getRes(res, 'outfile')
       SE <- getRes(res, 'singleEnds')
       SE <- SE[lengths(SE)>0]
-      SE_chr <- vapply(
-        strsplit(SE, split = '.', fixed = TRUE),
-        FUN = function(.ele){
-          .ele[length(.ele)-1]
-        },
-        FUN.VALUE = character(1L)
-      )
-      SE <- split(SE, SE_chr)
-      param <- meta$param
-      bamTag(param) <- c(bamTag(param), mposTag)
-      SE_outfile <- lapply(SE, function(se){
-        chr_SE <- lapply(se, readGAlignments, param=param)
-        chr_SE <- unlist(GAlignmentsList(chr_SE))
-        mcols(chr_SE)$mrnm <- NULL
-        chr_SE <- renameMcol(chr_SE, mposTag, tagNewName="mrnm")
-        rmBam(se)
-        this_outfile <- NULL
-        if(length(chr_SE)){
-          chr_SE <- split(chr_SE, mcols(chr_SE)$qname)
-          isSE <- lengths(chr_SE)==1
-          chunk0 <- chr_SE[!isSE]
-          rm(chr_SE)
-          if(length(chunk0)){
-            startpos <- vapply(start(chunk0), min,
-                               FUN.VALUE = integer(1L))
-            chunk0 <- chunk0[order(startpos)]
-            gal1 <- shiftGAlignmentsList(chunk0, positive = positive,
-                                         negative = negative)
-            rm(chunk0)
-            gc(verbose=FALSE)
-            if(length(gal1)){
-              if(length(mcols(gal1)$mpos)!=length(gal1)){
-                stop("Can not get mpos info from the reads.")
+      if(length(SE)){
+        SE_chr <- vapply(
+          strsplit(SE, split = '.', fixed = TRUE),
+          FUN = function(.ele){
+            .ele[length(.ele)-1]
+          },
+          FUN.VALUE = character(1L)
+        )
+        SE <- split(SE, SE_chr)
+        param <- meta$param
+        bamTag(param) <- c(bamTag(param), mposTag)
+        SE_outfile <- lapply(SE, function(se){
+          chr_SE <- lapply(se, readGAlignments, param=param)
+          chr_SE <- unlist(GAlignmentsList(chr_SE))
+          mcols(chr_SE)$mrnm <- NULL
+          chr_SE <- renameMcol(chr_SE, mposTag, tagNewName="mrnm")
+          rmBam(se)
+          this_outfile <- NULL
+          if(length(chr_SE)){
+            chr_SE <- split(chr_SE, mcols(chr_SE)$qname)
+            isSE <- lengths(chr_SE)==1
+            chunk0 <- chr_SE[!isSE]
+            rm(chr_SE)
+            if(length(chunk0)){
+              startpos <- vapply(start(chunk0), min,
+                                 FUN.VALUE = integer(1L))
+              chunk0 <- chunk0[order(startpos)]
+              gal1 <- shiftGAlignmentsList(chunk0, positive = positive,
+                                           negative = negative)
+              rm(chunk0)
+              gc(verbose=FALSE)
+              if(length(gal1)){
+                if(length(mcols(gal1)$mpos)!=length(gal1)){
+                  stop("Can not get mpos info from the reads.")
+                }
+                mcols(gal1)[, mposTag] <- mcols(gal1)$mpos
+                this_outfile <- tempfile(fileext = ".bam")
+                if(length(meta$header)>0) metadata(gal1)$header <- meta$header
+                exportBamFile(gal1, this_outfile)
               }
-              mcols(gal1)[, mposTag] <- mcols(gal1)$mpos
-              this_outfile <- tempfile(fileext = ".bam")
-              if(length(meta$header)>0) metadata(gal1)$header <- meta$header
-              exportBamFile(gal1, this_outfile)
+              rm(gal1)
+              gc(verbose=FALSE)
             }
-            rm(gal1)
-            gc(verbose=FALSE)
           }
-        }
-        return(this_outfile)
-      })
-      outfile <- c(outfile, unlist(SE_outfile))
+          return(this_outfile)
+        })
+        outfile <- c(outfile, unlist(SE_outfile))
+      }
       
       if(length(outfile)>1){
         BAI <- paste0(outfile[1], ".bai")

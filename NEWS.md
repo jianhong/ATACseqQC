@@ -1,5 +1,9 @@
 # CHANGES IN VERSION 1.27.2
 
+* Fix the issue if no single end reads in the PE bam files for shiftGAlignmentsList.R 
+
+# CHANGES IN VERSION 1.27.2
+
 * Try to decrease the memory cost for shiftGAlignmentsList.R 
 
 # CHANGES IN VERSION 1.27.1
