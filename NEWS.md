@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.27.2
+
+* Try to decrease the memory cost for shiftGAlignmentsList.R 
+
 # CHANGES IN VERSION 1.27.1
 
 * Fix the issue caused by `readGAlignmentsList` does not support read by chunk 

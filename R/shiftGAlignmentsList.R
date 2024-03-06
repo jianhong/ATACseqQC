@@ -97,7 +97,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam,
         SE <- GAlignments()
         df4Duplicates <- NULL
         while (length(chunk0 <-
-                      readGAlignmentsList(bamfile, param=meta$param))) {
+                      readGAlignmentsList(bamfile, param=sbp))) {
           isSE <- lengths(chunk0)==1
           if(sum(isSE)){
             SE <- c(SE, unlist(chunk0[isSE]))
@@ -142,6 +142,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam,
                                       as.character(seqnames(SE[1])),
                                       '.bam'))
           SE <- renameMcol(SE, "mrnm", tagNewName=mposTag)
+          mcols(SE)$isize[is.na(mcols(SE)$isize)] <- 0
           exportBamFile(SE, singleEnds)
           rm(SE)
           gc(verbose=FALSE)
@@ -207,6 +208,7 @@ shiftGAlignmentsList <- function(gal, positive=4L, negative=5L, outbam,
       SE_outfile <- lapply(SE, function(se){
         chr_SE <- lapply(se, readGAlignments, param=param)
         chr_SE <- unlist(GAlignmentsList(chr_SE))
+        mcols(chr_SE)$mrnm <- NULL
         chr_SE <- renameMcol(chr_SE, mposTag, tagNewName="mrnm")
         rmBam(se)
         this_outfile <- NULL
