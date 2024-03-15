@@ -1,4 +1,8 @@
-# CHANGES IN VERSION 1.27.2
+# CHANGES IN VERSION 1.27.4
+
+* Fix the refresh issue for IGVSnapshot.R 
+
+# CHANGES IN VERSION 1.27.3
 
 * Fix the issue if no single end reads in the PE bam files for shiftGAlignmentsList.R 
 

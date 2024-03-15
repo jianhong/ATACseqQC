@@ -24,7 +24,7 @@
 #' @param sessionFile A character vector of length 1L containing the name of 
 #' the IGV session file to be saved.
 #' @param outDir A character vector of length 1L containing the output directory.
-#' @author Haibo Liu
+#' @author Haibo Liu, Siyuan Feng
 #' @return None
 #' @export
 #' @importFrom utils installed.packages
