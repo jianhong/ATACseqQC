@@ -98,7 +98,7 @@ IGVSnapshot <- function(maxMem, genomeBuild="hg38", bamFileFullPathOrURLs,
       SRAdb::IGVsession(files=bamFileFullPathOrURLs, sessionFile=sessionFile, 
                    genome=genomeBuild, VisibleAttribute='', destdir=outDir)
     }
-    
+    SRAdb::IGVclear(sock)
 }
 
 #### Helper function: interactively get geneNames or genomicRegions from standard input, 
