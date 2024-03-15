@@ -1,6 +1,6 @@
 # ATACseqQC
 
-[![platforms](http://bioconductor.org/shields/availability/3.5/ATACseqQC.svg)](http://bioconductor.org/packages/devel/bioc/html/ATACseqQC.html)
+[![platforms](https://bioconductor.org/packages/devel/bioc/html/ATACseqQC.html#archives)](http://bioconductor.org/packages/devel/bioc/html/ATACseqQC.html)
 [![build](http://bioconductor.org/shields/build/devel/bioc/ATACseqQC.svg)](http://bioconductor.org/packages/devel/bioc/html/ATACseqQC.html)
 
 ATAC sequencing Quality Control
