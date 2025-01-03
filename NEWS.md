@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.31.1
+
+* Update email address. 
+
 # CHANGES IN VERSION 1.29.1
 
 * Fix the space inserted at the beginning after formatC for exportBamFile. 
