@@ -45,8 +45,11 @@ readBamFile <- function(bamFile, which, tag=character(0),
                         ...) {
   stopifnot(length(bamFile)==1)
   if(file.size(bamFile)>1e8 && !bigFile && interactive()){
-    bigFile <- readline("This is a big BAM file. Do you want to set bigFile=TRUE to save memory? (Y/n)? ")
-    bigFile <- bigFile=="" || bigFile=="Y" || bigFile=="y"
+    if(is.null(getOption('ATACseqQC.bigFile'))){
+      bigFile <- readline("This is a big BAM file. Do you want to set bigFile=TRUE to save memory? (Y/n)? ")
+      bigFile <- bigFile=="" || bigFile=="Y" || bigFile=="y"
+      options(ATACseqQC.bigFile = bigFile)
+    }
   }
   if(!bigFile){
     if(!missing(which)){

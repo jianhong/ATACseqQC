@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.33.1
+
+* add option 'ATACseqQC.bigFile' 
+
 # CHANGES IN VERSION 1.31.1
 
 * Update email address. 
