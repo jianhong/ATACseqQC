@@ -1,0 +1,1 @@
+Due to the planned archival of the preseqR package from CRAN, a minimal portion of code necessary for library complexity estimation was adapted from preseqR and incorporated into this package. Appropriate attribution has been retained, and Chao Deng, the original author of preseqR, is listed as the author of the `estimateLibComplexity` function.

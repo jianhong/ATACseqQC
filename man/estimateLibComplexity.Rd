@@ -35,13 +35,13 @@ number of distinct fragments, number of putative sequenced reads.
 Estimating the library complexity.
 }
 \examples{
-library(preseqR)
-data(FisherButterfly)
+FisherButterfly <- readRDS(system.file('extdata', 'FisherButterfly.rds',
+                           package='ATACseqQC'))
 estimateLibComplexity(histFile=FisherButterfly, times=100)
 }
 \seealso{
 \link{readsDupFreq}
 }
 \author{
-Haibo Liu, Feng Yan
+Haibo Liu, Feng Yan, Chao Deng
 }

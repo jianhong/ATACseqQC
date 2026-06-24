@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.37.1
+
+* remove the imported package preseqR and adjust the authorship.
+
 # CHANGES IN VERSION 1.33.1
 
 * add option 'ATACseqQC.bigFile' 

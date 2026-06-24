@@ -1,9 +1,9 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.37.0
+Version: 1.37.1
 Author: Jianhong Ou, Haibo Liu, Feng Yan, Jun Yu, Michelle Kelliher,
-        Lucio Castilla, Nathan Lawson, Lihua Julie Zhu
+        Lucio Castilla, Chao Deng, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jou@morgridge.org>
 Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
         using sequencing, is a rapid and sensitive method for chromatin
@@ -23,15 +23,15 @@ Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
 Depends: R (>= 3.4), BiocGenerics, S4Vectors
 Imports: BSgenome, Biostrings, ChIPpeakAnno, IRanges, GenomicRanges,
         GenomicAlignments, GenomeInfoDb, GenomicScores, graphics, grid,
-        limma, Rsamtools (>= 1.31.2), randomForest, rtracklayer, stats,
-        motifStack, preseqR, utils, KernSmooth, edgeR, BiocParallel
+        limma, polynom, Rsamtools (>= 1.31.2), randomForest, rtracklayer, stats,
+        motifStack, utils, KernSmooth, edgeR, BiocParallel
 Suggests: BiocStyle, knitr, BSgenome.Hsapiens.UCSC.hg19,
         TxDb.Hsapiens.UCSC.hg19.knownGene, phastCons100way.UCSC.hg19,
         MotifDb, trackViewer, testthat, rmarkdown
 License: GPL (>= 2)
 LazyData: TRUE
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
+RoxygenNote: 8.0.0
 biocViews: Sequencing, DNASeq, ATACSeq, GeneRegulation, QualityControl,
         Coverage, NucleosomePositioning, ImmunoOncology
 Encoding: UTF-8

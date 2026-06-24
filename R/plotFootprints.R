@@ -15,9 +15,7 @@
 #' @param segmentation the segmentation position and abundance
 #' @param reNormalizeByDistalSig Re-normalized the curver by distal signals.
 #' @param ... Not used.
-#' @importFrom grid grid.newpage viewport plotViewport pushViewport upViewport
-#' gpar grid.xaxis grid.yaxis convertX convertY 
-#' unit grid.legend grid.text grid.lines grid.segments
+#' @importFrom grid grid.newpage viewport plotViewport pushViewport upViewport gpar grid.xaxis grid.yaxis convertX convertY unit grid.legend grid.text grid.lines grid.segments
 #' @importFrom motifStack plotMotifLogoA
 #' @importClassesFrom motifStack pfm
 #' @export

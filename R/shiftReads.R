@@ -5,14 +5,12 @@
 #' @param negative integer(1). the size to be shift for negative strand
 #' @return an object of GAlignments
 #' @import S4Vectors
-#' @importFrom GenomicAlignments cigar qwidth sequenceLayer cigarNarrow 
-#' cigarQNarrow cigarWidthAlongQuerySpace
+#' @importFrom GenomicAlignments cigar qwidth sequenceLayer cigarNarrow cigarQNarrow cigarWidthAlongQuerySpace
 #' @importFrom Biostrings DNAStringSet PhredQuality
 #' @author Jianhong Ou
 shiftReads <- function(x, positive=4L, negative=5L){
   strds <- as.character(strand(x)) == "-"
   ns <- ifelse(strds, negative, positive)
-  ## fix soft-clipping
   cigars <- cigar(x)
   mcols(x)$seq <- sequenceLayer(mcols(x)$seq, cigars, 
                                 from="query", 

@@ -10,7 +10,7 @@
 #' @param tag A vector of characters indicates the tag names to be read.
 #' See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.
 #' @param what A character vector naming the fields to return. 
-#' Fields are described on the \link{Rsamtools}[scanBam] help page.
+#' Fields are described on the \link[Rsamtools]{scanBam} help page.
 #' @param flag An integer(2) vector used to filter reads based on their 
 #' 'flag' entry. 
 #' @param bigFile If the file take too much memory, set it to true to avoid read the reads into memory.

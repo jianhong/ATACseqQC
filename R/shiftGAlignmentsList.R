@@ -17,8 +17,7 @@
 #' @export
 #' @import S4Vectors
 #' @import GenomicRanges
-#' @importFrom Rsamtools mergeBam bamWhich `bamWhich<-` filterBam bamTag
-#' `bamTag<-`
+#' @importFrom Rsamtools mergeBam bamWhich `bamWhich<-` filterBam bamTag `bamTag<-`
 #' @importFrom rtracklayer export
 #' @importFrom utils read.csv write.csv combn txtProgressBar setTxtProgressBar
 #' @importFrom BiocParallel bptry bplapply

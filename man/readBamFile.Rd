@@ -28,7 +28,7 @@ See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.}
 See \link[Rsamtools:ScanBamParam-class]{ScanBamParam}.}
 
 \item{what}{A character vector naming the fields to return. 
-Fields are described on the \link{Rsamtools}[scanBam] help page.}
+Fields are described on the \link[Rsamtools]{scanBam} help page.}
 
 \item{flag}{An integer(2) vector used to filter reads based on their 
 'flag' entry.}
