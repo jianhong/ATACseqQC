@@ -1,4 +1,4 @@
-# CHANGES IN VERSION 1.37.1
+# CHANGES IN VERSION 1.36.1
 
 * remove the imported package preseqR and adjust the authorship.
 
