@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.37.2
+
+* import cigarillo package.
+
 # CHANGES IN VERSION 1.37.1
 
 * remove the imported package preseqR and adjust the authorship.

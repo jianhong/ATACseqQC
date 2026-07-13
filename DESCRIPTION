@@ -1,7 +1,7 @@
 Package: ATACseqQC
 Type: Package
 Title: ATAC-seq Quality Control
-Version: 1.37.1
+Version: 1.37.2
 Author: Jianhong Ou, Haibo Liu, Feng Yan, Jun Yu, Michelle Kelliher,
         Lucio Castilla, Chao Deng, Nathan Lawson, Lihua Julie Zhu
 Maintainer: Jianhong Ou <jou@morgridge.org>
@@ -21,7 +21,7 @@ Description: ATAC-seq, an assay for Transposase-Accessible Chromatin
         positioning pattern, and CTCF or other Transcript Factor
         footprints.
 Depends: R (>= 3.4), BiocGenerics, S4Vectors
-Imports: BSgenome, Biostrings, ChIPpeakAnno, IRanges, GenomicRanges,
+Imports: BSgenome, Biostrings, cigarillo, ChIPpeakAnno, IRanges, GenomicRanges,
         GenomicAlignments, GenomeInfoDb, GenomicScores, graphics, grid,
         limma, polynom, Rsamtools (>= 1.31.2), randomForest, rtracklayer, stats,
         motifStack, utils, KernSmooth, edgeR, BiocParallel

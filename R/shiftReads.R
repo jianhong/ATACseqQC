@@ -5,21 +5,22 @@
 #' @param negative integer(1). the size to be shift for negative strand
 #' @return an object of GAlignments
 #' @import S4Vectors
-#' @importFrom GenomicAlignments cigar qwidth sequenceLayer cigarNarrow cigarQNarrow cigarWidthAlongQuerySpace
+#' @importFrom GenomicAlignments cigar qwidth
+#' @importFrom cigarillo project_sequences narrow_cigars_along_ref cigar_extent_along_query narrow_cigars_along_query
 #' @importFrom Biostrings DNAStringSet PhredQuality
 #' @author Jianhong Ou
 shiftReads <- function(x, positive=4L, negative=5L){
   strds <- as.character(strand(x)) == "-"
   ns <- ifelse(strds, negative, positive)
   cigars <- cigar(x)
-  mcols(x)$seq <- sequenceLayer(mcols(x)$seq, cigars, 
+  mcols(x)$seq <- project_sequences(mcols(x)$seq, cigars, 
                                 from="query", 
                                 to="query-after-soft-clipping")
-  mcols(x)$qual <- sequenceLayer(mcols(x)$qual, cigars, 
+  mcols(x)$qual <- project_sequences(mcols(x)$qual, cigars, 
                                  from="query", 
                                  to="query-after-soft-clipping")
-  cigars <- as.character(cigarNarrow(cigars))
-  cigar_width <- cigarWidthAlongQuerySpace(cigars)
+  cigars <- as.character(narrow_cigars_along_ref(cigars))
+  cigar_width <- cigar_extent_along_query(cigars)
   seq_width <- width(mcols(x)$seq)
   withInsertionsAt5Ends <- which(cigar_width!=seq_width)
   if(length(withInsertionsAt5Ends)>0){
@@ -33,7 +34,7 @@ shiftReads <- function(x, positive=4L, negative=5L){
              start= (seq_width+1-cigar_width)[withInsertionsAt5Ends],
              stop = seq_width[withInsertionsAt5Ends])
   }
-  cigars <- cigarQNarrow(cigars, 
+  cigars <- narrow_cigars_along_query(cigars, 
                          start=ifelse(strds, 1, positive+1), 
                          end=ifelse(strds, -negative-1, -1))
   x@cigar <- as.character(cigars)
