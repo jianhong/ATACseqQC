@@ -19,3 +19,24 @@ Method 2013 (Greenleaf et al.), including diagnostic plot of fragment size
 distribution, proportion of mitochondria reads, nucleosome positioning 
 pattern, and CTCF or other Transcript Factor footprints.
 }
+\author{
+\strong{Maintainer}: Jianhong Ou \email{jou@morgridge.org} (\href{https://orcid.org/0000-0002-8652-2488}{ORCID})
+
+Authors:
+\itemize{
+  \item Jianhong Ou \email{jou@morgridge.org} (\href{https://orcid.org/0000-0002-8652-2488}{ORCID})
+  \item Haibo Liu
+  \item Jun Yu
+  \item Nathan Lawson
+  \item Julie Lihua Zhu \email{Julie.Zhu@umassmed.edu}
+}
+
+Other contributors:
+\itemize{
+  \item Feng Yan [contributor]
+  \item Michelle Kelliher [contributor]
+  \item Lucio Castilla [contributor]
+  \item Chao Deng [contributor]
+}
+
+}

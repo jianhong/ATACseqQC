@@ -82,6 +82,7 @@ library(MotifDb)
 CTCF <- query(MotifDb, c("CTCF"))
 CTCF <- as.list(CTCF)
 library(BSgenome.Hsapiens.UCSC.hg19)
+set.seed(seed = 42)
 factorFootprints(bamfile, pfm=CTCF[[1]],
                 genome=Hsapiens,
                 min.score="95\%", seqlev="chr1",
@@ -91,6 +92,7 @@ bds <- readRDS(system.file("extdata", "jolma2013.motifs.bindingList.95.rds",
                           package="ATACseqQC"))
 bindingSites <- bds[["Hsapiens-jolma2013-CTCF"]]
 seqlev <- "chr1" #seqlevels(bindingSites)
+set.seed(seed = 42)
 ff <- factorFootprints(bamfile, pfm=CTCF[[1]],
                 bindingSites=bindingSites,
                 seqlev=seqlev,
@@ -99,6 +101,7 @@ ff <- factorFootprints(bamfile, pfm=CTCF[[1]],
 library(motifStack)
 Profile <- lapply(ff$signal, function(.ele) colMeans(.ele, na.rm = TRUE))
 pfm <- new('pfm', mat=as.matrix(CTCF[[1]]), name='CTCF')
+set.seed(seed = 42)
 plotFootprints(Profile=c(Profile[["+"]], Profile[["-"]]),
               Mlen=ff$Mlen,
               motif=pfm,

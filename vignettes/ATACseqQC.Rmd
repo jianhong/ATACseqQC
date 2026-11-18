@@ -17,7 +17,7 @@ output:
     toc_depth: 4
 ---
 
-```{r, echo=FALSE, results="hide", warning=FALSE, message=FALSE}
+```{r prepare, echo=FALSE, results="hide", warning=FALSE, message=FALSE}
 suppressPackageStartupMessages({
   library(ATACseqQC)
   library(ChIPpeakAnno)
@@ -54,14 +54,14 @@ format is supported.
 
 First install ATACseqQC and other packages required to run the examples. Please note that the example dataset used here is from human. To run analysis with dataset from a different species or differnt assembly, please install the corresponding BSgenome, TxDb and phastCons. For example, to analyze mouse data aligned to mm10, please install BSgenome.Mmusculus.UCSC.mm10, TxDb.Mmusculus.UCSC.mm10.knownGene and phastCons60way.UCSC.mm10. Please note that phstCons60way.UCSC.mm10 is optional, which can be obtained according to the vignettes of GenomicScores. 
 
-```{r, eval=FALSE}
+```{r install, eval=FALSE}
 library(BiocManager)
 BiocManager::install(c("ATACseqQC", "ChIPpeakAnno", "MotifDb", "GenomicAlignments",
            "BSgenome.Hsapiens.UCSC.hg19", "TxDb.Hsapiens.UCSC.hg19.knownGene",
            "phastCons100way.UCSC.hg19"))
 ```
 
-```{r}
+```{r loadlibrary}
 ## load the library
 library(ATACseqQC)
 ## input the bamFile from the ATACseqQC package 
@@ -74,14 +74,14 @@ bamfile.labels <- gsub(".bam", "", basename(bamfile))
 
 Source code of IGVSnapshot function is available in extdata folder. To call the function, please try
 
-```{r, eval=FALSE}
+```{r IGVsnapshot, eval=FALSE}
 source(system.file("extdata", "IGVSnapshot.R", package = "ATACseqQC"))
 ```
 
 
 ## Estimate the library complexity
 
-```{r}
+```{r librarysize}
 #bamQC(bamfile, outPath=NULL)
 estimateLibComplexity(readsDupFreq(bamfile))
 ```
@@ -94,7 +94,7 @@ Second, the fragment size distribution should have a clear
 periodicity, which is evident in the inset figure, indicative of 
 nucleosome occupacy (present in integer multiples).
 
-```{r}
+```{r fragsize}
 ## generate fragement size distribution
 fragSize <- fragSizeDist(bamfile, bamfile.labels)
 ```
@@ -115,7 +115,7 @@ and all reads aligning to the negative strand are offset by -5bp [@buenrostro201
 The adjusted reads will be written into a new bamfile for peak calling or 
 footprinting.
 
-```{r}
+```{r readdata}
 ## bamfile tags to be read in
 possibleTag <- list("integer"=c("AM", "AS", "CM", "CP", "FI", "H0", "H1", "H2", 
                                 "HI", "IH", "MQ", "NH", "NM", "OP", "PQ", "SM",
@@ -149,7 +149,7 @@ gal1 <- shiftGAlignmentsList(gal, outbam=shiftedBamfile)
 
 PT score is calculated as the coverage of promoter divided by the coverage of its transcript body.
 PT score will show if the signal is enriched in promoters.
-```{r}
+```{r ptscore, fig.width=4, fig.height=4}
 library(TxDb.Hsapiens.UCSC.hg19.knownGene)
 txs <- transcripts(TxDb.Hsapiens.UCSC.hg19.knownGene)
 pt <- PTscore(gal1, txs)
@@ -169,7 +169,7 @@ The NFR score for each TSS is calculated as NFR-score = log2(nf) - log2((n1+n2)/
 A plot can be generated with the NFR scores as Y-axis and the average signals of 400 bp window as X-axis, 
 very like a MA plot for gene expression data. 
 
-```{r}
+```{r nfrscore, fig.width=4, fig.height=4}
 nfr <- NFRscore(gal1, txs)
 plot(nfr$log2meanCoverage, nfr$NFR_score, 
      xlab="log2 mean coverage",
@@ -186,7 +186,7 @@ the corresponding TSSs. TSS score = the depth of TSS (each 100bp window within 1
 TSSE score = max(mean(TSS score in each window)).
 TSS enrichment score is calculated according to the definition at [https://www.encodeproject.org/data-standards/terms/#enrichment](https://www.encodeproject.org/data-standards/terms/#enrichment). Transcription start site (TSS) enrichment values are dependent on the reference files used; cutoff values for high quality data are listed in the following table from [https://www.encodeproject.org/atac-seq/](https://www.encodeproject.org/atac-seq/).
 
-```{r}
+```{r TSSEscore}
 tsse <- TSSEscore(gal1, txs)
 tsse$TSSEscore
 plot(100*(-9:10-.5), tsse$values, type="b", 
@@ -212,7 +212,7 @@ This serves as the training set to classify the rest of the fragments
 using random forest. The number of the tree will be set to 2 times 
 of square root of the length of the training set.
 
-```{r}
+```{r splitbam}
 library(BSgenome.Hsapiens.UCSC.hg19)
 library(phastCons100way.UCSC.hg19)
 ## run program for chromosome 1 only
@@ -229,7 +229,7 @@ dir(outPath)
 
 You can also perform shifting, splitting and saving in one step by calling `splitBam`.
 
-```{r eval=FALSE}
+```{r splitonestep,eval=FALSE}
 objs <- splitBam(bamfile, tags=tags, outPath=outPath,
                  txs=txs, genome=genome,
                  conservation=phastCons100way.UCSC.hg19)
@@ -240,7 +240,7 @@ you would like to simply split the bam files using the fragment length,
 then you will just need to run the command without providing the conservation argument. 
 Without setting the conservation parameter, it will run much faster.
 
-```{r eval=FALSE}
+```{r splitbycut,eval=FALSE}
 ## split reads by fragment length
 ## NOT RUN IN THIS example
 objs <- splitGAlignmentsByCut(gal1, txs=txs, outPath = outPath)
@@ -256,7 +256,7 @@ downstream nucleosomes. Because ATAC-seq reads are concentrated at regions of
 open chromatin, users should see a strong nucleosome signal at the +1 
 nucleosome, but the signal decreases at the +2, +3 and +4 nucleosomes. 
 
-```{r fig.height=4, fig.width=4}
+```{r cumulativePercentage,fig.height=4, fig.width=4}
 library(ChIPpeakAnno)
 bamfiles <- file.path(outPath,
                      c("NucleosomeFree.bam",
@@ -267,7 +267,7 @@ bamfiles <- file.path(outPath,
 ## and mononucleosome bam files.
 cumulativePercentage(bamfiles[1:2], as(seqinformation["chr1"], "GRanges"))
 ```
-```{r fig.height=8, fig.width=4}
+```{r enrichHeat,fig.height=6, fig.width=4}
 TSS <- promoters(txs, upstream=0, downstream=1)
 TSS <- unique(TSS)
 ## estimate the library size for normalization
@@ -292,14 +292,14 @@ sigs.log2 <- lapply(sigs, function(.ele) log2(.ele+1))
 featureAlignedHeatmap(sigs.log2, reCenterPeaks(TSS, width=ups+dws),
                       zeroAt=.5, n.tile=NTILE)
 ```
-```{r fig.show="hide"}
+```{r featureDist,fig.show="hide"}
 ## get signals normalized for nucleosome-free and nucleosome-bound regions.
 out <- featureAlignedDistribution(sigs, 
                                   reCenterPeaks(TSS, width=ups+dws),
                                   zeroAt=.5, n.tile=NTILE, type="l", 
                                   ylab="Averaged coverage")
 ```
-```{r}
+```{r matplot}
 ## rescale the nucleosome-free and nucleosome signals to 0~1
 range01 <- function(x){(x-min(x))/(max(x)-min(x))}
 out <- apply(out, 2, range01)
@@ -323,7 +323,7 @@ do not take the conservation (PhyloP) into consideration.
 `factorFootprints` function could also accept the
 binding sites as a GRanges object.
 
-```{r}
+```{r footprint}
 ## foot prints
 library(MotifDb)
 CTCF <- query(MotifDb, c("CTCF"))
@@ -334,33 +334,37 @@ sigs <- factorFootprints(shiftedBamfile, pfm=CTCF[[1]],
                          min.score="90%", seqlev=seqlev,
                          upstream=100, downstream=100)
 ```
-```{r fig.height=6, fig.width=6}
+```{r ftheatmap,fig.height=6, fig.width=6,eval=FALSE}
 featureAlignedHeatmap(sigs$signal, 
                       feature.gr=reCenterPeaks(sigs$bindingSites,
                                                width=200+width(sigs$bindingSites[1])), 
                       annoMcols="score",
                       sortBy="score",
                       n.tile=ncol(sigs$signal[[1]]))
-
+```
+```{r stats}
 sigs$spearman.correlation
 sigs$Profile.segmentation
 ```
 
 
 
+
 Here is the CTCF footprints for the full dataset.
+
 ![CTCF footprints](CTCFfootprints.png)
 
 ### V-plot
 
 V-plot is a plot to visualize fragment midpoint vs length for a given transcription factors.
 
-```{r}
+```{r vPlot}
 vp <- vPlot(shiftedBamfile, pfm=CTCF[[1]], 
             genome=genome, min.score="90%", seqlev=seqlev,
             upstream=200, downstream=200, 
             ylim=c(30, 250), bandwidth=c(2, 1))
-
+```
+```{r dyadPlot,eval=FALSE}
 distanceDyad(vp, pch=20, cex=.5)
 ```
 
@@ -369,7 +373,7 @@ Here is the CTCF vPlot for the full dataset.
 
 # Plot correlations for multiple samples
 
-```{r}
+```{r correlation, fig.width=4,fig.height=4}
 path <- system.file("extdata", package="ATACseqQC", mustWork=TRUE)
 bamfiles <- dir(path, "*.bam$", full.name=TRUE)
 gals <- lapply(bamfiles, function(bamfile){

@@ -69,6 +69,7 @@ library(MotifDb)
 CTCF <- query(MotifDb, c("CTCF"))
 CTCF <- as.list(CTCF)
 library(BSgenome.Hsapiens.UCSC.hg19)
+set.seed(seed = 1)
 vPlot(bamfile, pfm=CTCF[[1]],
      genome=Hsapiens,
      min.score="95\%", seqlev="chr1",

@@ -34,102 +34,132 @@ importClassesFrom(GenomicAlignments,GAlignmentsList)
 importClassesFrom(GenomicRanges,GRanges)
 importClassesFrom(motifStack,pfm)
 importFrom(BSgenome,getSeq)
-importFrom(BiocParallel,bplapply)
-importFrom(BiocParallel,bptry)
-importFrom(Biostrings,DNAString)
-importFrom(Biostrings,DNAStringSet)
-importFrom(Biostrings,PWMscoreStartingAt)
-importFrom(Biostrings,PhredQuality)
-importFrom(Biostrings,letterFrequency)
-importFrom(Biostrings,matchPWM)
-importFrom(Biostrings,maxScore)
-importFrom(ChIPpeakAnno,annotatePeakInBatch)
-importFrom(ChIPpeakAnno,estLibSize)
-importFrom(ChIPpeakAnno,featureAlignedExtendSignal)
-importFrom(ChIPpeakAnno,featureAlignedSignal)
-importFrom(ChIPpeakAnno,reCenterPeaks)
-importFrom(GenomicAlignments,GAlignments)
-importFrom(GenomicAlignments,GAlignmentsList)
-importFrom(GenomicAlignments,cigar)
-importFrom(GenomicAlignments,coverage)
-importFrom(GenomicAlignments,qwidth)
-importFrom(GenomicAlignments,readGAlignmentPairs)
-importFrom(GenomicAlignments,readGAlignments)
-importFrom(GenomicAlignments,readGAlignmentsList)
-importFrom(GenomicAlignments,summarizeOverlaps)
-importFrom(GenomicRanges,coverage)
-importFrom(GenomicRanges,promoters)
-importFrom(GenomicRanges,shift)
-importFrom(GenomicScores,gscores)
-importFrom(GenomicScores,populations)
-importFrom(IRanges,Views)
-importFrom(IRanges,viewMeans)
+importFrom(BiocParallel,
+  bplapply,
+  bptry
+)
+importFrom(Biostrings,
+  DNAString,
+  DNAStringSet,
+  PWMscoreStartingAt,
+  PhredQuality,
+  letterFrequency,
+  matchPWM,
+  maxScore
+)
+importFrom(ChIPpeakAnno,
+  annotatePeakInBatch,
+  estLibSize,
+  featureAlignedExtendSignal,
+  featureAlignedSignal,
+  reCenterPeaks
+)
+importFrom(GenomicAlignments,
+  GAlignments,
+  GAlignmentsList,
+  cigar,
+  coverage,
+  qwidth,
+  readGAlignmentPairs,
+  readGAlignments,
+  readGAlignmentsList,
+  summarizeOverlaps
+)
+importFrom(GenomicRanges,
+  coverage,
+  promoters,
+  shift
+)
+importFrom(GenomicScores,
+  gscores,
+  populations
+)
+importFrom(IRanges,
+  Views,
+  viewMeans
+)
 importFrom(KernSmooth,bkde2D)
-importFrom(Rsamtools,BamFile)
-importFrom(Rsamtools,ScanBamParam)
-importFrom(Rsamtools,`bamTag<-`)
-importFrom(Rsamtools,`bamWhich<-`)
-importFrom(Rsamtools,asBam)
-importFrom(Rsamtools,bamFlagAsBitMatrix)
-importFrom(Rsamtools,bamTag)
-importFrom(Rsamtools,bamWhich)
-importFrom(Rsamtools,countBam)
-importFrom(Rsamtools,filterBam)
-importFrom(Rsamtools,idxstatsBam)
-importFrom(Rsamtools,mergeBam)
-importFrom(Rsamtools,scanBam)
-importFrom(Rsamtools,scanBamFlag)
-importFrom(Rsamtools,scanBamHeader)
-importFrom(Rsamtools,testPairedEndBam)
+importFrom(Rsamtools,
+  "bamTag<-",
+  "bamWhich<-",
+  BamFile,
+  ScanBamParam,
+  asBam,
+  bamFlagAsBitMatrix,
+  bamTag,
+  bamWhich,
+  countBam,
+  filterBam,
+  idxstatsBam,
+  mergeBam,
+  scanBam,
+  scanBamFlag,
+  scanBamHeader,
+  testPairedEndBam
+)
 importFrom(S4Vectors,FilterRules)
-importFrom(cigarillo,cigar_extent_along_query)
-importFrom(cigarillo,narrow_cigars_along_query)
-importFrom(cigarillo,narrow_cigars_along_ref)
-importFrom(cigarillo,project_sequences)
-importFrom(grDevices,dev.off)
-importFrom(grDevices,pdf)
-importFrom(graphics,abline)
-importFrom(graphics,axis)
-importFrom(graphics,legend)
-importFrom(graphics,lines)
-importFrom(graphics,par)
-importFrom(graphics,smoothScatter)
-importFrom(grid,convertX)
-importFrom(grid,convertY)
-importFrom(grid,gpar)
-importFrom(grid,grid.legend)
-importFrom(grid,grid.lines)
-importFrom(grid,grid.newpage)
-importFrom(grid,grid.segments)
-importFrom(grid,grid.text)
-importFrom(grid,grid.xaxis)
-importFrom(grid,grid.yaxis)
-importFrom(grid,plotViewport)
-importFrom(grid,pushViewport)
-importFrom(grid,unit)
-importFrom(grid,upViewport)
-importFrom(grid,viewport)
+importFrom(cigarillo,
+  cigar_extent_along_query,
+  narrow_cigars_along_query,
+  narrow_cigars_along_ref,
+  project_sequences
+)
+importFrom(grDevices,
+  dev.off,
+  pdf
+)
+importFrom(graphics,
+  abline,
+  axis,
+  legend,
+  lines,
+  par,
+  smoothScatter
+)
+importFrom(grid,
+  convertX,
+  convertY,
+  gpar,
+  grid.legend,
+  grid.lines,
+  grid.newpage,
+  grid.segments,
+  grid.text,
+  grid.xaxis,
+  grid.yaxis,
+  plotViewport,
+  pushViewport,
+  unit,
+  upViewport,
+  viewport
+)
 importFrom(limma,normalizeBetweenArrays)
 importFrom(motifStack,plotMotifLogoA)
-importFrom(polynom,polylist)
-importFrom(polynom,polynomial)
+importFrom(polynom,
+  polylist,
+  polynomial
+)
 importFrom(randomForest,randomForest)
 importFrom(rtracklayer,export)
-importFrom(stats,coef)
-importFrom(stats,cor.test)
-importFrom(stats,heatmap)
-importFrom(stats,lm)
-importFrom(stats,loess.smooth)
-importFrom(stats,model.matrix)
-importFrom(stats,p.adjust)
-importFrom(stats,pnorm)
-importFrom(stats,prcomp)
-importFrom(stats,predict)
-importFrom(stats,qnorm)
-importFrom(stats,rmultinom)
-importFrom(utils,combn)
-importFrom(utils,read.csv)
-importFrom(utils,read.delim)
-importFrom(utils,setTxtProgressBar)
-importFrom(utils,txtProgressBar)
-importFrom(utils,write.csv)
+importFrom(stats,
+  coef,
+  cor.test,
+  heatmap,
+  lm,
+  loess.smooth,
+  model.matrix,
+  p.adjust,
+  pnorm,
+  prcomp,
+  predict,
+  qnorm,
+  rmultinom
+)
+importFrom(utils,
+  combn,
+  read.csv,
+  read.delim,
+  setTxtProgressBar,
+  txtProgressBar,
+  write.csv
+)

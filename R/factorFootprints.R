@@ -59,6 +59,7 @@
 #'CTCF <- query(MotifDb, c("CTCF"))
 #'CTCF <- as.list(CTCF)
 #'library(BSgenome.Hsapiens.UCSC.hg19)
+#'set.seed(seed = 42)
 #'factorFootprints(bamfile, pfm=CTCF[[1]],
 #'                 genome=Hsapiens,
 #'                 min.score="95%", seqlev="chr1",
@@ -68,6 +69,7 @@
 #'                           package="ATACseqQC"))
 #'bindingSites <- bds[["Hsapiens-jolma2013-CTCF"]]
 #'seqlev <- "chr1" #seqlevels(bindingSites)
+#'set.seed(seed = 42)
 #'ff <- factorFootprints(bamfile, pfm=CTCF[[1]],
 #'                 bindingSites=bindingSites,
 #'                 seqlev=seqlev,
@@ -76,6 +78,7 @@
 #'library(motifStack)
 #'Profile <- lapply(ff$signal, function(.ele) colMeans(.ele, na.rm = TRUE))
 #'pfm <- new('pfm', mat=as.matrix(CTCF[[1]]), name='CTCF')
+#'set.seed(seed = 42)
 #'plotFootprints(Profile=c(Profile[["+"]], Profile[["-"]]),
 #'               Mlen=ff$Mlen,
 #'               motif=pfm,
@@ -163,7 +166,6 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       }
       subsampleNum <- min(10000, maxSiteNum)
       if(length(mt)>subsampleNum && sum(mt$userdefined)<subsampleNum){## subsample 
-          set.seed(seed = 1)
           mt.keep <- seq_along(mt)[!mt$userdefined]
           n <- subsampleNum-sum(mt$userdefined)
           if(length(mt.keep)>n){
@@ -178,7 +180,7 @@ factorFootprints <- function(bamfiles, index=bamfiles, pfm, genome,
       stopifnot(is(bindingSites, "GRanges"))
       stopifnot(all(!is.na(seqlengths(bindingSites))))
       stopifnot(length(bindingSites)>1)
-      stopifnot(length(bindingSites$score)==length(bindingSites))
+      # stopifnot(length(bindingSites$score)==length(bindingSites)) # the score column is removed to reduce the package size.
       mt <- bindingSites
       mt$userdefined <- TRUE
   }

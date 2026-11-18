@@ -1,3 +1,7 @@
+# CHANGES IN VERSION 1.37.3
+
+* Fix the issues in BiocCheck. To decrease the package size, the datas in extdata is random subsampled. 
+
 # CHANGES IN VERSION 1.37.2
 
 * import cigarillo package.
